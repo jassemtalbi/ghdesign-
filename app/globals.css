@@ -1,26 +1,210 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #f5f0eb;
+  --accent: #c9a96e;
+  --accent-light: #e8d5b0;
+  --muted: #6b6560;
+  --surface: #111111;
+  --border: #222018;
+  --font-serif: var(--font-cormorant), Georgia, serif;
+  --font-sans: var(--font-montserrat), system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 2px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--accent); }
+
+/* ── Custom cursor ── */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: width .25s, height .25s, background .25s, opacity .3s;
+  opacity: 0;
+}
+.cursor-follower {
+  width: 38px; height: 38px;
+  border: 1px solid rgba(201,169,110,.45);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: width .3s, height .3s, border-color .3s, opacity .3s;
+  opacity: 0;
+}
+.cursor.hover { width: 6px; height: 6px; background: #fff; }
+.cursor-follower.hover { width: 56px; height: 56px; border-color: rgba(201,169,110,.9); }
+
+/* ── Keyframes ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-18px); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes scrollLine {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .4; }
+}
+
+/* ── Utility animations ── */
+.animate-marquee  { animation: marquee 22s linear infinite; }
+.animate-float    { animation: float  6s ease-in-out infinite; }
+.animate-pulse-dot{ animation: pulse-dot 2s ease-in-out infinite; }
+
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(44px);
+  transition: opacity .85s cubic-bezier(.22,1,.36,1), transform .85s cubic-bezier(.22,1,.36,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Gold shimmer text ── */
+.text-gold {
+  background: linear-gradient(90deg, var(--accent), #f0d898, var(--accent));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ── Glassmorphism nav ── */
+.glass {
+  background: rgba(8,8,8,.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(201,169,110,.12);
+}
+
+/* ── Divider ── */
+.divider { width: 56px; height: 1px; background: var(--accent); margin: 0 auto; }
+
+/* ── Link underline ── */
+.link-line {
+  position: relative;
+}
+.link-line::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0;
+  width: 0; height: 1px;
+  background: var(--accent);
+  transition: width .4s cubic-bezier(.22,1,.36,1);
+}
+.link-line:hover::after { width: 100%; }
+
+/* ── Buttons ── */
+.btn-gold {
+  display: inline-block;
+  padding: 13px 36px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: color .4s;
+  cursor: none;
+}
+.btn-gold::before {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: var(--accent);
+  transition: left .4s cubic-bezier(.22,1,.36,1);
+  z-index: 0;
+}
+.btn-gold span, .btn-gold { position: relative; z-index: 1; }
+.btn-gold:hover { color: #0a0a0a; }
+.btn-gold:hover::before { left: 0; }
+
+.btn-light {
+  display: inline-block;
+  padding: 13px 36px;
+  background: var(--foreground);
+  color: #0a0a0a;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background .35s, color .35s;
+  cursor: none;
+}
+.btn-light:hover { background: var(--accent); }
+
+/* ── Product card ── */
+.product-card { position: relative; overflow: hidden; background: var(--surface); }
+.card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.8) 0%, transparent 55%);
+  opacity: 0;
+  transition: opacity .5s;
+}
+.product-card:hover .card-overlay { opacity: 1; }
+.card-cta {
+  position: absolute; bottom: -56px; left: 50%;
+  transform: translateX(-50%);
+  transition: bottom .4s cubic-bezier(.22,1,.36,1);
+  white-space: nowrap;
+}
+.product-card:hover .card-cta { bottom: 24px; }
+
+/* ── Image zoom ── */
+.img-zoom { overflow: hidden; }
+.img-zoom .img-inner {
+  transition: transform .8s cubic-bezier(.22,1,.36,1);
+}
+.img-zoom:hover .img-inner { transform: scale(1.07); }
+
+/* ── Scroll indicator line ── */
+.scroll-line {
+  position: absolute; top: 0; left: 0;
+  width: 100%;
+  background: var(--accent);
+  height: 50%;
+  animation: scrollLine 1.8s ease-in-out infinite;
 }
