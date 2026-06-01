@@ -107,7 +107,11 @@ export default function AdminArticles() {
     <div>
       <style>{mobileStyles}</style>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', marginBottom: '20px' }}>
+        <button onClick={openNew}
+          style={{ padding: '12px 32px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '16px', lineHeight: 1 }}>+</span> Nouvel article
+        </button>
         <div className="filter-tabs" style={{ display: 'flex', gap: '6px' }}>
           {(['all', 'published', 'draft'] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)}
@@ -120,10 +124,6 @@ export default function AdminArticles() {
             </button>
           ))}
         </div>
-        <button onClick={openNew}
-          style={{ padding: '10px 22px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '16px', lineHeight: 1 }}>+</span> Nouvel article
-        </button>
       </div>
 
       {/* Grid */}

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAdmin } from '../context/AdminContext';
 
-const tabs = ['All', 'Traditional', 'Evening', 'Casual Chic', 'Modest'];
+const tabs = ['All', 'New', 'Traditional', 'Evening', 'Casual Chic', 'Modest'];
 
 export default function Collections() {
   const ref = useRef<HTMLElement>(null);
@@ -31,6 +31,8 @@ export default function Collections() {
 
   const filtered = activeTab === 0
     ? published
+    : activeTab === 1
+    ? [...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6)
     : published.filter(p => p.category.toLowerCase().includes(tabs[activeTab].toLowerCase()));
 
   const handleAdd = (p: typeof published[0]) => {
