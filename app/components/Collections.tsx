@@ -15,13 +15,19 @@ export default function Collections() {
   const published = articles.filter(a => a.published);
 
   useEffect(() => {
+    const els = ref.current?.querySelectorAll('.reveal') ?? [];
+    // Immediately make visible anything already in viewport
+    els.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) el.classList.add('visible');
+    });
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')),
       { threshold: 0.08 }
     );
-    ref.current?.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+    els.forEach(el => obs.observe(el));
     return () => obs.disconnect();
-  }, [articles]);
+  }, [articles, activeTab]);
 
   const filtered = activeTab === 0
     ? published
@@ -81,7 +87,7 @@ export default function Collections() {
         {filtered.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))', gap: 'clamp(14px,2vw,24px)' }}>
             {filtered.map((p, i) => (
-              <div key={p.id} className="reveal" style={{ transitionDelay: `${i * 80}ms` }}>
+              <div key={p.id} style={{ transitionDelay: `${i * 80}ms` }}>
                 <div style={{ position: 'relative', background: 'var(--surface)', overflow: 'hidden' }}>
 
                   {/* Image */}
