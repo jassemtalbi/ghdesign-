@@ -5,7 +5,7 @@ import { useAdmin } from '../context/AdminContext';
 
 export default function NewArrivals() {
   const ref = useRef<HTMLElement>(null);
-  const [added, setAdded] = useState<number | null>(null);
+  const [added, setAdded] = useState<string | null>(null);
   const { addItem } = useCart();
   const { articles } = useAdmin();
 

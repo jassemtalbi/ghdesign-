@@ -7,7 +7,7 @@ export type Order = {
   id: string;
   createdAt: string;
   customer: { firstName: string; lastName: string; phone: string; email: string; address: string; city: string; wilaya: string; notes: string };
-  items: { id: number; name: string; category: string; price: string; priceNum: number; qty: number; image: string }[];
+  items: { id: string; name: string; category: string; price: string; priceNum: number; qty: number; image: string }[];
   subtotal: number;
   delivery: number;
   total: number;

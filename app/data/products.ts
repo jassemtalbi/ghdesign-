@@ -2,7 +2,7 @@ import type { Product } from '../context/CartContext';
 
 export const ALL_PRODUCTS: Product[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Jebba Dorée',
     category: 'Traditional',
     price: '39,000 TND',
@@ -11,7 +11,7 @@ export const ALL_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?w=700&q=85&fit=crop',
   },
   {
-    id: 2,
+    id: '2',
     name: 'Robe Bretelle',
     category: 'Evening',
     price: '49,000 TND',
@@ -20,7 +20,7 @@ export const ALL_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=700&q=85&fit=crop',
   },
   {
-    id: 3,
+    id: '3',
     name: 'Robe Polka Dot',
     category: 'Casual Chic',
     price: '79,000 TND',
@@ -29,7 +29,7 @@ export const ALL_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=700&q=85&fit=crop',
   },
   {
-    id: 4,
+    id: '4',
     name: 'Robe Voilée',
     category: 'Modest',
     price: '85,000 TND',
@@ -38,7 +38,7 @@ export const ALL_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=700&q=85&fit=crop',
   },
   {
-    id: 5,
+    id: '5',
     name: 'Kaftan Lumière',
     category: 'Traditional',
     price: '95,000 TND',
@@ -47,7 +47,7 @@ export const ALL_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=700&q=85&fit=crop',
   },
   {
-    id: 6,
+    id: '6',
     name: 'Robe Soir',
     category: 'Evening',
     price: '67,000 TND',
@@ -56,7 +56,7 @@ export const ALL_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=700&q=85&fit=crop',
   },
   {
-    id: 7,
+    id: '7',
     name: 'Tunique Brodée',
     category: 'Casual Chic',
     price: '55,000 TND',

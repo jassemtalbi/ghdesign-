@@ -8,7 +8,7 @@ const tabs = ['All', 'Traditional', 'Evening', 'Casual Chic', 'Modest'];
 export default function Collections() {
   const ref = useRef<HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [added, setAdded] = useState<number | null>(null);
+  const [added, setAdded] = useState<string | null>(null);
   const { addItem } = useCart();
   const { articles, loading } = useAdmin();
 

@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 export type Product = {
-  id: number;
+  id: string;
   name: string;
   category: string;
   price: string;
@@ -16,8 +16,8 @@ export type CartItem = Product & { qty: number };
 type CartCtx = {
   items: CartItem[];
   addItem: (p: Product) => void;
-  removeItem: (id: number) => void;
-  changeQty: (id: number, delta: number) => void;
+  removeItem: (id: string) => void;
+  changeQty: (id: string, delta: number) => void;
   cartOpen: boolean;
   setCartOpen: (v: boolean) => void;
   total: number;
@@ -37,14 +37,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, { ...p, qty: 1 }];
     });
-    // Open cart in next tick so state update is already flushed
     setTimeout(() => setCartOpen(true), 0);
   }, []);
 
-  const removeItem = useCallback((id: number) =>
+  const removeItem = useCallback((id: string) =>
     setItems(prev => prev.filter(it => it.id !== id)), []);
 
-  const changeQty = useCallback((id: number, delta: number) =>
+  const changeQty = useCallback((id: string, delta: number) =>
     setItems(prev => prev.map(it =>
       it.id === id ? { ...it, qty: Math.max(1, it.qty + delta) } : it
     )), []);
