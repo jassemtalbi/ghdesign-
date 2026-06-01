@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useCart } from '../context/CartContext';
+import { useAdmin } from '../context/AdminContext';
 
 type Step = 'form' | 'confirm';
 
@@ -15,6 +16,7 @@ const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND
 
 export default function CheckoutModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { items, setCartOpen } = useCart();
+  const { addOrder } = useAdmin();
   const subtotal = items.reduce((s, it) => s + it.priceNum * it.qty, 0);
   const delivery  = subtotal >= 100000 ? 0 : 8000;
   const grandTotal = subtotal + delivery;
@@ -47,7 +49,15 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = () => { if (validate()) setStep('confirm'); };
+  const handleSubmit = async () => {
+    if (!validate()) return;
+    await addOrder({
+      customer: form,
+      items: items.map(it => ({ id: it.id, name: it.name, category: it.category, price: it.price, priceNum: it.priceNum, qty: it.qty, image: it.image })),
+      subtotal, delivery, total: grandTotal,
+    });
+    setStep('confirm');
+  };
 
   const handleClose = () => {
     setStep('form');
@@ -107,8 +117,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
           </div>
 
           <button onClick={handleClose} className="close-modal"
-            style={{ background: 'none', border: '1px solid var(--border)', cursor: 'none', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '20px', lineHeight: 1, transition: 'all .3s', flexShrink: 0 }}>
-            ×
+            style={{ background: 'none', border: '1px solid var(--border)', cursor: 'none', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', transition: 'all .3s', flexShrink: 0, padding: 0 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
@@ -228,11 +238,6 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
         ) : (
           /* ── Success screen ── */
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 32px', textAlign: 'center', overflowY: 'auto' }}>
-            <div style={{ width: '72px', height: '72px', borderRadius: '50%', background: 'rgba(201,169,110,.1)', border: '1px solid var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </div>
             <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(1.5rem,4vw,2.2rem)', color: 'var(--foreground)', marginBottom: '10px' }}>
               Commande confirmée !
             </h3>
@@ -269,7 +274,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
               </div>
             </div>
 
-            <button onClick={handleClose} className="btn-gold" style={{ cursor: 'none', fontSize: '10px' }}>
+            <button onClick={handleClose} className="btn-gold" style={{ cursor: 'none', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
               Retour à la boutique
             </button>
           </div>

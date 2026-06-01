@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import { CartProvider } from "./context/CartContext";
+import { AdminProvider } from "./context/AdminContext";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className={`${cormorant.variable} ${montserrat.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">
-        <CartProvider>{children}</CartProvider>
+        <AdminProvider><CartProvider>{children}</CartProvider></AdminProvider>
       </body>
     </html>
   );

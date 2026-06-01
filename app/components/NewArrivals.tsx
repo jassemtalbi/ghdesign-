@@ -1,15 +1,16 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { useCart } from '../context/CartContext';
-import { ALL_PRODUCTS } from '../data/products';
-
-const NEW_PRODUCTS = ALL_PRODUCTS.slice(4, 7);
+import { useAdmin } from '../context/AdminContext';
 
 export default function NewArrivals() {
   const ref = useRef<HTMLElement>(null);
   const [added, setAdded] = useState<number | null>(null);
   const { addItem } = useCart();
+  const { articles } = useAdmin();
+
+  const published = articles.filter(a => a.published);
+  const newest = [...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 3);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -18,19 +19,20 @@ export default function NewArrivals() {
     );
     ref.current?.querySelectorAll('.reveal').forEach(el => obs.observe(el));
     return () => obs.disconnect();
-  }, []);
+  }, [articles]);
 
-  const handleAdd = (p: typeof NEW_PRODUCTS[0]) => {
-    addItem(p);
+  const handleAdd = (p: typeof newest[0]) => {
+    addItem({ id: p.id, name: p.name, category: p.category, price: p.price, priceNum: p.priceNum, tag: p.tag, image: p.image });
     setAdded(p.id);
     setTimeout(() => setAdded(null), 1600);
   };
+
+  if (newest.length === 0) return null;
 
   return (
     <section id="new" ref={ref} style={{ padding: 'clamp(64px,10vw,120px) clamp(16px,5vw,64px)', background: 'var(--surface)' }}>
       <div style={{ maxWidth: '1320px', margin: '0 auto' }}>
 
-        {/* Header */}
         <div className="reveal" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 'clamp(32px,5vw,56px)', gap: '12px' }}>
           <div>
             <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>Fresh In</p>
@@ -41,39 +43,26 @@ export default function NewArrivals() {
           </a>
         </div>
 
-        {/* Cards */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'clamp(16px,2.5vw,28px)' }}>
-          {NEW_PRODUCTS.map((item, i) => (
+          {newest.map((item, i) => (
             <div key={item.id} className="reveal" style={{ transitionDelay: `${i * 100}ms` }}>
               <div style={{ position: 'relative', overflow: 'hidden', background: '#0f0c07' }}>
-
-                {/* Image with gradient overlay */}
                 <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw"
-                    style={{ objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)' }}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.image} alt={item.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)', display: 'block' }}
                     className="nimg"
                   />
-                  {/* Bottom gradient for text readability */}
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.15) 50%, transparent 100%)' }} />
-
-                  {/* Tag */}
                   <div style={{ position: 'absolute', top: '14px', right: '14px', padding: '4px 11px', background: 'var(--accent)' }}>
                     <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.28em', textTransform: 'uppercase', fontWeight: 600, color: '#0a0a0a' }}>{item.tag}</span>
                   </div>
-
-                  {/* Info over image */}
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '18px 18px 20px' }}>
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'rgba(245,240,235,.5)', marginBottom: '4px' }}>{item.category}</p>
                     <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '8px', marginBottom: '14px' }}>
                       <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.15rem', color: 'var(--foreground)', letterSpacing: '.04em', lineHeight: 1.2 }}>{item.name}</h3>
                       <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', color: 'var(--accent)', flexShrink: 0 }}>{item.price}</span>
                     </div>
-
-                    {/* Add to cart button */}
                     <button onClick={() => handleAdd(item)}
                       style={{
                         width: '100%', padding: '11px',

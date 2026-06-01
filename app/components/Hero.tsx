@@ -7,6 +7,10 @@ export default function Hero() {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    fetch('/api/stats', { method: 'POST' });
+  }, []);
+
+  useEffect(() => {
     const t = setTimeout(() => setOn(true), 120);
     const fn = () => setSy(window.scrollY);
     window.addEventListener('scroll', fn, { passive: true });
