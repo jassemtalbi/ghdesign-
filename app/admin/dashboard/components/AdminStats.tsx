@@ -40,7 +40,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
   return (
     <div>
       {/* KPI cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px', marginBottom: '32px' }}>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
         {stats.map(s => (
           <div key={s.label} style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -55,7 +55,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '16px', alignItems: 'start' }}>
+      <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '16px', alignItems: 'start' }}>
 
         {/* Recent orders */}
         <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14' }}>

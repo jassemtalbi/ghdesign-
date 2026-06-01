@@ -3,6 +3,18 @@ import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useAdmin, type Article } from '../../../context/AdminContext';
 
+const mobileStyles = `
+  @media (max-width: 768px) {
+    .articles-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    .article-modal { width: 100% !important; height: 100% !important; max-height: 100vh !important; top: 0 !important; left: 0 !important; transform: none !important; border-radius: 0 !important; }
+    .filter-tabs { overflow-x: auto !important; scrollbar-width: none !important; }
+    .filter-tabs > div { min-width: max-content !important; }
+  }
+  @media (max-width: 480px) {
+    .articles-grid { grid-template-columns: 1fr !important; }
+  }
+`;
+
 const CATEGORIES = ['Traditional', 'Evening', 'Casual Chic', 'Modest'];
 const TAGS = ['Bestseller', 'New', 'Limited', 'Exclusive', 'Just Arrived', 'Sale'];
 
@@ -93,9 +105,10 @@ export default function AdminArticles() {
 
   return (
     <div>
+      <style>{mobileStyles}</style>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div className="filter-tabs" style={{ display: 'flex', gap: '6px' }}>
           {(['all', 'published', 'draft'] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)}
               style={{
@@ -114,7 +127,7 @@ export default function AdminArticles() {
       </div>
 
       {/* Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+      <div className="articles-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
         {filtered.map(a => (
           <div key={a.id} style={{ background: '#0d0d0d', border: '1px solid #1a1a14', overflow: 'hidden', transition: 'border-color .2s' }}>
             {/* Image */}
@@ -201,7 +214,7 @@ export default function AdminArticles() {
       {showForm && (
         <>
           <div onClick={() => setShowForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.8)', zIndex: 50 }} />
-          <div style={{
+          <div className="article-modal" style={{
             position: 'fixed', zIndex: 51, top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
             width: 'min(560px, 96vw)', maxHeight: '90vh', background: '#0d0d0d', border: '1px solid #1a1a14',
             display: 'flex', flexDirection: 'column', overflow: 'hidden',
@@ -273,7 +286,7 @@ export default function AdminArticles() {
                 )}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: errors.name ? '#e07070' : '#6b6560', marginBottom: '6px' }}>Nom *</label>
                   <input value={form.name} onChange={e => { setForm(p => ({ ...p, name: e.target.value })); setErrors(p => ({ ...p, name: '' })); }} placeholder="Nom de l'article" style={inp(!!errors.name)} />
