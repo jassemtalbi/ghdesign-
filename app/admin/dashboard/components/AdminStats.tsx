@@ -1,8 +1,34 @@
 'use client';
 import { useAdmin } from '../../../context/AdminContext';
 import { useEffect, useState } from 'react';
+import {
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+} from 'recharts';
 
 const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND';
+const fmtShort = (n: number) => n >= 1000 ? (n / 1000).toFixed(0) + 'k' : String(n);
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: '#f59e0b', confirmed: '#60a5fa', shipped: '#818cf8', delivered: '#4ade80', cancelled: '#f87171',
+};
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'En attente', confirmed: 'Confirmée', shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée',
+};
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: '#0d0d0d', border: '1px solid #2a2520', padding: '10px 14px', fontFamily: 'inherit' }}>
+      {label && <p style={{ fontSize: '9px', color: '#6b6560', letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>}
+      {payload.map((p: any, i: number) => (
+        <p key={i} style={{ fontSize: '11px', color: p.color || '#c9a96e' }}>
+          {p.name ? `${p.name}: ` : ''}{typeof p.value === 'number' && p.value > 1000 ? fmt(p.value) : p.value}
+        </p>
+      ))}
+    </div>
+  );
+};
 
 export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' | 'orders' | 'articles') => void }) {
   const { orders, articles } = useAdmin();
@@ -15,118 +41,208 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
   const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0);
   const pending = orders.filter(o => o.status === 'pending').length;
   const shipped = orders.filter(o => o.status === 'shipped').length;
-  const delivered = orders.filter(o => o.status === 'delivered').length;
   const published = articles.filter(a => a.published).length;
 
-  const stats = [
-    { label: 'Visiteurs', value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites', color: '#34d399', icon: <IconVisits /> },
-    { label: 'Chiffre d\'affaires', value: fmt(totalRevenue), sub: `${orders.filter(o => o.status !== 'cancelled').length} commandes`, color: '#c9a96e', icon: <IconRevenue /> },
-    { label: 'Commandes en attente', value: String(pending), sub: 'À traiter', color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending /> },
-    { label: 'En livraison', value: String(shipped), sub: 'En cours', color: '#60a5fa', icon: <IconShipped /> },
-    { label: 'Articles publiés', value: String(published), sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle /> },
+  // Revenue by day (last 7 days)
+  const revenueByDay = (() => {
+    const days: Record<string, number> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+      days[key] = 0;
+    }
+    orders.filter(o => o.status !== 'cancelled').forEach(o => {
+      const d = new Date(o.createdAt);
+      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+      if (key in days) days[key] += o.total;
+    });
+    return Object.entries(days).map(([date, total]) => ({ date, total }));
+  })();
+
+  // Orders by status for pie chart
+  const statusData = Object.entries(STATUS_LABELS).map(([key, label]) => ({
+    name: label,
+    value: orders.filter(o => o.status === key).length,
+    color: STATUS_COLORS[key],
+  })).filter(d => d.value > 0);
+
+  // Orders per day (last 7)
+  const ordersByDay = (() => {
+    const days: Record<string, number> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+      days[key] = 0;
+    }
+    orders.forEach(o => {
+      const d = new Date(o.createdAt);
+      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+      if (key in days) days[key]++;
+    });
+    return Object.entries(days).map(([date, count]) => ({ date, count }));
+  })();
+
+  // Categories
+  const categoryData = articles.reduce((acc, a) => {
+    acc[a.category] = (acc[a.category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  const categoryChart = Object.entries(categoryData).map(([name, value]) => ({ name, value }));
+
+  const kpis = [
+    { label: 'Visiteurs',           value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites',   color: '#34d399', icon: <IconVisits /> },
+    { label: "Chiffre d'affaires",  value: fmt(totalRevenue),                                         sub: `${orders.filter(o => o.status !== 'cancelled').length} commandes`, color: '#c9a96e', icon: <IconRevenue /> },
+    { label: 'En attente',          value: String(pending),                                            sub: 'À traiter',      color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending /> },
+    { label: 'En livraison',        value: String(shipped),                                            sub: 'En cours',       color: '#60a5fa', icon: <IconShipped /> },
+    { label: 'Articles publiés',    value: String(published),                                          sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle /> },
   ];
 
-  const recentOrders = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 5);
-
-  const statusColors: Record<string, string> = {
-    pending: '#f59e0b', confirmed: '#60a5fa', shipped: '#818cf8', delivered: '#4ade80', cancelled: '#f87171',
-  };
-  const statusLabels: Record<string, string> = {
-    pending: 'En attente', confirmed: 'Confirmée', shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée',
-  };
-
-  const categoryCount = articles.reduce((acc, a) => { acc[a.category] = (acc[a.category] || 0) + 1; return acc; }, {} as Record<string, number>);
+  const recentOrders = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
 
   return (
     <div>
       {/* KPI cards */}
-      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
-        {stats.map(s => (
-          <div key={s.label} style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '24px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <div style={{ width: '36px', height: '36px', background: `${s.color}18`, border: `1px solid ${s.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>
+      <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '14px', marginBottom: '24px' }}>
+        {kpis.map(s => (
+          <div key={s.label} style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '24px 28px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+              <div style={{ width: '32px', height: '32px', background: `${s.color}18`, border: `1px solid ${s.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>
                 {s.icon}
               </div>
+              <div style={{ width: '3px', height: '28px', background: s.color, opacity: .4 }} />
             </div>
-            <p style={{ fontFamily: 'Georgia, serif', fontSize: '1.8rem', color: s.color, fontWeight: 300, marginBottom: '4px', lineHeight: 1 }}>{s.value}</p>
-            <p style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '2px' }}>{s.label}</p>
-            <p style={{ fontSize: '10px', color: '#444' }}>{s.sub}</p>
+            <p style={{ fontFamily: 'Georgia, serif', fontSize: '1.6rem', color: s.color, fontWeight: 300, marginBottom: '2px', lineHeight: 1 }}>{s.value}</p>
+            <p style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560' }}>{s.label}</p>
+            <p style={{ fontSize: '10px', color: '#333', marginTop: '2px' }}>{s.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: '16px', alignItems: 'start' }}>
+      {/* Charts row 1 */}
+      <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
 
-        {/* Recent orders */}
-        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14' }}>
-          <div style={{ padding: '18px 22px', borderBottom: '1px solid #1a1a14', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e' }}>Commandes récentes</p>
-            <button onClick={() => onNavigate('orders')} style={{ fontSize: '9px', color: '#6b6560', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Voir tout →</button>
-          </div>
-          <div>
-            {recentOrders.map((o, i) => (
-              <div key={o.id} style={{ padding: '14px 22px', borderBottom: i < recentOrders.length - 1 ? '1px solid #111' : 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '3px' }}>
-                    <span style={{ fontFamily: 'Georgia, serif', fontSize: '.85rem', color: '#f5f0eb' }}>{o.customer.firstName} {o.customer.lastName}</span>
-                    <span style={{ fontSize: '8px', color: '#444' }}>{o.id}</span>
+        {/* Revenue area chart */}
+        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e', marginBottom: '4px' }}>Chiffre d'affaires</p>
+          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>7 derniers jours</p>
+          <ResponsiveContainer width="100%" height={180}>
+            <AreaChart data={revenueByDay}>
+              <defs>
+                <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%"  stopColor="#c9a96e" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#c9a96e" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" />
+              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} />
+              <YAxis tickFormatter={fmtShort} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={36} />
+              <Tooltip content={<CustomTooltip />} />
+              <Area type="monotone" dataKey="total" stroke="#c9a96e" strokeWidth={2} fill="url(#revGrad)" dot={{ fill: '#c9a96e', r: 3, strokeWidth: 0 }} activeDot={{ r: 5 }} />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Orders bar chart */}
+        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '4px' }}>Commandes</p>
+          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>7 derniers jours</p>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={ordersByDay} barSize={18}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" vertical={false} />
+              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} />
+              <YAxis allowDecimals={false} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={24} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="count" name="Commandes" fill="#60a5fa" fillOpacity={0.8} radius={[2, 2, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Charts row 2 */}
+      <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+
+        {/* Status pie */}
+        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#a78bfa', marginBottom: '4px' }}>Statuts commandes</p>
+          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>Répartition</p>
+          {statusData.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#333', fontSize: '11px', padding: '60px 0' }}>Aucune commande</p>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <ResponsiveContainer width={140} height={140}>
+                <PieChart>
+                  <Pie data={statusData} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={3} dataKey="value">
+                    {statusData.map((entry, i) => <Cell key={i} fill={entry.color} fillOpacity={0.85} />)}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{ flex: 1 }}>
+                {statusData.map(d => (
+                  <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: d.color, flexShrink: 0 }} />
+                    <span style={{ fontSize: '9px', color: '#6b6560', flex: 1 }}>{d.name}</span>
+                    <span style={{ fontSize: '10px', color: '#f5f0eb', fontWeight: 600 }}>{d.value}</span>
                   </div>
-                  <p style={{ fontSize: '10px', color: '#6b6560' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ fontFamily: 'Georgia, serif', fontSize: '.9rem', color: '#c9a96e', marginBottom: '4px' }}>{fmt(o.total)}</p>
-                  <span style={{ fontSize: '8px', padding: '3px 8px', background: `${statusColors[o.status]}18`, color: statusColors[o.status], border: `1px solid ${statusColors[o.status]}40` }}>
-                    {statusLabels[o.status]}
-                  </span>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* Categories breakdown */}
-        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14' }}>
-          <div style={{ padding: '18px 22px', borderBottom: '1px solid #1a1a14' }}>
-            <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e' }}>Par catégorie</p>
-          </div>
-          <div style={{ padding: '16px 22px' }}>
-            {Object.entries(categoryCount).map(([cat, count]) => {
-              const pct = Math.round((count / articles.length) * 100);
-              return (
-                <div key={cat} style={{ marginBottom: '14px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                    <span style={{ fontSize: '10px', color: '#f5f0eb' }}>{cat}</span>
-                    <span style={{ fontSize: '10px', color: '#6b6560' }}>{count} article{count > 1 ? 's' : ''}</span>
-                  </div>
-                  <div style={{ height: '2px', background: '#1a1a14' }}>
-                    <div style={{ height: '100%', width: `${pct}%`, background: '#c9a96e', transition: 'width .6s' }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div style={{ padding: '14px 22px', borderTop: '1px solid #1a1a14' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: '10px', color: '#6b6560' }}>Total articles</span>
-              <span style={{ fontSize: '10px', color: '#c9a96e', fontWeight: 600 }}>{articles.length}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
-              <span style={{ fontSize: '10px', color: '#6b6560' }}>Publiés</span>
-              <span style={{ fontSize: '10px', color: '#4ade80' }}>{published}</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px' }}>
-              <span style={{ fontSize: '10px', color: '#6b6560' }}>Brouillons</span>
-              <span style={{ fontSize: '10px', color: '#f59e0b' }}>{articles.length - published}</span>
-            </div>
-          </div>
+        {/* Categories bar */}
+        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#34d399', marginBottom: '4px' }}>Articles par catégorie</p>
+          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>Inventaire</p>
+          {categoryChart.length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#333', fontSize: '11px', padding: '60px 0' }}>Aucun article</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={140}>
+              <BarChart data={categoryChart} layout="vertical" barSize={12}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" horizontal={false} />
+                <XAxis type="number" allowDecimals={false} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="name" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={72} />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="value" name="Articles" fill="#34d399" fillOpacity={0.8} radius={[0, 2, 2, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
+      </div>
+
+      {/* Recent orders */}
+      <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14' }}>
+        <div style={{ padding: '18px 22px', borderBottom: '1px solid #1a1a14', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e' }}>Commandes récentes</p>
+          <button onClick={() => onNavigate('orders')} style={{ fontSize: '9px', color: '#6b6560', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Voir tout →</button>
+        </div>
+        {recentOrders.length === 0 && (
+          <p style={{ padding: '24px', textAlign: 'center', color: '#333', fontSize: '11px' }}>Aucune commande</p>
+        )}
+        {recentOrders.map((o, i) => (
+          <div key={o.id} style={{ padding: '14px 22px', borderBottom: i < recentOrders.length - 1 ? '1px solid #111' : 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                <span style={{ fontFamily: 'Georgia, serif', fontSize: '.85rem', color: '#f5f0eb' }}>{o.customer.firstName} {o.customer.lastName}</span>
+                <span style={{ fontSize: '8px', color: '#333' }}>{o.id}</span>
+              </div>
+              <p style={{ fontSize: '10px', color: '#6b6560' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
+            </div>
+            <div style={{ textAlign: 'right', flexShrink: 0 }}>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: '.9rem', color: '#c9a96e', marginBottom: '4px' }}>{fmt(o.total)}</p>
+              <span style={{ fontSize: '8px', padding: '3px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
+                {STATUS_LABELS[o.status]}
+              </span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-function IconVisits() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>; }
-function IconRevenue() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>; }
-function IconPending() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>; }
-function IconShipped() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>; }
-function IconArticle() { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>; }
+function IconVisits()  { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>; }
+function IconRevenue() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>; }
+function IconPending() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>; }
+function IconShipped() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>; }
+function IconArticle() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>; }

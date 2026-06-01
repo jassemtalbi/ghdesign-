@@ -42,6 +42,7 @@ export default function Dashboard() {
       <style>{`
         @media (max-width: 768px) {
           .sidebar { display: none !important; }
+          main { margin-left: 0 !important; }
           .bottom-nav { display: flex !important; }
           .main-pad { padding: 16px !important; padding-bottom: 80px !important; }
           .topbar-pad { padding: 14px 16px !important; }
@@ -59,7 +60,7 @@ export default function Dashboard() {
       <div style={{ minHeight: '100vh', background: '#080808', fontFamily: "'Montserrat', system-ui, sans-serif", display: 'flex' }}>
 
         {/* Sidebar — desktop only */}
-        <aside className="sidebar" style={{ width: '220px', flexShrink: 0, background: '#0d0d0d', borderRight: '1px solid #1a1a14', display: 'flex', flexDirection: 'column', position: 'sticky', top: 0, height: '100vh' }}>
+        <aside className="sidebar" style={{ width: '220px', flexShrink: 0, background: '#0d0d0d', borderRight: '1px solid #1a1a14', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 20 }}>
           <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid #1a1a14' }}>
             <p style={{ fontSize: '7px', letterSpacing: '.5em', textTransform: 'uppercase', color: '#c9a96e', marginBottom: '6px' }}>Admin</p>
             <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 300, fontSize: '1.3rem', color: '#f5f0eb', letterSpacing: '.06em' }}>GH Design</h2>
@@ -93,7 +94,7 @@ export default function Dashboard() {
         </aside>
 
         {/* Main */}
-        <main style={{ flex: 1, overflowY: 'auto', minWidth: 0 }}>
+        <main style={{ flex: 1, overflowY: 'auto', minWidth: 0, marginLeft: '220px' }}>
           {/* Top bar */}
           <div className="topbar-pad" style={{ padding: '20px 32px', borderBottom: '1px solid #1a1a14', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0d0d0d', position: 'sticky', top: 0, zIndex: 10 }}>
             <div>
