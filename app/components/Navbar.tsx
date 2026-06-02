@@ -6,7 +6,6 @@ import CheckoutModal from './CheckoutModal';
 
 const links = [
   { label: 'Collections', href: '#collections' },
-  { label: 'New Arrivals', href: '#new' },
   { label: 'About',        href: '#about' },
   { label: 'Contact',      href: '#contact' },
 ];
@@ -62,14 +61,6 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="hidden md:flex" style={{ alignItems: 'center', gap: '16px' }}>
-            {/* Search */}
-            <button style={{ background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', transition: 'color .3s' }} className="search-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-              Search
-            </button>
-
-            {/* Divider */}
-            <div style={{ width: '1px', height: '18px', background: 'var(--border)' }} />
 
             {/* Cart button */}
             <button onClick={() => setCartOpen(true)} className="cart-trigger"
