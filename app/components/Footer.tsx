@@ -28,13 +28,14 @@ export default function Footer() {
               <div style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.46em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '4px' }}>Design</div>
             </div>
             <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: '.78rem', lineHeight: 1.9, color: 'var(--muted)', maxWidth: '175px', marginBottom: '24px' }}>
-              Handcrafted women&apos;s fashion rooted in the soul of Tunisian heritage.
+              Handcrafted fashion for men & women, rooted in the soul of Tunisian heritage.
             </p>
             {/* Social */}
             <div style={{ display: 'flex', gap: '8px' }}>
               {[
-                { label: 'Fb', href: 'https://facebook.com' },
-                { label: 'Ig', href: 'https://instagram.com' },
+                { label: 'Fb', href: 'https://www.facebook.com/share/1cPXVWjggx/?mibextid=wwXIfr' },
+                { label: 'Ig', href: 'https://www.instagram.com/gh.design5?igsh=MXhhczNxeTh1emg3OA%3D%3D&utm_source=qr' },
+                { label: 'Tk', href: 'https://www.tiktok.com/@gh.design5?_r=1&_t=ZS-96swh3wlqqN' },
               ].map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                   className="footer-social"
@@ -75,7 +76,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
           <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.06em', color: 'var(--muted)' }}>
-            © 2025 GH Design. All rights reserved.
+            © 2026 GH Design. All rights reserved.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
             <div className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent)' }} />

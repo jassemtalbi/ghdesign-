@@ -19,7 +19,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "GH Design — Tunisian Women's Fashion",
-  description: "Handcrafted women's fashion inspired by the soul of North Africa.",
+  description: "Handcrafted fashion for men & women, inspired by the soul of North Africa.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,16 +1,68 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useAdmin, type Order, type OrderStatus } from '../../../context/AdminContext';
+import * as XLSX from 'xlsx';
+
+function Celebration({ onDone }: { onDone: () => void }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = Array.from({ length: 120 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      size: Math.random() * 8 + 4,
+      color: ['#c9a96e','#4ade80','#60a5fa','#f59e0b','#f5f0eb','#a78bfa'][Math.floor(Math.random() * 6)],
+      speed: Math.random() * 4 + 2,
+      angle: Math.random() * Math.PI * 2,
+      spin: (Math.random() - 0.5) * 0.2,
+      drift: (Math.random() - 0.5) * 2,
+    }));
+
+    let frame: number;
+    let start = performance.now();
+
+    const draw = (now: number) => {
+      const elapsed = now - start;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(p => {
+        p.y += p.speed;
+        p.x += p.drift;
+        p.angle += p.spin;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, 1 - elapsed / 1200);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.5);
+        ctx.restore();
+      });
+      if (elapsed < 1400) frame = requestAnimationFrame(draw);
+      else onDone();
+    };
+    frame = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(frame);
+  }, [onDone]);
+
+  return (
+    <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none' }} />
+  );
+}
 
 const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND';
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', shipped: '#818cf8', delivered: '#4ade80', cancelled: '#f87171',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: '#6b6560',
 };
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: 'En attente', confirmed: 'Confirmée', shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée',
+  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée',
 };
-const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'delivered', 'cancelled'];
 
 type SortKey = 'date' | 'total' | 'status';
 type SortDir = 'asc' | 'desc';
@@ -25,6 +77,34 @@ export default function AdminOrders() {
   const [sortKey, setSortKey] = useState<SortKey>('date');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [page, setPage] = useState(1);
+  const [celebrating, setCelebrating] = useState(false);
+
+  const exportXLSX = () => {
+    const data = filtered.map(o => ({
+      'ID': o.id,
+      'Date': new Date(o.createdAt).toLocaleDateString('fr-TN'),
+      'Prénom': o.customer.firstName,
+      'Nom': o.customer.lastName,
+      'Téléphone': o.customer.phone,
+      'Email': o.customer.email || '',
+      'Adresse': o.customer.address,
+      'Ville': o.customer.city,
+      'Gouvernorat': o.customer.wilaya,
+      'Articles': o.items.map(it => `${it.name}${it.size ? ` (${it.size})` : ''}${it.color ? ` - ${it.color}` : ''} x${it.qty}`).join(', '),
+      'Sous-total (TND)': o.subtotal,
+      'Livraison (TND)': o.delivery,
+      'Total (TND)': o.total,
+      'Statut': STATUS_LABELS[o.status],
+      'Note': o.customer.notes || '',
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Commandes');
+    // Auto column width
+    const cols = Object.keys(data[0] || {}).map(k => ({ wch: Math.max(k.length, 14) }));
+    ws['!cols'] = cols;
+    XLSX.writeFile(wb, `commandes_${new Date().toISOString().slice(0,10)}.xlsx`);
+  };
 
   const toggleSort = (key: SortKey) => {
     if (sortKey === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
@@ -65,6 +145,25 @@ export default function AdminOrders() {
 
   return (
     <>
+      {celebrating && (
+        <>
+          <Celebration onDone={() => setCelebrating(false)} />
+          <div style={{
+            position: 'fixed', top: '32px', left: '50%', transform: 'translateX(-50%)',
+            zIndex: 10000, background: '#0d0d0d', border: '1px solid #4ade80',
+            padding: '14px 28px', display: 'flex', alignItems: 'center', gap: '12px',
+            boxShadow: '0 0 32px rgba(74,222,128,.2)',
+            animation: 'fadeInDown .4s ease',
+          }}>
+            <span style={{ fontSize: '20px' }}>🎉</span>
+            <div>
+              <p style={{ fontFamily: 'Georgia, serif', fontSize: '.95rem', color: '#4ade80', fontWeight: 300 }}>Commande livrée !</p>
+              <p style={{ fontFamily: 'inherit', fontSize: '9px', color: '#6b6560', letterSpacing: '.1em', marginTop: '2px' }}>Félicitations 🎊</p>
+            </div>
+          </div>
+          <style>{`@keyframes fadeInDown { from { opacity:0; transform:translateX(-50%) translateY(-16px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
+        </>
+      )}
       <style>{`
         @media (max-width: 768px) {
           .orders-table-header { display: none !important; }
@@ -84,6 +183,20 @@ export default function AdminOrders() {
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Rechercher par nom, téléphone..."
               style={{ flex: 1, minWidth: '180px', padding: '10px 14px', background: '#0d0d0d', border: '1px solid #1a1a14', color: '#f5f0eb', fontSize: '11px', fontFamily: 'inherit', outline: 'none', borderRadius: 0 }} />
+            <button onClick={exportXLSX} disabled={filtered.length === 0}
+              style={{
+                padding: '10px 16px', background: filtered.length === 0 ? '#111' : '#166534',
+                border: `1px solid ${filtered.length === 0 ? '#1a1a14' : '#4ade80'}`,
+                color: filtered.length === 0 ? '#333' : '#4ade80',
+                fontSize: '9px', letterSpacing: '.15em', textTransform: 'uppercase',
+                cursor: filtered.length === 0 ? 'default' : 'pointer', fontFamily: 'inherit',
+                display: 'flex', alignItems: 'center', gap: '7px', transition: 'all .2s', flexShrink: 0,
+              }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export XLSX {filtered.length > 0 && `(${filtered.length})`}
+            </button>
             <div style={{ display: 'flex', gap: '6px' }}>
               {([['date', 'Date'], ['total', 'Montant'], ['status', 'Statut']] as [SortKey, string][]).map(([k, label]) => (
                 <button key={k} onClick={() => toggleSort(k)}
@@ -242,10 +355,18 @@ export default function AdminOrders() {
             </div>
             <div style={{ padding: '14px 18px', borderBottom: '1px solid #111' }}>
               <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Articles</p>
-              {selected.items.map(it => (
-                <div key={it.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span style={{ fontSize: '11px', color: '#f5f0eb' }}>{it.name} × {it.qty}</span>
-                  <span style={{ fontSize: '11px', color: '#c9a96e' }}>{fmt(it.priceNum * it.qty)}</span>
+              {selected.items.map((it, i) => (
+                <div key={i} style={{ marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '11px', color: '#f5f0eb' }}>{it.name} × {it.qty}</span>
+                    <span style={{ fontSize: '11px', color: '#c9a96e' }}>{fmt(it.priceNum * it.qty)}</span>
+                  </div>
+                  {(it.size || it.color) && (
+                    <div style={{ display: 'flex', gap: '5px', marginTop: '3px' }}>
+                      {it.size && <span style={{ fontSize: '8px', padding: '1px 6px', border: '1px solid #2a2520', color: '#6b6560', letterSpacing: '.1em' }}>{it.size}</span>}
+                      {it.color && <span style={{ fontSize: '8px', padding: '1px 6px', border: '1px solid rgba(201,169,110,.3)', color: '#c9a96e', letterSpacing: '.1em' }}>{it.color}</span>}
+                    </div>
+                  )}
                 </div>
               ))}
               <div style={{ borderTop: '1px solid #1a1a14', marginTop: '8px', paddingTop: '8px' }}>
@@ -263,7 +384,7 @@ export default function AdminOrders() {
               <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '10px' }}>Changer le statut</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 {ALL_STATUSES.map(s => (
-                  <button key={s} onClick={() => { updateOrderStatus(selected.id, s); setSelected(prev => prev ? { ...prev, status: s } : prev); }}
+                  <button key={s} onClick={() => { updateOrderStatus(selected.id, s); setSelected(prev => prev ? { ...prev, status: s } : prev); if (s === 'delivered') setCelebrating(true); }}
                     style={{
                       padding: '9px 10px', fontSize: '9px', letterSpacing: '.1em', textTransform: 'uppercase',
                       background: selected.status === s ? `${STATUS_COLORS[s]}18` : 'none',

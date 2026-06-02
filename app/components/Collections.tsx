@@ -9,6 +9,8 @@ export default function Collections() {
   const ref = useRef<HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [added, setAdded] = useState<string | null>(null);
+  // per-card selected size & color: { [articleId]: { size, color } }
+  const [selections, setSelections] = useState<Record<string, { size: string; color: string }>>({});
   const { addItem } = useCart();
   const { articles, loading } = useAdmin();
 
@@ -16,7 +18,6 @@ export default function Collections() {
 
   useEffect(() => {
     const els = ref.current?.querySelectorAll('.reveal') ?? [];
-    // Immediately make visible anything already in viewport
     els.forEach(el => {
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight) el.classList.add('visible');
@@ -35,9 +36,16 @@ export default function Collections() {
     ? [...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6)
     : published.filter(p => p.category.toLowerCase().includes(tabs[activeTab].toLowerCase()));
 
+  const getSel = (id: string) => selections[id] || { size: '', color: '' };
+
+  const setSel = (id: string, key: 'size' | 'color', val: string) =>
+    setSelections(prev => ({ ...prev, [id]: { ...getSel(id), [key]: val } }));
+
   const handleAdd = (p: typeof published[0]) => {
-    addItem({ id: p.id, name: p.name, category: p.category, price: p.price, priceNum: p.priceNum, tag: p.tag, image: p.image });
-    setAdded(p.id);
+    const { size, color } = getSel(p.id);
+    const cartKey = `${p.id}-${size}-${color}`;
+    addItem({ id: p.id, name: p.name, category: p.category, price: p.price, priceNum: p.priceNum, tag: p.tag, image: p.image, size: size || undefined, color: color || undefined });
+    setAdded(cartKey);
     setTimeout(() => setAdded(null), 1600);
   };
 
@@ -62,8 +70,7 @@ export default function Collections() {
                   color: activeTab === i ? 'var(--accent)' : 'var(--muted)',
                   borderTop: 'none', borderLeft: 'none', borderRight: 'none',
                   borderBottom: `1px solid ${activeTab === i ? 'var(--accent)' : 'transparent'}`,
-                  paddingBottom: '5px', background: 'none',
-                  cursor: 'none', transition: 'color .3s',
+                  paddingBottom: '5px', background: 'none', cursor: 'none', transition: 'color .3s',
                 }}>{t}</button>
             ))}
           </div>
@@ -87,63 +94,106 @@ export default function Collections() {
 
         {/* Product grid */}
         {filtered.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))', gap: 'clamp(14px,2vw,24px)' }}>
-            {filtered.map((p, i) => (
-              <div key={p.id} style={{ transitionDelay: `${i * 80}ms` }}>
-                <div style={{ position: 'relative', background: 'var(--surface)', overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'clamp(14px,2vw,24px)' }}>
+            {filtered.map((p, i) => {
+              const sel = getSel(p.id);
+              const cartKey = `${p.id}-${sel.size}-${sel.color}`;
+              const isAdded = added === cartKey;
+              const hasSizes = p.sizes?.length > 0;
+              const hasColors = p.colors?.length > 0;
 
-                  {/* Image */}
-                  <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.image} alt={p.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)', display: 'block' }}
-                      className="pimg"
-                    />
-                    <div className="card-overlay" />
-                    <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)' }}>
-                      <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
+              return (
+                <div key={p.id} style={{ transitionDelay: `${i * 80}ms` }}>
+                  <div style={{ position: 'relative', background: 'var(--surface)', overflow: 'hidden' }}>
+
+                    {/* Image */}
+                    <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={p.image} alt={p.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)', display: 'block' }}
+                        className="pimg"
+                      />
+                      <div className="card-overlay" />
+                      <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)' }}>
+                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
+                      </div>
                     </div>
-                    <div className="card-cta">
-                      <button onClick={() => handleAdd(p)} className="btn-gold"
-                        style={{ fontSize: '9px', padding: '11px 26px', cursor: 'none', display: 'flex', alignItems: 'center', gap: '8px', border: 'none' }}>
-                        {added === p.id
-                          ? <><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Ajouté !</>
-                          : <><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Ajouter au panier</>
+
+                    {/* Info */}
+                    <div style={{ padding: '15px 16px', borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px' }}>{p.category}</p>
+                          <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
+                        </div>
+                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', fontWeight: 300, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
+                      </div>
+
+                      {/* Size selector */}
+                      {hasSizes && (
+                        <div style={{ marginBottom: '8px' }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '5px' }}>
+                            Taille {sel.size && <span style={{ color: 'var(--accent)' }}>· {sel.size}</span>}
+                          </p>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                            {p.sizes.map(s => (
+                              <button key={s} onClick={() => setSel(p.id, 'size', sel.size === s ? '' : s)}
+                                style={{
+                                  fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '3px 9px',
+                                  background: sel.size === s ? 'var(--accent)' : 'none',
+                                  border: `1px solid ${sel.size === s ? 'var(--accent)' : 'var(--border)'}`,
+                                  color: sel.size === s ? '#0a0a0a' : 'var(--muted)',
+                                  cursor: 'none', transition: 'all .2s', fontWeight: sel.size === s ? 700 : 400,
+                                }}>{s}</button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Color selector */}
+                      {hasColors && (
+                        <div style={{ marginBottom: '10px' }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '5px' }}>
+                            Couleur {sel.color && <span style={{ color: 'var(--accent)' }}>· {sel.color}</span>}
+                          </p>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                            {p.colors.map(c => (
+                              <button key={c} onClick={() => setSel(p.id, 'color', sel.color === c ? '' : c)}
+                                style={{
+                                  fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '3px 10px',
+                                  background: sel.color === c ? 'rgba(201,169,110,.12)' : 'none',
+                                  border: `1px solid ${sel.color === c ? 'var(--accent)' : 'var(--border)'}`,
+                                  color: sel.color === c ? 'var(--accent)' : 'var(--muted)',
+                                  cursor: 'none', transition: 'all .2s',
+                                }}>{c}</button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Add to cart */}
+                      <button onClick={() => handleAdd(p)}
+                        style={{
+                          width: '100%', padding: '9px',
+                          background: isAdded ? 'rgba(201,169,110,.12)' : 'none',
+                          border: `1px solid ${isAdded ? 'var(--accent)' : 'var(--border)'}`,
+                          fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase',
+                          color: isAdded ? 'var(--accent)' : 'var(--muted)',
+                          cursor: 'none', transition: 'all .3s',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
+                        }} className="qadd">
+                        {isAdded
+                          ? <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Ajouté au panier</>
+                          : <>+ Ajouter au panier</>
                         }
                       </button>
                     </div>
                   </div>
-
-                  {/* Info */}
-                  <div style={{ padding: '15px 16px', borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '12px' }}>
-                      <div style={{ minWidth: 0 }}>
-                        <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '5px' }}>{p.category}</p>
-                        <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
-                      </div>
-                      <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', fontWeight: 300, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
-                    </div>
-                    <button onClick={() => handleAdd(p)}
-                      style={{
-                        width: '100%', padding: '9px', background: added === p.id ? 'rgba(201,169,110,.12)' : 'none',
-                        border: `1px solid ${added === p.id ? 'var(--accent)' : 'var(--border)'}`,
-                        fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase',
-                        color: added === p.id ? 'var(--accent)' : 'var(--muted)',
-                        cursor: 'none', transition: 'all .3s',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
-                      }} className="qadd">
-                      {added === p.id
-                        ? <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Ajouté au panier</>
-                        : <>+ Ajouter au panier</>
-                      }
-                    </button>
-                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
-
       </div>
 
       <style jsx>{`

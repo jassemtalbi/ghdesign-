@@ -181,7 +181,7 @@ export default function Navbar() {
           ) : (
             <div>
               {items.map(item => (
-                <div key={item.id} style={{ padding: '18px 28px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                <div key={item.cartKey} style={{ padding: '18px 28px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                   {/* Image */}
                   <div style={{ width: '74px', height: '94px', flexShrink: 0, overflow: 'hidden', position: 'relative', background: '#1a1208' }}>
                     <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} sizes="74px" />
@@ -192,17 +192,23 @@ export default function Navbar() {
                       <div>
                         <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px' }}>{item.category}</p>
                         <h4 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1rem', color: 'var(--foreground)', letterSpacing: '.03em', lineHeight: 1.2 }}>{item.name}</h4>
+                        {(item.size || item.color) && (
+                          <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
+                            {item.size && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '2px 7px', border: '1px solid var(--border)', color: 'var(--muted)', letterSpacing: '.1em' }}>{item.size}</span>}
+                            {item.color && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '2px 7px', border: '1px solid rgba(201,169,110,.3)', color: 'var(--accent)', letterSpacing: '.1em' }}>{item.color}</span>}
+                          </div>
+                        )}
                       </div>
-                      <button onClick={() => removeItem(item.id)} className="remove-x"
+                      <button onClick={() => removeItem(item.cartKey)} className="remove-x"
                         style={{ background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', fontSize: '14px', padding: '0', flexShrink: 0, transition: 'color .2s', lineHeight: 1 }}>✕</button>
                     </div>
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', color: 'var(--accent)', margin: '10px 0' }}>{item.price}</p>
                     {/* Qty */}
                     <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', width: 'fit-content' }}>
-                      <button onClick={() => changeQty(item.id, -1)} className="qty-btn"
+                      <button onClick={() => changeQty(item.cartKey, -1)} className="qty-btn"
                         style={{ width: '32px', height: '30px', background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color .2s' }}>−</button>
                       <span style={{ width: '34px', textAlign: 'center', fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--foreground)', borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)', lineHeight: '30px' }}>{item.qty}</span>
-                      <button onClick={() => changeQty(item.id, 1)} className="qty-btn"
+                      <button onClick={() => changeQty(item.cartKey, 1)} className="qty-btn"
                         style={{ width: '32px', height: '30px', background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color .2s' }}>+</button>
                     </div>
                   </div>

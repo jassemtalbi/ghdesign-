@@ -9,15 +9,17 @@ export type Product = {
   priceNum: number;
   tag: string;
   image: string;
+  size?: string;
+  color?: string;
 };
 
-export type CartItem = Product & { qty: number };
+export type CartItem = Product & { qty: number; cartKey: string };
 
 type CartCtx = {
   items: CartItem[];
   addItem: (p: Product) => void;
-  removeItem: (id: string) => void;
-  changeQty: (id: string, delta: number) => void;
+  removeItem: (cartKey: string) => void;
+  changeQty: (cartKey: string, delta: number) => void;
   cartOpen: boolean;
   setCartOpen: (v: boolean) => void;
   total: number;
@@ -30,22 +32,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
 
   const addItem = useCallback((p: Product) => {
+    const cartKey = `${p.id}-${p.size || ''}-${p.color || ''}`;
     setItems(prev => {
-      const existing = prev.find(it => it.id === p.id);
-      if (existing) {
-        return prev.map(it => it.id === p.id ? { ...it, qty: it.qty + 1 } : it);
-      }
-      return [...prev, { ...p, qty: 1 }];
+      const existing = prev.find(it => it.cartKey === cartKey);
+      if (existing) return prev.map(it => it.cartKey === cartKey ? { ...it, qty: it.qty + 1 } : it);
+      return [...prev, { ...p, qty: 1, cartKey }];
     });
     setTimeout(() => setCartOpen(true), 0);
   }, []);
 
-  const removeItem = useCallback((id: string) =>
-    setItems(prev => prev.filter(it => it.id !== id)), []);
+  const removeItem = useCallback((cartKey: string) =>
+    setItems(prev => prev.filter(it => it.cartKey !== cartKey)), []);
 
-  const changeQty = useCallback((id: string, delta: number) =>
+  const changeQty = useCallback((cartKey: string, delta: number) =>
     setItems(prev => prev.map(it =>
-      it.id === id ? { ...it, qty: Math.max(1, it.qty + delta) } : it
+      it.cartKey === cartKey ? { ...it, qty: Math.max(1, it.qty + delta) } : it
     )), []);
 
   const total = items.reduce((s, it) => s + it.qty, 0);

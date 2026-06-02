@@ -68,7 +68,7 @@ export default function Hero() {
 
         {/* Sub */}
         <p style={{ ...show(640), fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: 'clamp(.8rem,1.6vw,.95rem)', letterSpacing: '.18em', color: 'var(--muted)', maxWidth: '440px', margin: '0 auto 44px', lineHeight: 2 }}>
-          Handcrafted women&apos;s fashion inspired by the soul of North Africa
+          Handcrafted fashion for men & women, inspired by the soul of North Africa
         </p>
 
         {/* CTAs */}

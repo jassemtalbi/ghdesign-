@@ -1,13 +1,13 @@
 'use client';
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+export type OrderStatus = 'pending' | 'confirmed' | 'no_response' | 'delivered' | 'cancelled';
 
 export type Order = {
   id: string;
   createdAt: string;
   customer: { firstName: string; lastName: string; phone: string; email: string; address: string; city: string; wilaya: string; notes: string };
-  items: { id: string; name: string; category: string; price: string; priceNum: number; qty: number; image: string }[];
+  items: { id: string; name: string; category: string; price: string; priceNum: number; qty: number; image: string; size?: string; color?: string }[];
   subtotal: number;
   delivery: number;
   total: number;
@@ -22,6 +22,8 @@ export type Article = {
   priceNum: number;
   tag: string;
   image: string;
+  sizes: string[];
+  colors: string[];
   published: boolean;
   createdAt: string;
 };

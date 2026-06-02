@@ -1,20 +1,24 @@
 'use client';
 import { useAdmin } from '../../../context/AdminContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
 
 const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND';
-const fmtShort = (n: number) => n >= 1000 ? (n / 1000).toFixed(0) + 'k' : String(n);
+const fmtShort = (n: number) => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(0)+'k' : String(n);
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', shipped: '#818cf8', delivered: '#4ade80', cancelled: '#f87171',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: '#6b6560',
 };
 const STATUS_LABELS: Record<string, string> = {
-  pending: 'En attente', confirmed: 'Confirmée', shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée',
+  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée',
 };
+
+const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+type Range = '7d' | '30d' | 'month' | 'year';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
@@ -23,85 +27,177 @@ const CustomTooltip = ({ active, payload, label }: any) => {
       {label && <p style={{ fontSize: '9px', color: '#6b6560', letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>}
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ fontSize: '11px', color: p.color || '#c9a96e' }}>
-          {p.name ? `${p.name}: ` : ''}{typeof p.value === 'number' && p.value > 1000 ? fmt(p.value) : p.value}
+          {p.name ? `${p.name}: ` : ''}{typeof p.value === 'number' && p.value > 100 ? fmt(p.value) : p.value}
         </p>
       ))}
     </div>
   );
 };
 
+function RangeBar({ range, setRange, selectedMonth, setSelectedMonth, selectedYear, setSelectedYear }: {
+  range: Range; setRange: (r: Range) => void;
+  selectedMonth: number; setSelectedMonth: (m: number) => void;
+  selectedYear: number; setSelectedYear: (y: number) => void;
+}) {
+  const now = new Date();
+  const years = Array.from({ length: 3 }, (_, i) => now.getFullYear() - i);
+
+  const btnStyle = (active: boolean): React.CSSProperties => ({
+    padding: '5px 12px', fontSize: '8px', letterSpacing: '.15em', textTransform: 'uppercase',
+    background: active ? '#c9a96e' : '#0d0d0d', color: active ? '#0a0a0a' : '#6b6560',
+    border: `1px solid ${active ? '#c9a96e' : '#1a1a14'}`, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s',
+  });
+
+  const selStyle: React.CSSProperties = {
+    padding: '5px 10px', fontSize: '9px', background: '#0d0d0d', border: '1px solid #1a1a14',
+    color: '#6b6560', fontFamily: 'inherit', cursor: 'pointer', outline: 'none',
+    appearance: 'none' as const,
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+      <button style={btnStyle(range === '7d')}   onClick={() => setRange('7d')}>7 jours</button>
+      <button style={btnStyle(range === '30d')}  onClick={() => setRange('30d')}>30 jours</button>
+      <button style={btnStyle(range === 'month')} onClick={() => setRange('month')}>Mois</button>
+      <button style={btnStyle(range === 'year')}  onClick={() => setRange('year')}>Année</button>
+
+      {range === 'month' && (
+        <>
+          <select value={selectedMonth} onChange={e => setSelectedMonth(Number(e.target.value))} style={selStyle}>
+            {MONTHS_FR.map((m, i) => <option key={i} value={i}>{m}</option>)}
+          </select>
+          <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} style={selStyle}>
+            {years.map(y => <option key={y} value={y}>{y}</option>)}
+          </select>
+        </>
+      )}
+      {range === 'year' && (
+        <select value={selectedYear} onChange={e => setSelectedYear(Number(e.target.value))} style={selStyle}>
+          {years.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
+      )}
+    </div>
+  );
+}
+
 export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' | 'orders' | 'articles') => void }) {
   const { orders, articles } = useAdmin();
   const [visits, setVisits] = useState<number | null>(null);
+  const [range, setRange] = useState<Range>('7d');
+  const now = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(now.getMonth());
+  const [selectedYear, setSelectedYear]   = useState(now.getFullYear());
 
   useEffect(() => {
     fetch('/api/stats').then(r => r.json()).then(d => setVisits(d.visits));
   }, []);
 
   const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0);
-  const pending = orders.filter(o => o.status === 'pending').length;
-  const shipped = orders.filter(o => o.status === 'shipped').length;
+  const pending   = orders.filter(o => o.status === 'pending').length;
+  const noResponse = orders.filter(o => o.status === 'no_response').length; // eslint-disable-line
   const published = articles.filter(a => a.published).length;
 
-  // Revenue by day (last 7 days)
-  const revenueByDay = (() => {
-    const days: Record<string, number> = {};
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-      days[key] = 0;
+  // Build chart data based on range
+  const { revenueData, ordersData, rangeLabel } = useMemo(() => {
+    if (range === '7d' || range === '30d') {
+      const days = range === '7d' ? 7 : 30;
+      const map: Record<string, { total: number; count: number }> = {};
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        map[key] = { total: 0, count: 0 };
+      }
+      orders.filter(o => o.status !== 'cancelled').forEach(o => {
+        const d = new Date(o.createdAt);
+        const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        if (key in map) map[key].total += o.total;
+      });
+      orders.forEach(o => {
+        const d = new Date(o.createdAt);
+        const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+        if (key in map) map[key].count++;
+      });
+      return {
+        revenueData: Object.entries(map).map(([date, v]) => ({ date, total: v.total })),
+        ordersData:  Object.entries(map).map(([date, v]) => ({ date, count: v.count })),
+        rangeLabel: `${days} derniers jours`,
+      };
     }
+
+    if (range === 'month') {
+      const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
+      const map: Record<string, { total: number; count: number }> = {};
+      for (let d = 1; d <= daysInMonth; d++) {
+        const key = String(d).padStart(2, '0');
+        map[key] = { total: 0, count: 0 };
+      }
+      orders.filter(o => o.status !== 'cancelled').forEach(o => {
+        const d = new Date(o.createdAt);
+        if (d.getMonth() === selectedMonth && d.getFullYear() === selectedYear) {
+          const key = String(d.getDate()).padStart(2, '0');
+          if (key in map) map[key].total += o.total;
+        }
+      });
+      orders.forEach(o => {
+        const d = new Date(o.createdAt);
+        if (d.getMonth() === selectedMonth && d.getFullYear() === selectedYear) {
+          const key = String(d.getDate()).padStart(2, '0');
+          if (key in map) map[key].count++;
+        }
+      });
+      return {
+        revenueData: Object.entries(map).map(([date, v]) => ({ date, total: v.total })),
+        ordersData:  Object.entries(map).map(([date, v]) => ({ date, count: v.count })),
+        rangeLabel: `${MONTHS_FR[selectedMonth]} ${selectedYear}`,
+      };
+    }
+
+    // year
+    const map: Record<string, { total: number; count: number }> = {};
+    MONTHS_FR.forEach(m => { map[m.slice(0,3)] = { total: 0, count: 0 }; });
     orders.filter(o => o.status !== 'cancelled').forEach(o => {
       const d = new Date(o.createdAt);
-      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-      if (key in days) days[key] += o.total;
+      if (d.getFullYear() === selectedYear) {
+        const key = MONTHS_FR[d.getMonth()].slice(0, 3);
+        map[key].total += o.total;
+      }
     });
-    return Object.entries(days).map(([date, total]) => ({ date, total }));
-  })();
-
-  // Orders by status for pie chart
-  const statusData = Object.entries(STATUS_LABELS).map(([key, label]) => ({
-    name: label,
-    value: orders.filter(o => o.status === key).length,
-    color: STATUS_COLORS[key],
-  })).filter(d => d.value > 0);
-
-  // Orders per day (last 7)
-  const ordersByDay = (() => {
-    const days: Record<string, number> = {};
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-      days[key] = 0;
-    }
     orders.forEach(o => {
       const d = new Date(o.createdAt);
-      const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-      if (key in days) days[key]++;
+      if (d.getFullYear() === selectedYear) {
+        const key = MONTHS_FR[d.getMonth()].slice(0, 3);
+        map[key].count++;
+      }
     });
-    return Object.entries(days).map(([date, count]) => ({ date, count }));
-  })();
+    return {
+      revenueData: Object.entries(map).map(([date, v]) => ({ date, total: v.total })),
+      ordersData:  Object.entries(map).map(([date, v]) => ({ date, count: v.count })),
+      rangeLabel: String(selectedYear),
+    };
+  }, [range, selectedMonth, selectedYear, orders]);
 
-  // Categories
+  const statusData = Object.entries(STATUS_LABELS).map(([key, label]) => ({
+    name: label, value: orders.filter(o => o.status === key).length, color: STATUS_COLORS[key],
+  })).filter(d => d.value > 0);
+
   const categoryData = articles.reduce((acc, a) => {
-    acc[a.category] = (acc[a.category] || 0) + 1;
-    return acc;
+    acc[a.category] = (acc[a.category] || 0) + 1; return acc;
   }, {} as Record<string, number>);
   const categoryChart = Object.entries(categoryData).map(([name, value]) => ({ name, value }));
 
-  const kpis = [
-    { label: 'Visiteurs',           value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites',   color: '#34d399', icon: <IconVisits /> },
-    { label: "Chiffre d'affaires",  value: fmt(totalRevenue),                                         sub: `${orders.filter(o => o.status !== 'cancelled').length} commandes`, color: '#c9a96e', icon: <IconRevenue /> },
-    { label: 'En attente',          value: String(pending),                                            sub: 'À traiter',      color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending /> },
-    { label: 'En livraison',        value: String(shipped),                                            sub: 'En cours',       color: '#60a5fa', icon: <IconShipped /> },
-    { label: 'Articles publiés',    value: String(published),                                          sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle /> },
-  ];
-
   const recentOrders = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
+
+  const kpis = [
+    { label: 'Visiteurs',          value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites',   color: '#34d399', icon: <IconVisits /> },
+    { label: "Chiffre d'affaires", value: fmt(totalRevenue), sub: `${orders.filter(o=>o.status!=='cancelled').length} commandes`, color: '#c9a96e', icon: <IconRevenue /> },
+    { label: 'En attente',         value: String(pending),   sub: 'À traiter',  color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending /> },
+    { label: 'Ne répond pas',      value: String(noResponse), sub: 'Sans réponse', color: '#f87171', icon: <IconShipped /> },
+    { label: 'Articles publiés',   value: String(published), sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle /> },
+  ];
 
   return (
     <div>
-      {/* KPI cards */}
+      {/* KPIs */}
       <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         {kpis.map(s => (
           <div key={s.label} style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '24px 28px' }}>
@@ -118,15 +214,21 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
         ))}
       </div>
 
+      {/* Filter bar */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+        <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560' }}>Période : <span style={{ color: '#c9a96e' }}>{rangeLabel}</span></p>
+        <RangeBar range={range} setRange={setRange} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
+      </div>
+
       {/* Charts row 1 */}
       <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
 
-        {/* Revenue area chart */}
+        {/* Revenue area */}
         <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
           <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e', marginBottom: '4px' }}>Chiffre d'affaires</p>
-          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>7 derniers jours</p>
+          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>{rangeLabel}</p>
           <ResponsiveContainer width="100%" height={180}>
-            <AreaChart data={revenueByDay}>
+            <AreaChart data={revenueData}>
               <defs>
                 <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%"  stopColor="#c9a96e" stopOpacity={0.25} />
@@ -134,7 +236,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" />
-              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
               <YAxis tickFormatter={fmtShort} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={36} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="total" stroke="#c9a96e" strokeWidth={2} fill="url(#revGrad)" dot={{ fill: '#c9a96e', r: 3, strokeWidth: 0 }} activeDot={{ r: 5 }} />
@@ -142,14 +244,14 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
           </ResponsiveContainer>
         </div>
 
-        {/* Orders bar chart */}
+        {/* Orders bar */}
         <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
           <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '4px' }}>Commandes</p>
-          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>7 derniers jours</p>
+          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>{rangeLabel}</p>
           <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={ordersByDay} barSize={18}>
+            <BarChart data={ordersData} barSize={range === 'year' ? 14 : 18}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" vertical={false} />
-              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
               <YAxis allowDecimals={false} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={24} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="count" name="Commandes" fill="#60a5fa" fillOpacity={0.8} radius={[2, 2, 0, 0]} />

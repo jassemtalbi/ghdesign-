@@ -18,7 +18,10 @@ const mobileStyles = `
 const CATEGORIES = ['Traditional', 'Evening', 'Casual Chic', 'Modest'];
 const TAGS = ['Bestseller', 'New', 'Limited', 'Exclusive', 'Just Arrived', 'Sale'];
 
-const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', published: true };
+const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const PRESET_COLORS = ['Noir', 'Blanc', 'Beige', 'Doré', 'Rouge', 'Bleu', 'Vert', 'Rose', 'Bordeaux', 'Gris'];
+
+const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', sizes: [] as string[], colors: [] as string[], colorInput: '', published: true };
 
 export default function AdminArticles() {
   const { articles, addArticle, updateArticle, deleteArticle, togglePublish } = useAdmin();
@@ -44,7 +47,7 @@ export default function AdminArticles() {
 
   const openEdit = (a: Article) => {
     setEditing(a);
-    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, published: a.published });
+    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, sizes: a.sizes || [], colors: a.colors || [], colorInput: '', published: a.published });
     setErrors({});
     setShowForm(true);
   };
@@ -90,10 +93,11 @@ export default function AdminArticles() {
     if (!validate()) return;
     const num = Math.round(parseFloat(form.price.replace(/[^0-9.]/g, '')));
     const formatted = `${num.toLocaleString('fr-FR').replace(/\s/g, ',')} TND`;
+    const { colorInput, ...rest } = form;
     if (editing) {
-      await updateArticle(editing.id, { ...form, priceNum: num, price: formatted });
+      await updateArticle(editing.id, { ...rest, priceNum: num, price: formatted });
     } else {
-      await addArticle({ ...form, priceNum: num, price: formatted });
+      await addArticle({ ...rest, priceNum: num, price: formatted });
     }
     setShowForm(false);
   };
@@ -107,11 +111,7 @@ export default function AdminArticles() {
     <div>
       <style>{mobileStyles}</style>
       {/* Header */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', marginBottom: '20px' }}>
-        <button onClick={openNew}
-          style={{ padding: '12px 32px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '16px', lineHeight: 1 }}>+</span> Nouvel article
-        </button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <div className="filter-tabs" style={{ display: 'flex', gap: '6px' }}>
           {(['all', 'published', 'draft'] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)}
@@ -124,6 +124,10 @@ export default function AdminArticles() {
             </button>
           ))}
         </div>
+        <button onClick={openNew}
+          style={{ padding: '10px 22px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          <span style={{ fontSize: '16px', lineHeight: 1 }}>+</span> Nouvel article
+        </button>
       </div>
 
       {/* Grid */}
@@ -312,6 +316,62 @@ export default function AdminArticles() {
                     {TAGS.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
+              </div>
+
+              {/* Sizes */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Tailles disponibles</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {SIZES.map(s => (
+                    <button key={s} type="button" onClick={() => setForm(p => ({ ...p, sizes: p.sizes.includes(s) ? p.sizes.filter(x => x !== s) : [...p.sizes, s] }))}
+                      style={{
+                        padding: '6px 14px', fontSize: '10px', fontFamily: 'inherit', cursor: 'pointer',
+                        background: form.sizes.includes(s) ? '#c9a96e' : 'none',
+                        border: `1px solid ${form.sizes.includes(s) ? '#c9a96e' : '#2a2520'}`,
+                        color: form.sizes.includes(s) ? '#0a0a0a' : '#6b6560',
+                        fontWeight: form.sizes.includes(s) ? 700 : 400,
+                        transition: 'all .2s',
+                      }}>{s}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Colors */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Couleurs disponibles</label>
+                {/* Preset color chips */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                  {PRESET_COLORS.map(c => (
+                    <button key={c} type="button" onClick={() => setForm(p => ({ ...p, colors: p.colors.includes(c) ? p.colors.filter(x => x !== c) : [...p.colors, c] }))}
+                      style={{
+                        padding: '5px 12px', fontSize: '10px', fontFamily: 'inherit', cursor: 'pointer',
+                        background: form.colors.includes(c) ? 'rgba(201,169,110,.15)' : 'none',
+                        border: `1px solid ${form.colors.includes(c) ? '#c9a96e' : '#2a2520'}`,
+                        color: form.colors.includes(c) ? '#c9a96e' : '#6b6560',
+                        transition: 'all .2s',
+                      }}>{c}</button>
+                  ))}
+                </div>
+                {/* Custom color input */}
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input value={form.colorInput} onChange={e => setForm(p => ({ ...p, colorInput: e.target.value }))}
+                    onKeyDown={e => { if (e.key === 'Enter' && form.colorInput.trim()) { e.preventDefault(); setForm(p => ({ ...p, colors: [...p.colors, p.colorInput.trim()], colorInput: '' })); }}}
+                    placeholder="Autre couleur..." style={{ ...inp(), flex: 1, padding: '8px 12px' }} />
+                  <button type="button" onClick={() => { if (form.colorInput.trim()) setForm(p => ({ ...p, colors: [...p.colors, p.colorInput.trim()], colorInput: '' })); }}
+                    style={{ padding: '8px 14px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '11px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>+</button>
+                </div>
+                {/* Selected colors */}
+                {form.colors.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '8px' }}>
+                    {form.colors.map(c => (
+                      <span key={c} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', background: 'rgba(201,169,110,.1)', border: '1px solid rgba(201,169,110,.3)', fontSize: '10px', color: '#c9a96e' }}>
+                        {c}
+                        <button type="button" onClick={() => setForm(p => ({ ...p, colors: p.colors.filter(x => x !== c) }))}
+                          style={{ background: 'none', border: 'none', color: '#c9a96e', cursor: 'pointer', fontSize: '12px', lineHeight: 1, padding: 0 }}>×</button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

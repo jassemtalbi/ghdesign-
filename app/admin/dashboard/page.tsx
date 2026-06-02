@@ -63,7 +63,11 @@ export default function Dashboard() {
         <aside className="sidebar" style={{ width: '220px', flexShrink: 0, background: '#0d0d0d', borderRight: '1px solid #1a1a14', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 20 }}>
           <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid #1a1a14' }}>
             <p style={{ fontSize: '7px', letterSpacing: '.5em', textTransform: 'uppercase', color: '#c9a96e', marginBottom: '6px' }}>Admin</p>
-            <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 300, fontSize: '1.3rem', color: '#f5f0eb', letterSpacing: '.06em' }}>GH Design</h2>
+            <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 300, fontSize: '1.3rem', color: '#f5f0eb', letterSpacing: '.06em', marginBottom: '14px' }}>GH Design</h2>
+            <div style={{ padding: '10px 12px', background: 'rgba(201,169,110,.06)', border: '1px solid rgba(201,169,110,.15)' }}>
+              <p style={{ fontSize: '11px', color: '#f5f0eb', fontFamily: 'Georgia, serif', fontWeight: 300 }}>Bonjour Ghada ☀️😊</p>
+              <p style={{ fontSize: '9px', color: '#6b6560', marginTop: '3px', fontFamily: 'inherit' }}>Bonne journée !</p>
+            </div>
           </div>
           <nav style={{ flex: 1, padding: '20px 12px' }}>
             {navItems.map(item => (
