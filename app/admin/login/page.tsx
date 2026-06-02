@@ -8,18 +8,27 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      if (form.user === 'admin' && form.pass === 'ghdesign2024') {
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: form.user, password: form.pass }),
+      });
+      if (res.ok) {
         localStorage.setItem('gh_admin', '1');
         router.push('/admin/dashboard');
       } else {
-        setError('Identifiants incorrects');
+        const data = await res.json();
+        setError(data.error || 'Identifiants incorrects');
         setLoading(false);
       }
-    }, 600);
+    } catch {
+      setError('Erreur de connexion');
+      setLoading(false);
+    }
   };
 
   return (
