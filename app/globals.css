@@ -154,27 +154,28 @@ body {
   width: 100%; height: 100%;
   background: var(--accent);
   transition: left .4s cubic-bezier(.22,1,.36,1);
-  z-index: 0;
+  z-index: -1;
 }
-.btn-gold span, .btn-gold { position: relative; z-index: 1; }
-.btn-gold:hover { color: #0a0a0a; }
+.btn-gold:hover { color: #0a0a0a !important; }
 .btn-gold:hover::before { left: 0; }
+.btn-gold:hover svg { stroke: #0a0a0a !important; }
 
 .btn-light {
   display: inline-block;
   padding: 13px 36px;
-  background: var(--foreground);
-  color: #0a0a0a;
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid rgba(245,240,235,.25);
   font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: .25em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background .35s, color .35s;
+  transition: border-color .35s, color .35s;
   cursor: none;
 }
-.btn-light:hover { background: var(--accent); }
+.btn-light:hover { border-color: var(--foreground); color: var(--foreground); }
 
 /* ── Product card ── */
 .product-card { position: relative; overflow: hidden; background: var(--surface); }

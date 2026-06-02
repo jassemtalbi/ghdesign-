@@ -144,11 +144,6 @@ export default function Collections() {
           </div>
         )}
 
-        {filtered.length > 0 && (
-          <div className="reveal" style={{ textAlign: 'center', marginTop: 'clamp(36px,5vw,60px)' }}>
-            <a href="#" className="btn-gold">Voir toute la collection</a>
-          </div>
-        )}
       </div>
 
       <style jsx>{`

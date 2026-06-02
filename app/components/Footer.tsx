@@ -1,9 +1,16 @@
 'use client';
 
 const cols = [
-  { title: 'Collections', links: ['New Arrivals', 'Traditional', 'Evening Wear', 'Casual Chic', 'Modest Collection'] },
-  { title: 'Information',  links: ['About Us', 'Sizing Guide', 'Care Instructions', 'Shipping & Returns', 'FAQ'] },
-  { title: 'Contact',      links: ['Custom Orders', 'Press Inquiries', 'Wholesale', 'Instagram', 'Facebook'] },
+  { title: 'Collections', links: [
+    { label: 'Traditional',        href: '#collections' },
+    { label: 'Evening Wear',       href: '#collections' },
+    { label: 'Casual Chic',        href: '#collections' },
+    { label: 'Modest Collection',  href: '#collections' },
+  ]},
+  { title: 'Information', links: [
+    { label: 'À propos',           href: '#about' },
+    { label: 'Contact',            href: '#contact' },
+  ]},
 ];
 
 export default function Footer() {
@@ -23,14 +30,13 @@ export default function Footer() {
             <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: '.78rem', lineHeight: 1.9, color: 'var(--muted)', maxWidth: '175px', marginBottom: '24px' }}>
               Handcrafted women&apos;s fashion rooted in the soul of Tunisian heritage.
             </p>
-            {/* Social row */}
+            {/* Social */}
             <div style={{ display: 'flex', gap: '8px' }}>
               {[
-                { label: 'Fb', href: '#' },
-                { label: 'Ig', href: '#' },
-                { label: 'Tw', href: '#' },
+                { label: 'Fb', href: 'https://facebook.com' },
+                { label: 'Ig', href: 'https://instagram.com' },
               ].map(s => (
-                <a key={s.label} href={s.href}
+                <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                   className="footer-social"
                   style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '10px', color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'all .3s' }}>
                   {s.label}
@@ -47,10 +53,10 @@ export default function Footer() {
               </h4>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '11px' }}>
                 {col.links.map(l => (
-                  <li key={l}>
-                    <a href="#" className="footer-link"
+                  <li key={l.label}>
+                    <a href={l.href} className="footer-link"
                       style={{ fontFamily: 'var(--font-sans)', fontSize: '.8rem', fontWeight: 300, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s', display: 'inline-block' }}>
-                      {l}
+                      {l.label}
                     </a>
                   </li>
                 ))}
@@ -59,7 +65,7 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Divider with logo */}
+        {/* Divider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: 'clamp(28px,4vw,40px)' }}>
           <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
           <span className="text-gold" style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', letterSpacing: '.3em', fontWeight: 300 }}>GH DESIGN</span>
@@ -74,14 +80,6 @@ export default function Footer() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
             <div className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent)' }} />
             <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: 'var(--muted)' }}>Made with love in Tunisia</p>
-          </div>
-          <div style={{ display: 'flex', gap: '18px' }}>
-            {['Privacy', 'Terms', 'Cookies'].map(l => (
-              <a key={l} href="#" className="footer-link"
-                style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s' }}>
-                {l}
-              </a>
-            ))}
           </div>
         </div>
       </div>
