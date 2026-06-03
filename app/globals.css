@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #f5f0eb;
-  --accent: #c9a96e;
+  --background: #faf9f7;
+  --foreground: #1a1410;
+  --accent: #b8924a;
   --accent-light: #e8d5b0;
-  --muted: #6b6560;
-  --surface: #111111;
-  --border: #222018;
+  --muted: #8a7f72;
+  --surface: #f2efe9;
+  --border: #e0d8cc;
   --font-serif: var(--font-cormorant), Georgia, serif;
   --font-sans: var(--font-montserrat), system-ui, sans-serif;
 }
@@ -35,7 +35,7 @@ body {
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 2px; }
-::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-track { background: var(--border); }
 ::-webkit-scrollbar-thumb { background: var(--accent); }
 
 /* ── Custom cursor ── */
@@ -51,7 +51,7 @@ body {
 }
 .cursor-follower {
   width: 38px; height: 38px;
-  border: 1px solid rgba(201,169,110,.45);
+  border: 1px solid rgba(184,146,74,.45);
   border-radius: 50%;
   position: fixed; top: 0; left: 0;
   pointer-events: none; z-index: 99998;
@@ -59,8 +59,8 @@ body {
   transition: width .3s, height .3s, border-color .3s, opacity .3s;
   opacity: 0;
 }
-.cursor.hover { width: 6px; height: 6px; background: #fff; }
-.cursor-follower.hover { width: 56px; height: 56px; border-color: rgba(201,169,110,.9); }
+.cursor.hover { width: 6px; height: 6px; background: var(--foreground); }
+.cursor-follower.hover { width: 56px; height: 56px; border-color: rgba(184,146,74,.9); }
 
 /* ── Keyframes ── */
 @keyframes marquee {
@@ -109,10 +109,10 @@ body {
 
 /* ── Glassmorphism nav ── */
 .glass {
-  background: rgba(8,8,8,.75);
+  background: rgba(250,249,247,.85);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid rgba(201,169,110,.12);
+  border-bottom: 1px solid rgba(184,146,74,.15);
 }
 
 /* ── Divider ── */
@@ -156,26 +156,26 @@ body {
   transition: left .4s cubic-bezier(.22,1,.36,1);
   z-index: -1;
 }
-.btn-gold:hover { color: #0a0a0a !important; }
+.btn-gold:hover { color: var(--background) !important; }
 .btn-gold:hover::before { left: 0; }
-.btn-gold:hover svg { stroke: #0a0a0a !important; }
+.btn-gold:hover svg { stroke: var(--background) !important; }
 
 .btn-light {
   display: inline-block;
   padding: 13px 36px;
   background: transparent;
   color: var(--foreground);
-  border: 1px solid rgba(245,240,235,.25);
+  border: 1px solid rgba(26,20,16,.3);
   font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: .25em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: border-color .35s, color .35s;
+  transition: border-color .35s, color .35s, background .35s;
   cursor: none;
 }
-.btn-light:hover { border-color: var(--foreground); color: var(--foreground); }
+.btn-light:hover { border-color: var(--foreground); background: var(--foreground); color: var(--background); }
 
 /* ── Product card ── */
 .product-card { position: relative; overflow: hidden; background: var(--surface); }

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useCart } from '../context/CartContext';
@@ -90,12 +90,12 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
       <div style={{
         position: 'fixed', zIndex: 81, top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
         width: 'min(980px, 96vw)', height: 'min(90vh, 780px)',
-        background: '#0d0d0d', border: '1px solid var(--border)',
+        background: 'var(--background)', border: '1px solid var(--border)',
         display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}>
 
         {/* Header */}
-        <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, background: '#0d0d0d' }}>
+        <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, background: 'var(--background)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap', rowGap: '8px' }}>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '1.5rem', color: 'var(--foreground)', lineHeight: 1 }}>
               {step === 'form' ? 'Passer la commande' : 'Commande confirmée'}
@@ -103,7 +103,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
             {step === 'form' && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '10px', fontWeight: 700, color: '#0a0a0a' }}>1</div>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '10px', fontWeight: 700, color: 'var(--background)' }}>1</div>
                   <span style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--foreground)' }}>Informations</span>
                 </div>
                 <div style={{ width: '28px', height: '1px', background: 'var(--border)' }} />
@@ -149,7 +149,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                 <SectionTitle>Adresse de livraison</SectionTitle>
                 <div style={{ marginBottom: '12px' }}>
                   <Field label="Adresse complète *" error={errors.address}>
-                    <input value={form.address} onChange={e => set('address', e.target.value)} placeholder="Rue, numéro, appartement..." style={inp(!!errors.address)} />
+                    <input value={form.address} onChange={e => set('address', e.target.value)} placeholder="Rue, Numéro, appartement..." style={inp(!!errors.address)} />
                   </Field>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '12px', marginBottom: '12px' }}>
@@ -182,7 +182,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                       const hasColors = (article?.colors?.length ?? 0) > 0;
                       if (!hasSizes && !hasColors) return null;
                       return (
-                        <div key={item.cartKey} style={{ marginBottom: '14px', padding: '12px 14px', background: '#111', border: '1px solid #2a2520' }}>
+                        <div key={item.cartKey} style={{ marginBottom: '14px', padding: '12px 14px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
                           <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--foreground)', marginBottom: '10px' }}>{item.name}</p>
                           {hasSizes && (
                             <div style={{ marginBottom: '10px' }}>
@@ -195,8 +195,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                                     style={{
                                       fontFamily: 'var(--font-sans)', fontSize: '9px', padding: '5px 12px', cursor: 'pointer',
                                       background: sel.size === s ? 'var(--accent)' : 'none',
-                                      border: `1px solid ${sel.size === s ? 'var(--accent)' : '#3a3530'}`,
-                                      color: sel.size === s ? '#0a0a0a' : '#6b6560',
+                                      border: `1px solid ${sel.size === s ? 'var(--accent)' : 'var(--border)'}`,
+                                      color: sel.size === s ? 'var(--background)' : 'var(--muted)',
                                       fontWeight: sel.size === s ? 700 : 400, transition: 'all .2s',
                                     }}>{s}</button>
                                 ))}
@@ -213,9 +213,9 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                                   <button key={c} type="button" onClick={() => setSel(item.cartKey, 'color', sel.color === c ? '' : c)}
                                     style={{
                                       fontFamily: 'var(--font-sans)', fontSize: '9px', padding: '5px 12px', cursor: 'pointer',
-                                      background: sel.color === c ? 'rgba(201,169,110,.15)' : 'none',
-                                      border: `1px solid ${sel.color === c ? 'var(--accent)' : '#3a3530'}`,
-                                      color: sel.color === c ? 'var(--accent)' : '#6b6560',
+                                      background: sel.color === c ? 'rgba(184,146,74,.1)' : 'none',
+                                      border: `1px solid ${sel.color === c ? 'var(--accent)' : 'var(--border)'}`,
+                                      color: sel.color === c ? 'var(--accent)' : 'var(--muted)',
                                       transition: 'all .2s',
                                     }}>{c}</button>
                                 ))}
@@ -230,7 +230,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
 
               </div>
 
-              <div style={{ flexShrink: 0, padding: '16px 28px 20px', borderTop: '1px solid var(--border)', background: '#0d0d0d' }}>
+              <div style={{ flexShrink: 0, padding: '16px 28px 20px', borderTop: '1px solid var(--border)', background: 'var(--background)' }}>
                 <button onClick={handleSubmit} className="btn-gold"
                   style={{ width: '100%', padding: '15px', fontSize: '10px', cursor: 'none', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: 'none' }}>
                   Confirmer la commande
@@ -240,7 +240,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
             </div>
 
             {/* RIGHT — order summary with size/color selectors */}
-            <div style={{ width: '300px', flexShrink: 0, borderLeft: '1px solid var(--border)', display: 'flex', flexDirection: 'column', background: '#0a0a0a', overflow: 'hidden' }} className="summary-panel">
+            <div style={{ width: '300px', flexShrink: 0, borderLeft: '1px solid var(--border)', display: 'flex', flexDirection: 'column', background: 'var(--background)', overflow: 'hidden' }} className="summary-panel">
               <div style={{ flex: 1, overflowY: 'auto', padding: '20px' }}>
                 <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.4em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px' }}>Votre commande</p>
 
@@ -248,15 +248,15 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                   const sel = getSel(item.cartKey);
                   return (
                     <div key={item.cartKey} style={{ display: 'flex', gap: '10px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--border)' }}>
-                      <div style={{ width: '50px', height: '64px', flexShrink: 0, position: 'relative', overflow: 'hidden', background: '#1a1208' }}>
+                      <div style={{ width: '50px', height: '64px', flexShrink: 0, position: 'relative', overflow: 'hidden', background: 'var(--surface)' }}>
                         <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} sizes="50px" />
-                        <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '16px', height: '16px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '8px', fontWeight: 700, color: '#0a0a0a' }}>{item.qty}</div>
+                        <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '16px', height: '16px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '8px', fontWeight: 700, color: 'var(--background)' }}>{item.qty}</div>
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <h4 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '.88rem', color: 'var(--foreground)', marginBottom: '4px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</h4>
                         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                          {sel.size && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid #2a2520', color: '#6b6560' }}>{sel.size}</span>}
-                          {sel.color && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid rgba(201,169,110,.3)', color: 'var(--accent)' }}>{sel.color}</span>}
+                          {sel.size && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid var(--border)', color: 'var(--muted)' }}>{sel.size}</span>}
+                          {sel.color && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid rgba(184,146,74,.3)', color: 'var(--accent)' }}>{sel.color}</span>}
                         </div>
                         <p style={{ fontFamily: 'var(--font-sans)', fontSize: '.76rem', color: 'var(--accent)' }}>{fmt(item.priceNum * item.qty)}</p>
                       </div>
@@ -296,7 +296,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
               Merci, {form.firstName} {form.lastName}
             </p>
             <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: '.85rem', color: 'var(--muted)', lineHeight: 1.9, maxWidth: '400px', marginBottom: '28px' }}>
-              Votre commande a été reçue. Livraison à{' '}
+              Votre commande a été reçue. Livraison à {' '}
               <span style={{ color: 'var(--foreground)' }}>{form.city}, {form.wilaya}</span>.
             </p>
 
@@ -312,8 +312,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                     </div>
                     {(sel.size || sel.color) && (
                       <div style={{ display: 'flex', gap: '5px', marginTop: '3px' }}>
-                        {sel.size && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid #2a2520', color: '#6b6560' }}>{sel.size}</span>}
-                        {sel.color && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid rgba(201,169,110,.3)', color: 'var(--accent)' }}>{sel.color}</span>}
+                        {sel.size && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid var(--border)', color: 'var(--muted)' }}>{sel.size}</span>}
+                        {sel.color && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '1px 6px', border: '1px solid rgba(184,146,74,.3)', color: 'var(--accent)' }}>{sel.color}</span>}
                       </div>
                     )}
                   </div>
@@ -340,14 +340,14 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
 
       <style jsx>{`
         .close-modal:hover { border-color:var(--accent) !important; color:var(--accent) !important; }
-        input, textarea, select { background-color: #111 !important; }
+        input, textarea, select { background-color: var(--surface) !important; }
         input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
-          -webkit-box-shadow: 0 0 0 1000px #111 inset !important;
+          -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
           -webkit-text-fill-color: var(--foreground) !important;
           caret-color: var(--foreground) !important;
         }
-        input::placeholder, textarea::placeholder { color: #4a4540 !important; }
-        select option { background: #111; color: var(--foreground); }
+        input::placeholder, textarea::placeholder { color: var(--muted) !important; }
+        select option { background: var(--surface); color: var(--foreground); }
         @media (max-width: 640px) { .summary-panel { display: none !important; } }
       `}</style>
     </>
@@ -377,8 +377,8 @@ function Field({ label, error, children }: { label: string; error: string; child
 
 function inp(err: boolean): React.CSSProperties {
   return {
-    width: '100%', padding: '11px 13px', backgroundColor: '#111',
-    border: `1px solid ${err ? '#c05050' : '#2a2520'}`, color: '#f5f0eb',
+    width: '100%', padding: '11px 13px', backgroundColor: 'var(--surface)',
+    border: `1px solid ${err ? '#c05050' : 'var(--border)'}`, color: 'var(--foreground)',
     fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: '.85rem',
     outline: 'none', transition: 'border-color .25s', borderRadius: 0,
   };

@@ -15,7 +15,7 @@ const cols = [
 
 export default function Footer() {
   return (
-    <footer style={{ background: '#060606', borderTop: '1px solid var(--border)' }}>
+    <footer style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'clamp(56px,8vw,96px) clamp(20px,5vw,64px)' }}>
 
         {/* Top grid */}

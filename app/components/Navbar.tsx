@@ -37,9 +37,9 @@ export default function Navbar() {
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
         transition: 'all .6s cubic-bezier(.22,1,.36,1)',
         padding: scrolled ? '14px 0' : '26px 0',
-        background: scrolled ? 'rgba(8,8,8,.88)' : 'transparent',
+        background: scrolled ? 'rgba(250,249,247,.92)' : 'transparent',
         backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(201,169,110,.1)' : '1px solid transparent',
+        borderBottom: scrolled ? '1px solid rgba(184,146,74,.15)' : '1px solid transparent',
       }}>
         <div style={{ maxWidth: '1320px', margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
 
@@ -53,7 +53,7 @@ export default function Navbar() {
           <div className="hidden md:flex" style={{ gap: 'clamp(20px,2.5vw,38px)', alignItems: 'center' }}>
             {links.map(l => (
               <a key={l.label} href={l.href} className="navlink"
-                style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.24em', textTransform: 'uppercase', fontWeight: 400, color: 'rgba(245,240,235,.75)', textDecoration: 'none', cursor: 'none', position: 'relative', paddingBottom: '3px', transition: 'color .3s' }}>
+                style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.24em', textTransform: 'uppercase', fontWeight: 400, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', position: 'relative', paddingBottom: '3px', transition: 'color .3s' }}>
                 {l.label}
               </a>
             ))}
@@ -64,13 +64,13 @@ export default function Navbar() {
 
             {/* Cart button */}
             <button onClick={() => setCartOpen(true)} className="cart-trigger"
-              style={{ position: 'relative', background: 'none', border: '1px solid rgba(201,169,110,.35)', cursor: 'none', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: '9px', transition: 'border-color .3s, background .3s' }}>
+              style={{ position: 'relative', background: 'none', border: '1px solid rgba(184,146,74,.4)', cursor: 'none', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: '9px', transition: 'border-color .3s, background .3s' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--foreground)' }}>
                 <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
               </svg>
               <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--foreground)' }}>Panier</span>
               {total > 0 && (
-                <span style={{ position: 'absolute', top: '-8px', right: '-8px', minWidth: '19px', height: '19px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '9px', fontWeight: 600, color: '#0a0a0a', padding: '0 4px' }}>
+                <span style={{ position: 'absolute', top: '-8px', right: '-8px', minWidth: '19px', height: '19px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '9px', fontWeight: 600, color: 'var(--background)', padding: '0 4px' }}>
                   {total}
                 </span>
               )}
@@ -84,7 +84,7 @@ export default function Navbar() {
                 <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
               </svg>
               {total > 0 && (
-                <span style={{ position: 'absolute', top: '-2px', right: '-2px', width: '16px', height: '16px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', fontWeight: 700, color: '#0a0a0a' }}>{total}</span>
+                <span style={{ position: 'absolute', top: '-2px', right: '-2px', width: '16px', height: '16px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '8px', fontWeight: 700, color: 'var(--background)' }}>{total}</span>
               )}
             </button>
             <button onClick={() => setMenuOpen(!menuOpen)}
@@ -99,7 +99,7 @@ export default function Navbar() {
 
       {/* ─────────────── MOBILE MENU ─────────────── */}
       <div style={{
-        position: 'fixed', inset: 0, zIndex: 45, background: '#080808',
+        position: 'fixed', inset: 0, zIndex: 45, background: 'var(--background)',
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? 'all' : 'none', transition: 'opacity .45s',
       }}>
@@ -137,7 +137,7 @@ export default function Navbar() {
       {/* Panel */}
       <aside style={{
         position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 61,
-        width: 'min(440px,100vw)', background: '#0c0c0c',
+        width: 'min(440px,100vw)', background: 'var(--background)',
         borderLeft: '1px solid var(--border)',
         display: 'flex', flexDirection: 'column',
         transform: cartOpen ? 'translateX(0)' : 'translateX(100%)',
@@ -161,7 +161,7 @@ export default function Navbar() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
           {items.length === 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '18px', padding: '40px 28px', textAlign: 'center' }}>
-              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ color: 'rgba(201,169,110,.2)' }}>
+              <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ color: 'rgba(184,146,74,.2)' }}>
                 <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
               </svg>
               <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--muted)' }}>Votre panier est vide</p>
@@ -174,7 +174,7 @@ export default function Navbar() {
               {items.map(item => (
                 <div key={item.cartKey} style={{ padding: '18px 28px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                   {/* Image */}
-                  <div style={{ width: '74px', height: '94px', flexShrink: 0, overflow: 'hidden', position: 'relative', background: '#1a1208' }}>
+                  <div style={{ width: '74px', height: '94px', flexShrink: 0, overflow: 'hidden', position: 'relative', background: 'var(--surface)' }}>
                     <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} sizes="74px" />
                   </div>
                   {/* Details */}
@@ -186,7 +186,7 @@ export default function Navbar() {
                         {(item.size || item.color) && (
                           <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
                             {item.size && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '2px 7px', border: '1px solid var(--border)', color: 'var(--muted)', letterSpacing: '.1em' }}>{item.size}</span>}
-                            {item.color && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '2px 7px', border: '1px solid rgba(201,169,110,.3)', color: 'var(--accent)', letterSpacing: '.1em' }}>{item.color}</span>}
+                            {item.color && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '2px 7px', border: '1px solid rgba(184,146,74,.3)', color: 'var(--accent)', letterSpacing: '.1em' }}>{item.color}</span>}
                           </div>
                         )}
                       </div>
@@ -237,7 +237,7 @@ export default function Navbar() {
         .navlink::after { content:''; position:absolute; bottom:0; left:0; width:0; height:1px; background:var(--accent); transition:width .4s cubic-bezier(.22,1,.36,1); }
         .navlink:hover::after { width:100%; }
         .search-btn:hover { color:var(--foreground) !important; }
-        .cart-trigger:hover { border-color:var(--accent) !important; background:rgba(201,169,110,.05) !important; }
+        .cart-trigger:hover { border-color:var(--accent) !important; background:rgba(184,146,74,.05) !important; }
         .close-x:hover { border-color:var(--accent) !important; color:var(--accent) !important; }
         .remove-x:hover { color:var(--foreground) !important; }
         .qty-btn:hover { color:var(--foreground) !important; }

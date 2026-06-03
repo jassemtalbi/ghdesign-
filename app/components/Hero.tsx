@@ -24,17 +24,17 @@ export default function Hero() {
   });
 
   return (
-    <section ref={ref} style={{ position: 'relative', width: '100%',marginTop: '60px', height: '100vh', minHeight: '600px', overflow: 'hidden', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <section ref={ref} style={{ position: 'relative', width: '100%', height: '100vh', minHeight: '600px', overflow: 'hidden', background: 'var(--background)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 
       {/* Parallax bg */}
       <div style={{ position: 'absolute', inset: 0, transform: `translateY(${sy * .3}px)` }}>
         <div style={{
           position: 'absolute', inset: 0,
           background: `
-            radial-gradient(ellipse 70% 55% at 18% 50%, rgba(201,169,110,.09) 0%, transparent 60%),
-            radial-gradient(ellipse 55% 70% at 82% 18%, rgba(201,169,110,.06) 0%, transparent 60%),
-            radial-gradient(ellipse 100% 90% at 50% 105%, rgba(20,12,4,.95) 0%, transparent 65%),
-            #0a0a0a`,
+            radial-gradient(ellipse 70% 55% at 18% 50%, rgba(184,146,74,.07) 0%, transparent 60%),
+            radial-gradient(ellipse 55% 70% at 82% 18%, rgba(184,146,74,.05) 0%, transparent 60%),
+            radial-gradient(ellipse 100% 90% at 50% 105%, rgba(240,235,228,.95) 0%, transparent 65%),
+            var(--background)`,
         }} />
         {/* Grid */}
         <div style={{ position: 'absolute', inset: 0, opacity: .028,
@@ -47,8 +47,8 @@ export default function Hero() {
       </div>
 
       {/* Side lines */}
-      <div style={{ position: 'absolute', left: '6%', top: 0, bottom: 0, width: '1px', background: 'linear-gradient(to bottom,transparent,rgba(201,169,110,.12),transparent)' }} />
-      <div style={{ position: 'absolute', right: '6%', top: 0, bottom: 0, width: '1px', background: 'linear-gradient(to bottom,transparent,rgba(201,169,110,.12),transparent)' }} />
+      <div style={{ position: 'absolute', left: '6%', top: 0, bottom: 0, width: '1px', background: 'linear-gradient(to bottom,transparent,rgba(184,146,74,.12),transparent)' }} />
+      <div style={{ position: 'absolute', right: '6%', top: 0, bottom: 0, width: '1px', background: 'linear-gradient(to bottom,transparent,rgba(184,146,74,.12),transparent)' }} />
 
       {/* Content */}
       <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: '900px', width: '100%', margin: '0 auto' }}>
@@ -81,7 +81,7 @@ export default function Hero() {
       {/* Scroll indicator */}
       <div style={{ position: 'absolute', bottom: '80px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', ...show(1100) }}>
         <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.4em', textTransform: 'uppercase', color: 'var(--muted)' }}>Scroll</span>
-        <div style={{ width: '1px', height: '44px', overflow: 'hidden', background: 'rgba(201,169,110,.2)', position: 'relative' }}>
+        <div style={{ width: '1px', height: '44px', overflow: 'hidden', background: 'rgba(184,146,74,.2)', position: 'relative' }}>
           <div className="scroll-line" />
         </div>
       </div>
