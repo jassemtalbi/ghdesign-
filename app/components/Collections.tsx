@@ -56,7 +56,7 @@ export default function Collections() {
 
         {/* Header */}
         <div className="reveal" style={{ textAlign: 'center', marginBottom: 'clamp(36px,6vw,64px)' }}>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px', fontWeight: 400 }}>Curated for You</p>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px', fontWeight: 600 }}>Curated for You</p>
           <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2rem,6vw,4.2rem)', color: 'var(--foreground)', lineHeight: 1.08, marginBottom: '22px' }}>The Collection</h2>
           <div className="divider" />
         </div>
@@ -67,7 +67,7 @@ export default function Collections() {
             {tabs.map((t, i) => (
               <button key={t} onClick={() => setActiveTab(i)}
                 style={{
-                  fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.28em', textTransform: 'uppercase', fontWeight: 400,
+                  fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.28em', textTransform: 'uppercase', fontWeight: 600,
                   color: activeTab === i ? 'var(--accent)' : 'var(--muted)',
                   borderTop: 'none', borderLeft: 'none', borderRight: 'none',
                   borderBottom: `1px solid ${activeTab === i ? 'var(--accent)' : 'transparent'}`,
@@ -85,7 +85,7 @@ export default function Collections() {
               <p style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(1.2rem,3vw,1.6rem)', color: 'var(--foreground)', marginBottom: '12px' }}>
                 Aucun article disponible pour le moment
               </p>
-              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.35em', color: 'var(--accent)', textTransform: 'uppercase' }}>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.35em', color: 'var(--accent)', textTransform: 'uppercase' }}>
                 Revenez bientôt
               </p>
               <div style={{ width: '40px', height: '1px', background: 'var(--border)', margin: '24px auto 0' }} />
@@ -141,7 +141,7 @@ export default function Collections() {
                       )}
 
                       <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)' }}>
-                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
+                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
                       </div>
                     </div>
 
@@ -149,23 +149,23 @@ export default function Collections() {
                     <div style={{ padding: '15px 16px', borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
                         <div style={{ minWidth: 0 }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px', fontWeight: 400 }}>{p.category}</p>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px', fontWeight: 600 }}>{p.category}</p>
                           <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
                         </div>
-                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', fontWeight: 700, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
+                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.92rem', fontWeight: 700, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
                       </div>
 
                       {/* Size selector */}
                       {hasSizes && (
                         <div style={{ marginBottom: '10px' }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px', fontWeight: 700 }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px', fontWeight: 700 }}>
                             Taille {sel.size && <span style={{ color: 'var(--accent)' }}>· {sel.size}</span>}
                           </p>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                             {p.sizes.map(s => (
                               <button key={s} onClick={() => setSel(p.id, 'size', sel.size === s ? '' : s)}
                                 style={{
-                                  fontFamily: 'var(--font-sans)', fontSize: '10px', padding: '6px 14px',
+                                  fontFamily: 'var(--font-sans)', fontSize: '12px', padding: '6px 14px',
                                   background: sel.size === s ? 'var(--accent)' : 'none',
                                   border: `1px solid ${sel.size === s ? 'var(--accent)' : 'var(--border)'}`,
                                   color: sel.size === s ? '#0a0a0a' : 'var(--muted)',
@@ -179,14 +179,14 @@ export default function Collections() {
                       {/* Color selector */}
                       {hasColors && (
                         <div style={{ marginBottom: '12px' }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px' }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px' }}>
                             Couleur {sel.color && <span style={{ color: 'var(--accent)' }}>· {sel.color}</span>}
                           </p>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                             {p.colors.map(c => (
                               <button key={c} onClick={() => setSel(p.id, 'color', sel.color === c ? '' : c)}
                                 style={{
-                                  fontFamily: 'var(--font-sans)', fontSize: '10px', padding: '6px 14px',
+                                  fontFamily: 'var(--font-sans)', fontSize: '12px', padding: '6px 14px',
                                   background: sel.color === c ? 'rgba(201,169,110,.12)' : 'none',
                                   border: `1px solid ${sel.color === c ? 'var(--accent)' : 'var(--border)'}`,
                                   color: sel.color === c ? 'var(--accent)' : 'var(--muted)',
@@ -203,7 +203,7 @@ export default function Collections() {
                           width: '100%', padding: '9px',
                           background: isAdded ? 'rgba(201,169,110,.12)' : 'none',
                           border: `1px solid ${isAdded ? 'var(--accent)' : 'var(--border)'}`,
-                          fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase',
+                          fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.2em', textTransform: 'uppercase',
                           color: isAdded ? 'var(--accent)' : 'var(--muted)',
                           cursor: 'none', transition: 'all .3s',
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',

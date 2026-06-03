@@ -56,7 +56,7 @@ export default function Hero() {
         {/* Pre-title */}
         {/* <div style={{ ...show(200), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '28px' }}>
           <div style={{ width: '36px', height: '1px', background: 'var(--accent)' }} />
-          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.5em', textTransform: 'uppercase', color: 'var(--accent)' }}>Collection 2025</span>
+          <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.5em', textTransform: 'uppercase', color: 'var(--accent)' }}>Collection 2025</span>
           <div style={{ width: '36px', height: '1px', background: 'var(--accent)' }} />
         </div> */}
 
@@ -67,7 +67,7 @@ export default function Hero() {
         </h1>
 
         {/* Sub */}
-        <p style={{ ...show(640), fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 'clamp(.8rem,1.6vw,.95rem)', letterSpacing: '.18em', color: 'var(--muted)', maxWidth: '440px', margin: '0 auto 44px', lineHeight: 2 }}>
+        <p style={{ ...show(640), fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 'clamp(.8rem,1.6vw,.95rem)', letterSpacing: '.18em', color: 'var(--muted)', maxWidth: '440px', margin: '0 auto 44px', lineHeight: 2 }}>
           Handcrafted fashion for men & women, inspired by the soul of North Africa
         </p>
 
@@ -80,7 +80,7 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <div style={{ position: 'absolute', bottom: '80px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', ...show(1100) }}>
-        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.4em', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 400 }}>Scroll</span>
+        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.4em', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600 }}>Scroll</span>
         <div style={{ width: '1px', height: '44px', overflow: 'hidden', background: 'rgba(184,146,74,.2)', position: 'relative' }}>
           <div className="scroll-line" />
         </div>
@@ -94,9 +94,9 @@ export default function Hero() {
         ...show(1200),
       }} className="hidden md:grid">
         {[['500+','Unique Pieces'],['10+','Years of Craft'],['100%','Handmade']].map(([n,l]) => (
-          <div key={l} style={{ padding: '18px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', borderRight: '1px solid var(--border)' }}>
-            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: 'var(--accent)', fontWeight: 700 }}>{n}</span>
-            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.32em', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 400 }}>{l}</span>
+          <div key={l} style={{ padding: '14px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', borderRight: '1px solid var(--border)', overflow: 'hidden' }}>
+            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: 'var(--accent)', fontWeight: 700 }}>{n}</span>
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600, textAlign: 'center', lineHeight: 1.3 }}>{l}</span>
           </div>
         ))}
       </div>

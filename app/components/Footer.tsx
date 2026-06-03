@@ -25,9 +25,9 @@ export default function Footer() {
           <div>
             <div style={{ marginBottom: '20px' }}>
               <div className="text-gold" style={{ fontFamily: 'var(--font-sans)', fontSize: '1.2rem', letterSpacing: '.32em', fontWeight: 900, lineHeight: 1 }}>GH</div>
-              <div style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.46em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '4px', fontWeight: 400 }}>Design</div>
+              <div style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.46em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '4px', fontWeight: 600 }}>Design</div>
             </div>
-            <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '.78rem', lineHeight: 1.9, color: 'var(--muted)', maxWidth: '175px', marginBottom: '24px' }}>
+            <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: '1rem', lineHeight: 1.9, color: 'var(--muted)', maxWidth: '175px', marginBottom: '24px' }}>
               Handcrafted fashion for men & women, rooted in the soul of Tunisian heritage.
             </p>
             {/* Social */}
@@ -39,7 +39,7 @@ export default function Footer() {
               ].map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                   className="footer-social"
-                  style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '10px', color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'all .3s' }}>
+                  style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'all .3s' }}>
                   {s.label}
                 </a>
               ))}
@@ -49,14 +49,14 @@ export default function Footer() {
           {/* Link columns */}
           {cols.map(col => (
             <div key={col.title}>
-              <h4 style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.42em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px', fontWeight: 400 }}>
+              <h4 style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.42em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px', fontWeight: 600 }}>
                 {col.title}
               </h4>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '11px' }}>
                 {col.links.map(l => (
                   <li key={l.label}>
                     <a href={l.href} className="footer-link"
-                      style={{ fontFamily: 'var(--font-sans)', fontSize: '.8rem', fontWeight: 400, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s', display: 'inline-block' }}>
+                      style={{ fontFamily: 'var(--font-sans)', fontSize: '.9rem', fontWeight: 600, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s', display: 'inline-block' }}>
                       {l.label}
                     </a>
                   </li>
@@ -75,12 +75,12 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.06em', color: 'var(--muted)', fontWeight: 400 }}>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', letterSpacing: '.06em', color: 'var(--muted)', fontWeight: 600 }}>
             © 2026 GH Design. All rights reserved.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
             <div className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent)' }} />
-            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: 'var(--muted)', fontWeight: 400 }}>Made with love in Tunisia</p>
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--muted)', fontWeight: 600 }}>Made with love in Tunisia</p>
           </div>
         </div>
       </div>

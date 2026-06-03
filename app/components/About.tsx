@@ -43,20 +43,20 @@ export default function About() {
             {/* Floating 10+ badge */}
             <div className="animate-float" style={{ position:'absolute', bottom:'-20px', right:'-20px', width:'105px', height:'105px', background:'var(--background)', border:'1px solid var(--border)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'4px' }}>
               <span style={{ fontFamily:'var(--font-serif)', fontSize:'2rem', color:'var(--accent)', fontWeight:700, lineHeight:1 }}>10+</span>
-              <span style={{ fontFamily:'var(--font-sans)', fontSize:'7.5px', letterSpacing:'.26em', textTransform:'uppercase', color:'var(--muted)', textAlign:'center' }}>Years of Art</span>
+              <span style={{ fontFamily:'var(--font-sans)', fontSize:'9px', letterSpacing:'.26em', textTransform:'uppercase', color:'var(--muted)', textAlign:'center' }}>Years of Art</span>
             </div>
 
             {/* Gold 100% badge */}
             <div style={{ position:'absolute', top:0, left:0, width:'86px', height:'86px', background:'var(--accent)', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'3px' }}>
               <span style={{ fontFamily:'var(--font-serif)', fontSize:'1.35rem', color:'#0a0a0a', fontWeight:700, lineHeight:1 }}>100%</span>
-              <span style={{ fontFamily:'var(--font-sans)', fontSize:'7px', letterSpacing:'.2em', textTransform:'uppercase', color:'#0a0a0a', textAlign:'center' }}>Handmade</span>
+              <span style={{ fontFamily:'var(--font-sans)', fontSize:'9px', letterSpacing:'.2em', textTransform:'uppercase', color:'#0a0a0a', textAlign:'center' }}>Handmade</span>
             </div>
           </div>
 
           {/* Text */}
           <div style={{ display:'flex', flexDirection:'column', gap:'clamp(16px,2.5vw,24px)' }}>
             <div className="reveal">
-              <p style={{ fontFamily:'var(--font-sans)', fontSize:'9px', letterSpacing:'.5em', textTransform:'uppercase', color:'var(--accent)', marginBottom:'14px', fontWeight:400 }}>Our Heritage</p>
+              <p style={{ fontFamily:'var(--font-sans)', fontSize:'11px', letterSpacing:'.5em', textTransform:'uppercase', color:'var(--accent)', marginBottom:'14px', fontWeight:600 }}>Our Heritage</p>
               <h2 style={{ fontFamily:'var(--font-serif)', fontWeight:700, fontSize:'clamp(1.9rem,4.5vw,3.2rem)', color:'var(--foreground)', lineHeight:1.15 }}>
                 Crafted with Soul,<br/>
                 <span style={{ fontStyle:'italic', color:'var(--accent)' }}>Worn with Pride</span>
@@ -66,10 +66,10 @@ export default function About() {
             <div style={{ width:'52px', height:'1px', background:'var(--accent)' }} />
 
             <div className="reveal" style={{ display:'flex', flexDirection:'column', gap:'14px' }}>
-              <p style={{ fontFamily:'var(--font-sans)', fontWeight:400, fontSize:'.88rem', lineHeight:1.95, color:'var(--muted)' }}>
+              <p style={{ fontFamily:'var(--font-sans)', fontWeight:600, fontSize:'1rem', lineHeight:1.95, color:'var(--muted)' }}>
                 GH Design was born from a deep love of Tunisian heritage and a desire to bring that timeless beauty into modern fashion. Every stitch tells a story of craftsmanship passed down through generations.
               </p>
-              <p style={{ fontFamily:'var(--font-sans)', fontWeight:400, fontSize:'.88rem', lineHeight:1.95, color:'var(--muted)' }}>
+              <p style={{ fontFamily:'var(--font-sans)', fontWeight:600, fontSize:'1rem', lineHeight:1.95, color:'var(--muted)' }}>
                 We believe that true luxury lies in the details — in the careful selection of fabrics, the precision of embroidery, and the quiet confidence of a woman who wears her culture with grace.
               </p>
             </div>
@@ -80,8 +80,8 @@ export default function About() {
                 <div key={v.title} className="about-value" style={{ display:'flex', gap:'12px', alignItems:'flex-start', padding:'12px 14px', borderLeft:'1px solid transparent', transition:'border-color .3s, background .3s' }}>
                   <span style={{ color:'var(--accent)', fontSize:'1rem', lineHeight:1, flexShrink:0, marginTop:'2px' }}>{v.icon}</span>
                   <div>
-                    <h4 style={{ fontFamily:'var(--font-sans)', fontSize:'.8rem', fontWeight:700, color:'var(--foreground)', letterSpacing:'.04em', marginBottom:'3px' }}>{v.title}</h4>
-                    <p style={{ fontFamily:'var(--font-sans)', fontSize:'11px', color:'var(--muted)', fontWeight:400 }}>{v.desc}</p>
+                    <h4 style={{ fontFamily:'var(--font-sans)', fontSize:'.9rem', fontWeight:700, color:'var(--foreground)', letterSpacing:'.04em', marginBottom:'3px' }}>{v.title}</h4>
+                    <p style={{ fontFamily:'var(--font-sans)', fontSize:'11px', color:'var(--muted)', fontWeight:600 }}>{v.desc}</p>
                   </div>
                 </div>
               ))}
@@ -103,7 +103,7 @@ export default function About() {
           <p style={{ fontFamily:'var(--font-serif)', fontWeight:700, fontStyle:'italic', fontSize:'clamp(1.3rem,3vw,2.3rem)', color:'var(--foreground)', lineHeight:1.5 }}>
             &ldquo;Fashion is not just clothing — it is a language, a memory, a celebration of who you are.&rdquo;
           </p>
-          <p style={{ fontFamily:'var(--font-sans)', fontSize:'9px', letterSpacing:'.4em', textTransform:'uppercase', color:'var(--accent)', marginTop:'22px', fontWeight:400 }}>— GH Design</p>
+          <p style={{ fontFamily:'var(--font-sans)', fontSize:'11px', letterSpacing:'.4em', textTransform:'uppercase', color:'var(--accent)', marginTop:'22px', fontWeight:600 }}>— GH Design</p>
         </div>
       </div>
 
