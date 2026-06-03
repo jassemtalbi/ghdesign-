@@ -1,10 +1,16 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function AdminLogin() {
   const router = useRouter();
   const [form, setForm] = useState({ user: '', pass: '' });
+
+  useEffect(() => {
+    if (localStorage.getItem('gh_admin') === '1') {
+      router.replace('/admin/dashboard');
+    }
+  }, [router]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
