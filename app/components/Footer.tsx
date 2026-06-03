@@ -24,10 +24,10 @@ export default function Footer() {
           {/* Brand column */}
           <div>
             <div style={{ marginBottom: '20px' }}>
-              <div className="text-gold" style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', letterSpacing: '.32em', fontWeight: 300, lineHeight: 1 }}>GH</div>
-              <div style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.46em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '4px' }}>Design</div>
+              <div className="text-gold" style={{ fontFamily: 'var(--font-sans)', fontSize: '2rem', letterSpacing: '.32em', fontWeight: 900, lineHeight: 1 }}>GH</div>
+              <div style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.46em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '4px', fontWeight: 400 }}>Design</div>
             </div>
-            <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: '.78rem', lineHeight: 1.9, color: 'var(--muted)', maxWidth: '175px', marginBottom: '24px' }}>
+            <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '.78rem', lineHeight: 1.9, color: 'var(--muted)', maxWidth: '175px', marginBottom: '24px' }}>
               Handcrafted fashion for men & women, rooted in the soul of Tunisian heritage.
             </p>
             {/* Social */}
@@ -49,14 +49,14 @@ export default function Footer() {
           {/* Link columns */}
           {cols.map(col => (
             <div key={col.title}>
-              <h4 style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.42em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px', fontWeight: 500 }}>
+              <h4 style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.42em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px', fontWeight: 400 }}>
                 {col.title}
               </h4>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '11px' }}>
                 {col.links.map(l => (
                   <li key={l.label}>
                     <a href={l.href} className="footer-link"
-                      style={{ fontFamily: 'var(--font-sans)', fontSize: '.8rem', fontWeight: 300, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s', display: 'inline-block' }}>
+                      style={{ fontFamily: 'var(--font-sans)', fontSize: '.8rem', fontWeight: 400, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s', display: 'inline-block' }}>
                       {l.label}
                     </a>
                   </li>
@@ -69,18 +69,18 @@ export default function Footer() {
         {/* Divider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: 'clamp(28px,4vw,40px)' }}>
           <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
-          <span className="text-gold" style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', letterSpacing: '.3em', fontWeight: 300 }}>GH DESIGN</span>
+          <span className="text-gold" style={{ fontFamily: 'var(--font-sans)', fontSize: '1.1rem', letterSpacing: '.3em', fontWeight: 900 }}>GH DESIGN</span>
           <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
         </div>
 
         {/* Bottom bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.06em', color: 'var(--muted)' }}>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.06em', color: 'var(--muted)', fontWeight: 400 }}>
             © 2026 GH Design. All rights reserved.
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
             <div className="animate-pulse-dot" style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent)' }} />
-            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: 'var(--muted)' }}>Made with love in Tunisia</p>
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: 'var(--muted)', fontWeight: 400 }}>Made with love in Tunisia</p>
           </div>
         </div>
       </div>

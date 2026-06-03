@@ -23,12 +23,12 @@ export default function Contact() {
 
       <div style={{ position:'relative', zIndex:1, maxWidth:'640px', margin:'0 auto', textAlign:'center' }}>
         <div className="reveal">
-          <p style={{ fontFamily:'var(--font-sans)', fontSize:'9px', letterSpacing:'.5em', textTransform:'uppercase', color:'var(--accent)', marginBottom:'14px' }}>Get in Touch</p>
-          <h2 style={{ fontFamily:'var(--font-serif)', fontWeight:300, fontSize:'clamp(1.8rem,5vw,3.2rem)', color:'var(--foreground)', lineHeight:1.2, marginBottom:'14px' }}>
+          <p style={{ fontFamily:'var(--font-sans)', fontSize:'9px', letterSpacing:'.5em', textTransform:'uppercase', color:'var(--accent)', marginBottom:'14px', fontWeight:400 }}>Get in Touch</p>
+          <h2 style={{ fontFamily:'var(--font-serif)', fontWeight:700, fontSize:'clamp(1.8rem,5vw,3.2rem)', color:'var(--foreground)', lineHeight:1.2, marginBottom:'14px' }}>
             Let&apos;s Create Something{' '}
             <span style={{ fontStyle:'italic', color:'var(--accent)' }}>Beautiful</span>
           </h2>
-          <p style={{ fontFamily:'var(--font-sans)', fontWeight:300, fontSize:'.88rem', lineHeight:1.9, color:'var(--muted)', marginBottom:'40px' }}>
+          <p style={{ fontFamily:'var(--font-sans)', fontWeight:400, fontSize:'.88rem', lineHeight:1.9, color:'var(--muted)', marginBottom:'40px' }}>
             Reach out for custom orders, size inquiries, or to simply connect with the GH Design atelier.
           </p>
         </div>
@@ -39,14 +39,14 @@ export default function Contact() {
             <input type="email" placeholder="Your email address" style={{
               flex:'1 1 200px', padding:'14px 18px',
               background:'var(--background)', color:'var(--foreground)',
-              fontFamily:'var(--font-sans)', fontWeight:300, fontSize:'.85rem',
+              fontFamily:'var(--font-sans)', fontWeight:400, fontSize:'.85rem',
               border:'none', outline:'none', minWidth:0,
             }} />
             <button className="btn-gold" style={{ fontSize:'9px', padding:'12px 22px', border:'none', borderLeft:'1px solid var(--border)', flexShrink:0 }}>
               Subscribe
             </button>
           </div>
-          <p style={{ fontFamily:'var(--font-sans)', fontSize:'10px', letterSpacing:'.08em', color:'var(--muted)' }}>
+          <p style={{ fontFamily:'var(--font-sans)', fontSize:'10px', letterSpacing:'.08em', color:'var(--muted)', fontWeight:400 }}>
             Join our circle for exclusive previews, private sales &amp; new arrivals.
           </p>
         </div>
@@ -56,8 +56,8 @@ export default function Contact() {
           {socials.map(s => (
             <div key={s.label} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'6px' }}>
               <span style={{ color:'var(--accent)', fontSize:'.9rem' }}>{s.icon}</span>
-              <span style={{ fontFamily:'var(--font-sans)', fontSize:'8px', letterSpacing:'.3em', textTransform:'uppercase', color:'var(--muted)' }}>{s.label}</span>
-              <span className="link-line" style={{ fontFamily:'var(--font-sans)', fontSize:'.82rem', fontWeight:300, color:'var(--foreground)', cursor:'none' }}>{s.value}</span>
+              <span style={{ fontFamily:'var(--font-sans)', fontSize:'8px', letterSpacing:'.3em', textTransform:'uppercase', color:'var(--muted)', fontWeight:400 }}>{s.label}</span>
+              <span className="link-line" style={{ fontFamily:'var(--font-sans)', fontSize:'.82rem', fontWeight:400, color:'var(--foreground)', cursor:'none' }}>{s.value}</span>
             </div>
           ))}
         </div>

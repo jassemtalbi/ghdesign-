@@ -45,8 +45,8 @@ export default function Navbar() {
 
           {/* Logo */}
           <a href="#" style={{ cursor: 'none', textDecoration: 'none', flexShrink: 0 }}>
-            <div className="text-gold" style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '1.6rem', letterSpacing: '.35em', lineHeight: 1 }}>GH</div>
-            <div style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.5em', color: 'var(--muted)', textTransform: 'uppercase', marginTop: '3px' }}>Design</div>
+            <div className="text-gold" style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1.6rem', letterSpacing: '.35em', lineHeight: 1 }}>GH</div>
+            <div style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.5em', color: 'var(--muted)', textTransform: 'uppercase', marginTop: '3px', fontWeight: 400 }}>Design</div>
           </a>
 
           {/* Center links */}
@@ -68,7 +68,7 @@ export default function Navbar() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--foreground)' }}>
                 <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
               </svg>
-              <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--foreground)' }}>Panier</span>
+              <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--foreground)', fontWeight: 400 }}>Panier</span>
               {total > 0 && (
                 <span style={{ position: 'absolute', top: '-8px', right: '-8px', minWidth: '19px', height: '19px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '9px', fontWeight: 600, color: 'var(--background)', padding: '0 4px' }}>
                   {total}
@@ -104,12 +104,12 @@ export default function Navbar() {
         opacity: menuOpen ? 1 : 0, pointerEvents: menuOpen ? 'all' : 'none', transition: 'opacity .45s',
       }}>
         <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', opacity: .03, pointerEvents: 'none', userSelect: 'none' }}>
-          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22rem', fontWeight: 300, color: 'var(--accent)', lineHeight: 1 }}>GH</span>
+          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '22rem', fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>GH</span>
         </div>
         {links.map((l, i) => (
           <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
             style={{
-              fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(2.2rem,8vw,3.5rem)',
+              fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2.2rem,8vw,3.5rem)',
               color: 'var(--foreground)', textDecoration: 'none', cursor: 'none', marginBottom: '20px',
               transform: menuOpen ? 'translateY(0)' : 'translateY(18px)',
               opacity: menuOpen ? 1 : 0,
@@ -146,7 +146,7 @@ export default function Navbar() {
         {/* Header */}
         <div style={{ padding: '28px 28px 22px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
           <div>
-            <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '1.7rem', color: 'var(--foreground)', letterSpacing: '.05em', lineHeight: 1 }}>Mon Panier</h2>
+            <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1.7rem', color: 'var(--foreground)', letterSpacing: '.05em', lineHeight: 1 }}>Mon Panier</h2>
             <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.18em', color: 'var(--muted)', marginTop: '5px' }}>
               {total === 0 ? 'Vide' : `${total} article${total > 1 ? 's' : ''}`}
             </p>
@@ -182,7 +182,7 @@ export default function Navbar() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
                       <div>
                         <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px' }}>{item.category}</p>
-                        <h4 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1rem', color: 'var(--foreground)', letterSpacing: '.03em', lineHeight: 1.2 }}>{item.name}</h4>
+                        <h4 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1rem', color: 'var(--foreground)', letterSpacing: '.03em', lineHeight: 1.2 }}>{item.name}</h4>
                         {(item.size || item.color) && (
                           <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
                             {item.size && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '2px 7px', border: '1px solid var(--border)', color: 'var(--muted)', letterSpacing: '.1em' }}>{item.size}</span>}
@@ -214,7 +214,7 @@ export default function Navbar() {
           <div style={{ padding: '22px 28px 32px', borderTop: '1px solid var(--border)', flexShrink: 0 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
               <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--muted)' }}>Sous-total</span>
-              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--accent)', fontWeight: 400 }}>
+              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--accent)', fontWeight: 700 }}>
                 {subtotal.toLocaleString('fr-TN')} TND
               </span>
             </div>

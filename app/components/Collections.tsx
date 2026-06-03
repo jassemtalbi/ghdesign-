@@ -55,8 +55,8 @@ export default function Collections() {
 
         {/* Header */}
         <div className="reveal" style={{ textAlign: 'center', marginBottom: 'clamp(36px,6vw,64px)' }}>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px' }}>Curated for You</p>
-          <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(2rem,6vw,4.2rem)', color: 'var(--foreground)', lineHeight: 1.08, marginBottom: '22px' }}>The Collection</h2>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px', fontWeight: 400 }}>Curated for You</p>
+          <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2rem,6vw,4.2rem)', color: 'var(--foreground)', lineHeight: 1.08, marginBottom: '22px' }}>The Collection</h2>
           <div className="divider" />
         </div>
 
@@ -81,7 +81,7 @@ export default function Collections() {
           <div style={{ textAlign: 'center', padding: 'clamp(48px,8vw,80px) 0' }}>
             <div style={{ display: 'inline-block', border: '1px solid var(--border)', padding: 'clamp(32px,5vw,56px) clamp(32px,8vw,96px)', background: 'var(--surface)' }}>
               <div style={{ width: '40px', height: '1px', background: 'var(--accent)', margin: '0 auto 24px' }} />
-              <p style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(1.2rem,3vw,1.6rem)', color: 'var(--foreground)', marginBottom: '12px' }}>
+              <p style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(1.2rem,3vw,1.6rem)', color: 'var(--foreground)', marginBottom: '12px' }}>
                 Aucun article disponible pour le moment
               </p>
               <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.35em', color: 'var(--accent)', textTransform: 'uppercase' }}>
@@ -147,16 +147,16 @@ export default function Collections() {
                     <div style={{ padding: '15px 16px', borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
                         <div style={{ minWidth: 0 }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px' }}>{p.category}</p>
-                          <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 400, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px', fontWeight: 400 }}>{p.category}</p>
+                          <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
                         </div>
-                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', fontWeight: 300, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
+                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', fontWeight: 700, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
                       </div>
 
                       {/* Size selector */}
                       {hasSizes && (
                         <div style={{ marginBottom: '10px' }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px' }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px', fontWeight: 700 }}>
                             Taille {sel.size && <span style={{ color: 'var(--accent)' }}>· {sel.size}</span>}
                           </p>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
