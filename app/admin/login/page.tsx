@@ -42,26 +42,26 @@ export default function AdminLogin() {
       <div style={{ width: '100%', maxWidth: '400px', padding: '0 24px' }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>Administration</p>
-          <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2.4rem', color: 'var(--foreground)', letterSpacing: '.08em' }}>GH Design</h1>
+          <p style={{ fontSize: '12px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>Administration</p>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '2.2rem', color: 'var(--foreground)', letterSpacing: '.08em' }}>GH Design</h1>
           <div style={{ width: '40px', height: '1px', background: 'var(--accent)', margin: '16px auto 0' }} />
         </div>
 
         <form onSubmit={submit}>
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Identifiant</label>
+            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Identifiant</label>
             <input
               value={form.user} onChange={e => { setForm(p => ({ ...p, user: e.target.value })); setError(''); }}
               placeholder="admin"
-              style={{ width: '100%', padding: '13px 16px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.9rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
+              style={{ width: '100%', padding: '13px 16px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.88rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
             />
           </div>
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Mot de passe</label>
+            <label style={{ display: 'block', fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Mot de passe</label>
             <input
               type="password" value={form.pass} onChange={e => { setForm(p => ({ ...p, pass: e.target.value })); setError(''); }}
               placeholder="••••••••"
-              style={{ width: '100%', padding: '13px 16px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.9rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
+              style={{ width: '100%', padding: '13px 16px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.88rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
             />
           </div>
 
@@ -74,7 +74,7 @@ export default function AdminLogin() {
               width: '100%', padding: '14px',
               background: loading ? 'rgba(201,169,110,.3)' : 'var(--accent)',
               border: 'none', color: 'var(--background)',
-              fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700,
+              fontSize: '12px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700,
               fontFamily: 'inherit', cursor: 'pointer', transition: 'all .3s',
             }}>
             {loading ? '...' : 'Se connecter'}

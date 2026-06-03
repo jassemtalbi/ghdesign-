@@ -24,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
     <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '10px 14px', fontFamily: 'inherit' }}>
-      {label && <p style={{ fontSize: '9px', color: 'var(--muted)', letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>}
+      {label && <p style={{ fontSize: '12px', color: 'var(--muted)', letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>}
       {payload.map((p: any, i: number) => (
         <p key={i} style={{ fontSize: '11px', color: p.color || 'var(--accent)' }}>
           {p.name ? `${p.name}: ` : ''}{typeof p.value === 'number' && p.value > 100 ? fmt(p.value) : p.value}
@@ -43,13 +43,13 @@ function RangeBar({ range, setRange, selectedMonth, setSelectedMonth, selectedYe
   const years = Array.from({ length: 3 }, (_, i) => now.getFullYear() - i);
 
   const btnStyle = (active: boolean): React.CSSProperties => ({
-    padding: '5px 12px', fontSize: '8px', letterSpacing: '.15em', textTransform: 'uppercase',
+    padding: '5px 12px', fontSize: '11px', letterSpacing: '.15em', textTransform: 'uppercase',
     background: active ? 'var(--accent)' : 'var(--surface)', color: active ? 'var(--background)' : 'var(--muted)',
     border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s',
   });
 
   const selStyle: React.CSSProperties = {
-    padding: '5px 10px', fontSize: '9px', background: 'var(--surface)', border: '1px solid var(--border)',
+    padding: '5px 10px', fontSize: '12px', background: 'var(--surface)', border: '1px solid var(--border)',
     color: 'var(--muted)', fontFamily: 'inherit', cursor: 'pointer', outline: 'none',
     appearance: 'none' as const,
   };
@@ -207,16 +207,16 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
               </div>
               <div style={{ width: '3px', height: '28px', background: s.color, opacity: .4 }} />
             </div>
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: s.color, fontWeight: 300, marginBottom: '2px', lineHeight: 1 }}>{s.value}</p>
-            <p style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>{s.label}</p>
-            <p style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '2px' }}>{s.sub}</p>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: s.color, fontWeight: 700, marginBottom: '2px', lineHeight: 1 }}>{s.value}</p>
+            <p style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>{s.label}</p>
+            <p style={{ fontSize: '11px', color: 'var(--muted)', marginTop: '2px' }}>{s.sub}</p>
           </div>
         ))}
       </div>
 
       {/* Filter bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-        <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Période : <span style={{ color: 'var(--accent)' }}>{rangeLabel}</span></p>
+        <p style={{ fontSize: '12px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Période : <span style={{ color: 'var(--accent)' }}>{rangeLabel}</span></p>
         <RangeBar range={range} setRange={setRange} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
       </div>
 
@@ -225,8 +225,8 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
 
         {/* Revenue area */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '4px' }}>Chiffre d'affaires</p>
-          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>{rangeLabel}</p>
+          <p style={{ fontSize: '12px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '4px' }}>Chiffre d'affaires</p>
+          <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px' }}>{rangeLabel}</p>
           <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={revenueData}>
               <defs>
@@ -246,8 +246,8 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
 
         {/* Orders bar */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '4px' }}>Commandes</p>
-          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>{rangeLabel}</p>
+          <p style={{ fontSize: '12px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '4px' }}>Commandes</p>
+          <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px' }}>{rangeLabel}</p>
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={ordersData} barSize={range === 'year' ? 14 : 18}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -265,8 +265,8 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
 
         {/* Status pie */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#a78bfa', marginBottom: '4px' }}>Statuts commandes</p>
-          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>Répartition</p>
+          <p style={{ fontSize: '12px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#a78bfa', marginBottom: '4px' }}>Statuts commandes</p>
+          <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px' }}>Répartition</p>
           {statusData.length === 0 ? (
             <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '11px', padding: '60px 0' }}>Aucune commande</p>
           ) : (
@@ -283,8 +283,8 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
                 {statusData.map(d => (
                   <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: d.color, flexShrink: 0 }} />
-                    <span style={{ fontSize: '9px', color: 'var(--muted)', flex: 1 }}>{d.name}</span>
-                    <span style={{ fontSize: '10px', color: 'var(--foreground)', fontWeight: 600 }}>{d.value}</span>
+                    <span style={{ fontSize: '12px', color: 'var(--muted)', flex: 1 }}>{d.name}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--foreground)', fontWeight: 600 }}>{d.value}</span>
                   </div>
                 ))}
               </div>
@@ -294,8 +294,8 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
 
         {/* Categories bar */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#34d399', marginBottom: '4px' }}>Articles par catégorie</p>
-          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>Inventaire</p>
+          <p style={{ fontSize: '12px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#34d399', marginBottom: '4px' }}>Articles par catégorie</p>
+          <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px' }}>Inventaire</p>
           {categoryChart.length === 0 ? (
             <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '11px', padding: '60px 0' }}>Aucun article</p>
           ) : (
@@ -315,8 +315,8 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       {/* Recent orders */}
       <div style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
         <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)' }}>Commandes récentes</p>
-          <button onClick={() => onNavigate('orders')} style={{ fontSize: '9px', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Voir tout →</button>
+          <p style={{ fontSize: '12px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)' }}>Commandes récentes</p>
+          <button onClick={() => onNavigate('orders')} style={{ fontSize: '12px', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Voir tout →</button>
         </div>
         {recentOrders.length === 0 && (
           <p style={{ padding: '24px', textAlign: 'center', color: 'var(--muted)', fontSize: '11px' }}>Aucune commande</p>
@@ -325,14 +325,14 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
           <div key={o.id} style={{ padding: '14px 22px', borderBottom: i < recentOrders.length - 1 ? '1px solid #111' : 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '.85rem', color: 'var(--foreground)' }}>{o.customer.firstName} {o.customer.lastName}</span>
-                <span style={{ fontSize: '8px', color: 'var(--muted)' }}>{o.id}</span>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--foreground)' }}>{o.customer.firstName} {o.customer.lastName}</span>
+                <span style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.id}</span>
               </div>
-              <p style={{ fontSize: '10px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
+              <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
             </div>
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.9rem', color: 'var(--accent)', marginBottom: '4px' }}>{fmt(o.total)}</p>
-              <span style={{ fontSize: '8px', padding: '3px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)', marginBottom: '4px' }}>{fmt(o.total)}</p>
+              <span style={{ fontSize: '11px', padding: '3px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                 {STATUS_LABELS[o.status]}
               </span>
             </div>
