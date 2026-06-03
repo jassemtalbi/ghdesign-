@@ -32,6 +32,7 @@ export default function AdminArticles() {
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [activeImg, setActiveImg] = useState<Record<string, number>>({});
   const fileRef = useRef<HTMLInputElement>(null);
 
   const filtered = articles.filter(a =>
@@ -151,14 +152,37 @@ export default function AdminArticles() {
       </div>
 
       {/* Grid */}
+      <div style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)', paddingRight: '4px' }}>
       <div className="articles-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
         {filtered.map(a => (
           <div key={a.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'border-color .2s' }}>
-            {/* Image */}
+            {/* Image gallery */}
+            {(() => {
+              const imgs = a.images?.length > 0 ? a.images : (a.image ? [a.image] : []);
+              const idx = activeImg[a.id] ?? 0;
+              return (
             <div style={{ position: 'relative', aspectRatio: '3/4', background: 'var(--surface)', overflow: 'hidden' }}>
-              {a.image && (
+              {imgs.length > 0 && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={a.image} alt={a.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={imgs[idx]} alt={a.name} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity .25s' }} />
+              )}
+              {imgs.length > 1 && (
+                <>
+                  <button onClick={e => { e.stopPropagation(); setActiveImg(p => ({ ...p, [a.id]: (idx - 1 + imgs.length) % imgs.length })); }}
+                    style={{ position: 'absolute', left: '6px', top: '50%', transform: 'translateY(-50%)', width: '26px', height: '26px', background: 'rgba(0,0,0,.55)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', zIndex: 2 }}>
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+                  </button>
+                  <button onClick={e => { e.stopPropagation(); setActiveImg(p => ({ ...p, [a.id]: (idx + 1) % imgs.length })); }}
+                    style={{ position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)', width: '26px', height: '26px', background: 'rgba(0,0,0,.55)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', zIndex: 2 }}>
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  </button>
+                  <div style={{ position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', zIndex: 2 }}>
+                    {imgs.map((_, i) => (
+                      <div key={i} onClick={e => { e.stopPropagation(); setActiveImg(p => ({ ...p, [a.id]: i })); }}
+                        style={{ width: '5px', height: '5px', borderRadius: '50%', background: i === idx ? 'var(--accent)' : 'rgba(255,255,255,.5)', cursor: 'pointer', transition: 'background .2s' }} />
+                    ))}
+                  </div>
+                </>
               )}
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.1) 55%, transparent 100%)' }} />
 
@@ -189,7 +213,7 @@ export default function AdminArticles() {
               </div>
 
               {/* Name + price over image */}
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px' }}>
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px', zIndex: 1 }}>
                 <p style={{ fontFamily: 'var(--font-serif)', color: '#fff', fontSize: '1rem', marginBottom: '3px', lineHeight: 1.2 }}>{a.name}</p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: '12px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(245,240,235,.45)' }}>{a.category}</span>
@@ -197,6 +221,8 @@ export default function AdminArticles() {
                 </div>
               </div>
             </div>
+            );
+            })()}
 
             {/* Actions bar */}
             <div style={{ padding: '10px 12px', display: 'flex', gap: '6px', alignItems: 'center', borderTop: '1px solid var(--border)' }}>
@@ -232,6 +258,7 @@ export default function AdminArticles() {
             </div>
           </div>
         ))}
+      </div>
       </div>
 
       {/* Modal form */}
