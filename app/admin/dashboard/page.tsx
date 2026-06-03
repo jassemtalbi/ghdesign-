@@ -26,7 +26,7 @@ export default function Dashboard() {
 
   const logout = () => { localStorage.removeItem('gh_admin'); router.replace('/admin/login'); };
 
-  if (!ready) return <div style={{ minHeight: '100vh', background: '#0a0a0a' }} />;
+  if (!ready) return <div style={{ minHeight: '100vh', background: 'var(--background)' }} />;
 
   const pendingCount = orders.filter(o => o.status === 'pending').length;
 
@@ -58,16 +58,16 @@ export default function Dashboard() {
         }
       `}</style>
 
-      <div style={{ minHeight: '100vh', background: '#080808', fontFamily: "'Montserrat', system-ui, sans-serif", display: 'flex' }}>
+      <div style={{ minHeight: '100vh', background: 'var(--background)', fontFamily: "'Montserrat', system-ui, sans-serif", display: 'flex' }}>
 
         {/* Sidebar — desktop only */}
-        <aside className="sidebar" style={{ width: '220px', flexShrink: 0, background: '#0d0d0d', borderRight: '1px solid #1a1a14', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 20 }}>
-          <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid #1a1a14' }}>
-            <p style={{ fontSize: '7px', letterSpacing: '.5em', textTransform: 'uppercase', color: '#c9a96e', marginBottom: '6px' }}>Admin</p>
-            <h2 style={{ fontFamily: 'Georgia, serif', fontWeight: 300, fontSize: '1.3rem', color: '#f5f0eb', letterSpacing: '.06em', marginBottom: '14px' }}>GH Design</h2>
+        <aside className="sidebar" style={{ width: '220px', flexShrink: 0, background: 'var(--surface)', borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', position: 'fixed', top: 0, left: 0, height: '100vh', zIndex: 20 }}>
+          <div style={{ padding: '28px 24px 24px', borderBottom: '1px solid var(--border)' }}>
+            <p style={{ fontSize: '7px', letterSpacing: '.5em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '6px' }}>Admin</p>
+            <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '1.3rem', color: 'var(--foreground)', letterSpacing: '.06em', marginBottom: '14px' }}>GH Design</h2>
             <div style={{ padding: '10px 12px', background: 'rgba(201,169,110,.06)', border: '1px solid rgba(201,169,110,.15)' }}>
-              <p style={{ fontSize: '11px', color: '#f5f0eb', fontFamily: 'Georgia, serif', fontWeight: 300 }}>Bonjour Ghada ☀️😊</p>
-              <p style={{ fontSize: '9px', color: '#6b6560', marginTop: '3px', fontFamily: 'inherit' }}>Bonne journée !</p>
+              <p style={{ fontSize: '11px', color: 'var(--foreground)', fontFamily: 'var(--font-serif)', fontWeight: 300 }}>Bonjour Ghada ☀️😊</p>
+              <p style={{ fontSize: '9px', color: 'var(--muted)', marginTop: '3px', fontFamily: 'inherit' }}>Bonne journée !</p>
             </div>
           </div>
           <nav style={{ flex: 1, padding: '20px 12px' }}>
@@ -77,22 +77,22 @@ export default function Dashboard() {
                   width: '100%', padding: '11px 14px', marginBottom: '4px',
                   background: tab === item.id ? 'rgba(201,169,110,.1)' : 'none',
                   border: tab === item.id ? '1px solid rgba(201,169,110,.2)' : '1px solid transparent',
-                  color: tab === item.id ? '#c9a96e' : '#6b6560',
+                  color: tab === item.id ? 'var(--accent)' : 'var(--muted)',
                   display: 'flex', alignItems: 'center', gap: '10px',
                   fontSize: '10px', letterSpacing: '.15em', textTransform: 'uppercase',
                   cursor: 'pointer', transition: 'all .2s', fontFamily: 'inherit', textAlign: 'left',
                 }}>
                 {item.icon}
                 <span style={{ flex: 1 }}>{item.label}</span>
-                {item.badge ? <span style={{ background: '#c9a96e', color: '#0a0a0a', fontSize: '8px', fontWeight: 700, padding: '2px 6px', borderRadius: '10px' }}>{item.badge}</span> : null}
+                {item.badge ? <span style={{ background: 'var(--accent)', color: 'var(--background)', fontSize: '8px', fontWeight: 700, padding: '2px 6px', borderRadius: '10px' }}>{item.badge}</span> : null}
               </button>
             ))}
           </nav>
-          <div style={{ padding: '16px 12px', borderTop: '1px solid #1a1a14' }}>
-            <a href="/" target="_blank" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', color: '#6b6560', fontSize: '10px', letterSpacing: '.1em', textTransform: 'uppercase', textDecoration: 'none', marginBottom: '4px' }}>
+          <div style={{ padding: '16px 12px', borderTop: '1px solid var(--border)' }}>
+            <a href="/" target="_blank" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', color: 'var(--muted)', fontSize: '10px', letterSpacing: '.1em', textTransform: 'uppercase', textDecoration: 'none', marginBottom: '4px' }}>
               <IconShop /> Voir la boutique
             </a>
-            <button onClick={logout} style={{ width: '100%', padding: '10px 14px', background: 'none', border: 'none', color: '#6b6560', fontSize: '10px', letterSpacing: '.1em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'inherit' }}>
+            <button onClick={logout} style={{ width: '100%', padding: '10px 14px', background: 'none', border: 'none', color: 'var(--muted)', fontSize: '10px', letterSpacing: '.1em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px', fontFamily: 'inherit' }}>
               <IconLogout /> Déconnexion
             </button>
           </div>
@@ -101,19 +101,19 @@ export default function Dashboard() {
         {/* Main */}
         <main style={{ flex: 1, overflowY: 'auto', minWidth: 0, marginLeft: '220px' }}>
           {/* Top bar */}
-          <div className="topbar-pad" style={{ padding: '20px 32px', borderBottom: '1px solid #1a1a14', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#0d0d0d', position: 'sticky', top: 0, zIndex: 10 }}>
+          <div className="topbar-pad" style={{ padding: '20px 32px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface)', position: 'sticky', top: 0, zIndex: 10 }}>
             <div>
-              <h1 style={{ fontFamily: 'Georgia, serif', fontWeight: 300, fontSize: '1.3rem', color: '#f5f0eb' }}>{tabLabel}</h1>
-              <p style={{ fontSize: '10px', color: '#6b6560', marginTop: '2px' }}>
+              <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '1.3rem', color: 'var(--foreground)' }}>{tabLabel}</h1>
+              <p style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '2px' }}>
                 {new Date().toLocaleDateString('fr-TN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade8066' }} />
-              <span style={{ fontSize: '10px', color: '#6b6560', letterSpacing: '.1em' }}>En ligne</span>
+              <span style={{ fontSize: '10px', color: 'var(--muted)', letterSpacing: '.1em' }}>En ligne</span>
               <AdminNotifications />
               {/* Mobile logout */}
-              <button onClick={logout} className="mobile-logout" style={{ background: 'none', border: '1px solid #1a1a14', color: '#6b6560', cursor: 'pointer', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', letterSpacing: '.1em', textTransform: 'uppercase', fontFamily: 'inherit' }}>
+              <button onClick={logout} className="mobile-logout" style={{ background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', cursor: 'pointer', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', letterSpacing: '.1em', textTransform: 'uppercase', fontFamily: 'inherit' }}>
                 <IconLogout />
               </button>
             </div>
@@ -129,7 +129,7 @@ export default function Dashboard() {
         {/* Bottom nav — mobile only */}
         <nav className="bottom-nav" style={{
           position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
-          background: '#0d0d0d', borderTop: '1px solid #1a1a14',
+          background: 'var(--surface)', borderTop: '1px solid var(--border)',
           display: 'none', alignItems: 'center', justifyContent: 'space-around',
           padding: '8px 0 max(8px, env(safe-area-inset-bottom))',
         }}>
@@ -138,18 +138,18 @@ export default function Dashboard() {
               style={{
                 flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
                 background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0',
-                color: tab === item.id ? '#c9a96e' : '#6b6560',
+                color: tab === item.id ? 'var(--accent)' : 'var(--muted)',
                 transition: 'color .2s', fontFamily: 'inherit', position: 'relative',
               }}>
               {item.icon}
               <span style={{ fontSize: '8px', letterSpacing: '.1em', textTransform: 'uppercase' }}>{item.label}</span>
               {item.badge ? (
-                <span style={{ position: 'absolute', top: '2px', right: '20%', background: '#c9a96e', color: '#0a0a0a', fontSize: '7px', fontWeight: 700, padding: '1px 5px', borderRadius: '10px' }}>{item.badge}</span>
+                <span style={{ position: 'absolute', top: '2px', right: '20%', background: 'var(--accent)', color: 'var(--background)', fontSize: '7px', fontWeight: 700, padding: '1px 5px', borderRadius: '10px' }}>{item.badge}</span>
               ) : null}
             </button>
           ))}
           <a href="/" target="_blank"
-            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: '#6b6560', textDecoration: 'none', padding: '6px 0' }}>
+            style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: 'var(--muted)', textDecoration: 'none', padding: '6px 0' }}>
             <IconShop />
             <span style={{ fontSize: '8px', letterSpacing: '.1em', textTransform: 'uppercase' }}>Boutique</span>
           </a>

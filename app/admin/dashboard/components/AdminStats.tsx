@@ -10,7 +10,7 @@ const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND
 const fmtShort = (n: number) => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(0)+'k' : String(n);
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: '#6b6560',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)',
 };
 const STATUS_LABELS: Record<string, string> = {
   pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée',
@@ -23,10 +23,10 @@ type Range = '7d' | '30d' | 'month' | 'year';
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#0d0d0d', border: '1px solid #2a2520', padding: '10px 14px', fontFamily: 'inherit' }}>
-      {label && <p style={{ fontSize: '9px', color: '#6b6560', letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>}
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '10px 14px', fontFamily: 'inherit' }}>
+      {label && <p style={{ fontSize: '9px', color: 'var(--muted)', letterSpacing: '.2em', textTransform: 'uppercase', marginBottom: '6px' }}>{label}</p>}
       {payload.map((p: any, i: number) => (
-        <p key={i} style={{ fontSize: '11px', color: p.color || '#c9a96e' }}>
+        <p key={i} style={{ fontSize: '11px', color: p.color || 'var(--accent)' }}>
           {p.name ? `${p.name}: ` : ''}{typeof p.value === 'number' && p.value > 100 ? fmt(p.value) : p.value}
         </p>
       ))}
@@ -44,13 +44,13 @@ function RangeBar({ range, setRange, selectedMonth, setSelectedMonth, selectedYe
 
   const btnStyle = (active: boolean): React.CSSProperties => ({
     padding: '5px 12px', fontSize: '8px', letterSpacing: '.15em', textTransform: 'uppercase',
-    background: active ? '#c9a96e' : '#0d0d0d', color: active ? '#0a0a0a' : '#6b6560',
-    border: `1px solid ${active ? '#c9a96e' : '#1a1a14'}`, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s',
+    background: active ? 'var(--accent)' : 'var(--surface)', color: active ? 'var(--background)' : 'var(--muted)',
+    border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s',
   });
 
   const selStyle: React.CSSProperties = {
-    padding: '5px 10px', fontSize: '9px', background: '#0d0d0d', border: '1px solid #1a1a14',
-    color: '#6b6560', fontFamily: 'inherit', cursor: 'pointer', outline: 'none',
+    padding: '5px 10px', fontSize: '9px', background: 'var(--surface)', border: '1px solid var(--border)',
+    color: 'var(--muted)', fontFamily: 'inherit', cursor: 'pointer', outline: 'none',
     appearance: 'none' as const,
   };
 
@@ -189,7 +189,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
 
   const kpis = [
     { label: 'Visiteurs',          value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites',   color: '#34d399', icon: <IconVisits /> },
-    { label: "Chiffre d'affaires", value: fmt(totalRevenue), sub: `${orders.filter(o=>o.status!=='cancelled').length} commandes`, color: '#c9a96e', icon: <IconRevenue /> },
+    { label: "Chiffre d'affaires", value: fmt(totalRevenue), sub: `${orders.filter(o=>o.status!=='cancelled').length} commandes`, color: 'var(--accent)', icon: <IconRevenue /> },
     { label: 'En attente',         value: String(pending),   sub: 'À traiter',  color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending /> },
     { label: 'Ne répond pas',      value: String(noResponse), sub: 'Sans réponse', color: '#f87171', icon: <IconShipped /> },
     { label: 'Articles publiés',   value: String(published), sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle /> },
@@ -200,23 +200,23 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       {/* KPIs */}
       <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         {kpis.map(s => (
-          <div key={s.label} style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '24px 28px' }}>
+          <div key={s.label} style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '24px 28px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
               <div style={{ width: '32px', height: '32px', background: `${s.color}18`, border: `1px solid ${s.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}>
                 {s.icon}
               </div>
               <div style={{ width: '3px', height: '28px', background: s.color, opacity: .4 }} />
             </div>
-            <p style={{ fontFamily: 'Georgia, serif', fontSize: '1.6rem', color: s.color, fontWeight: 300, marginBottom: '2px', lineHeight: 1 }}>{s.value}</p>
-            <p style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560' }}>{s.label}</p>
-            <p style={{ fontSize: '10px', color: '#333', marginTop: '2px' }}>{s.sub}</p>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.6rem', color: s.color, fontWeight: 300, marginBottom: '2px', lineHeight: 1 }}>{s.value}</p>
+            <p style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>{s.label}</p>
+            <p style={{ fontSize: '10px', color: 'var(--muted)', marginTop: '2px' }}>{s.sub}</p>
           </div>
         ))}
       </div>
 
       {/* Filter bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-        <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560' }}>Période : <span style={{ color: '#c9a96e' }}>{rangeLabel}</span></p>
+        <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Période : <span style={{ color: 'var(--accent)' }}>{rangeLabel}</span></p>
         <RangeBar range={range} setRange={setRange} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} selectedYear={selectedYear} setSelectedYear={setSelectedYear} />
       </div>
 
@@ -224,35 +224,35 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
 
         {/* Revenue area */}
-        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e', marginBottom: '4px' }}>Chiffre d'affaires</p>
-          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>{rangeLabel}</p>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '4px' }}>Chiffre d'affaires</p>
+          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>{rangeLabel}</p>
           <ResponsiveContainer width="100%" height={180}>
             <AreaChart data={revenueData}>
               <defs>
                 <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%"  stopColor="#c9a96e" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#c9a96e" stopOpacity={0} />
+                  <stop offset="5%"  stopColor="var(--accent)" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" />
-              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-              <YAxis tickFormatter={fmtShort} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={36} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="date" tick={{ fill: 'var(--muted)', fontSize: 9 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis tickFormatter={fmtShort} tick={{ fill: 'var(--muted)', fontSize: 9 }} axisLine={false} tickLine={false} width={36} />
               <Tooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="total" stroke="#c9a96e" strokeWidth={2} fill="url(#revGrad)" dot={{ fill: '#c9a96e', r: 3, strokeWidth: 0 }} activeDot={{ r: 5 }} />
+              <Area type="monotone" dataKey="total" stroke="var(--accent)" strokeWidth={2} fill="url(#revGrad)" dot={{ fill: 'var(--accent)', r: 3, strokeWidth: 0 }} activeDot={{ r: 5 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
 
         {/* Orders bar */}
-        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
           <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#60a5fa', marginBottom: '4px' }}>Commandes</p>
-          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>{rangeLabel}</p>
+          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>{rangeLabel}</p>
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={ordersData} barSize={range === 'year' ? 14 : 18}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" vertical={false} />
-              <XAxis dataKey="date" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
-              <YAxis allowDecimals={false} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={24} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+              <XAxis dataKey="date" tick={{ fill: 'var(--muted)', fontSize: 9 }} axisLine={false} tickLine={false} interval="preserveStartEnd" />
+              <YAxis allowDecimals={false} tick={{ fill: 'var(--muted)', fontSize: 9 }} axisLine={false} tickLine={false} width={24} />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="count" name="Commandes" fill="#60a5fa" fillOpacity={0.8} radius={[2, 2, 0, 0]} />
             </BarChart>
@@ -264,11 +264,11 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
 
         {/* Status pie */}
-        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
           <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#a78bfa', marginBottom: '4px' }}>Statuts commandes</p>
-          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>Répartition</p>
+          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>Répartition</p>
           {statusData.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#333', fontSize: '11px', padding: '60px 0' }}>Aucune commande</p>
+            <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '11px', padding: '60px 0' }}>Aucune commande</p>
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               <ResponsiveContainer width={140} height={140}>
@@ -283,8 +283,8 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
                 {statusData.map(d => (
                   <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: d.color, flexShrink: 0 }} />
-                    <span style={{ fontSize: '9px', color: '#6b6560', flex: 1 }}>{d.name}</span>
-                    <span style={{ fontSize: '10px', color: '#f5f0eb', fontWeight: 600 }}>{d.value}</span>
+                    <span style={{ fontSize: '9px', color: 'var(--muted)', flex: 1 }}>{d.name}</span>
+                    <span style={{ fontSize: '10px', color: 'var(--foreground)', fontWeight: 600 }}>{d.value}</span>
                   </div>
                 ))}
               </div>
@@ -293,17 +293,17 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
         </div>
 
         {/* Categories bar */}
-        <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14', padding: '20px' }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
           <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#34d399', marginBottom: '4px' }}>Articles par catégorie</p>
-          <p style={{ fontSize: '10px', color: '#444', marginBottom: '16px' }}>Inventaire</p>
+          <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '16px' }}>Inventaire</p>
           {categoryChart.length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#333', fontSize: '11px', padding: '60px 0' }}>Aucun article</p>
+            <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: '11px', padding: '60px 0' }}>Aucun article</p>
           ) : (
             <ResponsiveContainer width="100%" height={140}>
               <BarChart data={categoryChart} layout="vertical" barSize={12}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1a1a14" horizontal={false} />
-                <XAxis type="number" allowDecimals={false} tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} />
-                <YAxis type="category" dataKey="name" tick={{ fill: '#6b6560', fontSize: 9 }} axisLine={false} tickLine={false} width={72} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                <XAxis type="number" allowDecimals={false} tick={{ fill: 'var(--muted)', fontSize: 9 }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="name" tick={{ fill: 'var(--muted)', fontSize: 9 }} axisLine={false} tickLine={false} width={72} />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="value" name="Articles" fill="#34d399" fillOpacity={0.8} radius={[0, 2, 2, 0]} />
               </BarChart>
@@ -313,25 +313,25 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       </div>
 
       {/* Recent orders */}
-      <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14' }}>
-        <div style={{ padding: '18px 22px', borderBottom: '1px solid #1a1a14', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e' }}>Commandes récentes</p>
-          <button onClick={() => onNavigate('orders')} style={{ fontSize: '9px', color: '#6b6560', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Voir tout →</button>
+      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
+        <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)' }}>Commandes récentes</p>
+          <button onClick={() => onNavigate('orders')} style={{ fontSize: '9px', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Voir tout →</button>
         </div>
         {recentOrders.length === 0 && (
-          <p style={{ padding: '24px', textAlign: 'center', color: '#333', fontSize: '11px' }}>Aucune commande</p>
+          <p style={{ padding: '24px', textAlign: 'center', color: 'var(--muted)', fontSize: '11px' }}>Aucune commande</p>
         )}
         {recentOrders.map((o, i) => (
           <div key={o.id} style={{ padding: '14px 22px', borderBottom: i < recentOrders.length - 1 ? '1px solid #111' : 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                <span style={{ fontFamily: 'Georgia, serif', fontSize: '.85rem', color: '#f5f0eb' }}>{o.customer.firstName} {o.customer.lastName}</span>
-                <span style={{ fontSize: '8px', color: '#333' }}>{o.id}</span>
+                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '.85rem', color: 'var(--foreground)' }}>{o.customer.firstName} {o.customer.lastName}</span>
+                <span style={{ fontSize: '8px', color: 'var(--muted)' }}>{o.id}</span>
               </div>
-              <p style={{ fontSize: '10px', color: '#6b6560' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
+              <p style={{ fontSize: '10px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
             </div>
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <p style={{ fontFamily: 'Georgia, serif', fontSize: '.9rem', color: '#c9a96e', marginBottom: '4px' }}>{fmt(o.total)}</p>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.9rem', color: 'var(--accent)', marginBottom: '4px' }}>{fmt(o.total)}</p>
               <span style={{ fontSize: '8px', padding: '3px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                 {STATUS_LABELS[o.status]}
               </span>

@@ -38,30 +38,30 @@ export default function AdminLogin() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Montserrat', system-ui, sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: 'var(--background)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Montserrat', system-ui, sans-serif" }}>
       <div style={{ width: '100%', maxWidth: '400px', padding: '0 24px' }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <p style={{ fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: '#c9a96e', marginBottom: '10px' }}>Administration</p>
-          <h1 style={{ fontFamily: 'Georgia, serif', fontWeight: 300, fontSize: '2.4rem', color: '#f5f0eb', letterSpacing: '.08em' }}>GH Design</h1>
-          <div style={{ width: '40px', height: '1px', background: '#c9a96e', margin: '16px auto 0' }} />
+          <p style={{ fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>Administration</p>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '2.4rem', color: 'var(--foreground)', letterSpacing: '.08em' }}>GH Design</h1>
+          <div style={{ width: '40px', height: '1px', background: 'var(--accent)', margin: '16px auto 0' }} />
         </div>
 
         <form onSubmit={submit}>
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Identifiant</label>
+            <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Identifiant</label>
             <input
               value={form.user} onChange={e => { setForm(p => ({ ...p, user: e.target.value })); setError(''); }}
               placeholder="admin"
-              style={{ width: '100%', padding: '13px 16px', background: '#111', border: '1px solid #222018', color: '#f5f0eb', fontSize: '.9rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
+              style={{ width: '100%', padding: '13px 16px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.9rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
             />
           </div>
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Mot de passe</label>
+            <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Mot de passe</label>
             <input
               type="password" value={form.pass} onChange={e => { setForm(p => ({ ...p, pass: e.target.value })); setError(''); }}
               placeholder="••••••••"
-              style={{ width: '100%', padding: '13px 16px', background: '#111', border: '1px solid #222018', color: '#f5f0eb', fontSize: '.9rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
+              style={{ width: '100%', padding: '13px 16px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.9rem', outline: 'none', fontFamily: 'inherit', borderRadius: 0 }}
             />
           </div>
 
@@ -72,8 +72,8 @@ export default function AdminLogin() {
           <button type="submit" disabled={loading}
             style={{
               width: '100%', padding: '14px',
-              background: loading ? 'rgba(201,169,110,.3)' : '#c9a96e',
-              border: 'none', color: '#0a0a0a',
+              background: loading ? 'rgba(201,169,110,.3)' : 'var(--accent)',
+              border: 'none', color: 'var(--background)',
               fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700,
               fontFamily: 'inherit', cursor: 'pointer', transition: 'all .3s',
             }}>
@@ -81,8 +81,8 @@ export default function AdminLogin() {
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '32px', fontSize: '11px', color: '#333' }}>
-          <a href="/" style={{ color: '#6b6560', textDecoration: 'none' }}>← Retour à la boutique</a>
+        <p style={{ textAlign: 'center', marginTop: '32px', fontSize: '11px', color: 'var(--muted)' }}>
+          <a href="/" style={{ color: 'var(--muted)', textDecoration: 'none' }}>← Retour à la boutique</a>
         </p>
       </div>
     </div>

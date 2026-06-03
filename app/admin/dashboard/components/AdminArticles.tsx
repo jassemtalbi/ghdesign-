@@ -123,8 +123,8 @@ export default function AdminArticles() {
   };
 
   const inp = (err?: boolean): React.CSSProperties => ({
-    width: '100%', padding: '10px 13px', background: '#111', border: `1px solid ${err ? '#c05050' : '#222018'}`,
-    color: '#f5f0eb', fontSize: '.85rem', fontFamily: 'inherit', outline: 'none', borderRadius: 0,
+    width: '100%', padding: '10px 13px', background: 'var(--surface)', border: `1px solid ${err ? '#c05050' : 'var(--border)'}`,
+    color: 'var(--foreground)', fontSize: '.85rem', fontFamily: 'inherit', outline: 'none', borderRadius: 0,
   });
 
   return (
@@ -137,15 +137,15 @@ export default function AdminArticles() {
             <button key={f} onClick={() => setFilter(f)}
               style={{
                 padding: '7px 14px', fontSize: '8px', letterSpacing: '.2em', textTransform: 'uppercase',
-                background: filter === f ? '#c9a96e' : '#0d0d0d', color: filter === f ? '#0a0a0a' : '#6b6560',
-                border: `1px solid ${filter === f ? '#c9a96e' : '#1a1a14'}`, cursor: 'pointer', fontFamily: 'inherit',
+                background: filter === f ? 'var(--accent)' : 'var(--surface)', color: filter === f ? 'var(--background)' : 'var(--muted)',
+                border: `1px solid ${filter === f ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', fontFamily: 'inherit',
               }}>
               {f === 'all' ? `Tous (${articles.length})` : f === 'published' ? `Publiés (${articles.filter(a => a.published).length})` : `Brouillons (${articles.filter(a => !a.published).length})`}
             </button>
           ))}
         </div>
         <button onClick={openNew}
-          style={{ padding: '10px 22px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+          style={{ padding: '10px 22px', background: 'var(--accent)', border: 'none', color: 'var(--background)', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           <span style={{ fontSize: '16px', lineHeight: 1 }}>+</span> Nouvel article
         </button>
       </div>
@@ -153,9 +153,9 @@ export default function AdminArticles() {
       {/* Grid */}
       <div className="articles-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
         {filtered.map(a => (
-          <div key={a.id} style={{ background: '#0d0d0d', border: '1px solid #1a1a14', overflow: 'hidden', transition: 'border-color .2s' }}>
+          <div key={a.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', overflow: 'hidden', transition: 'border-color .2s' }}>
             {/* Image */}
-            <div style={{ position: 'relative', aspectRatio: '3/4', background: '#111', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', aspectRatio: '3/4', background: 'var(--surface)', overflow: 'hidden' }}>
               {a.image && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={a.image} alt={a.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -185,21 +185,21 @@ export default function AdminArticles() {
                 border: '1px solid rgba(201,169,110,.4)',
                 backdropFilter: 'blur(6px)',
               }}>
-                <span style={{ fontSize: '8px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#c9a96e', fontWeight: 600 }}>{a.tag}</span>
+                <span style={{ fontSize: '8px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 600 }}>{a.tag}</span>
               </div>
 
               {/* Name + price over image */}
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '16px' }}>
-                <p style={{ fontFamily: 'Georgia, serif', color: '#f5f0eb', fontSize: '1.05rem', marginBottom: '3px', lineHeight: 1.2 }}>{a.name}</p>
+                <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--foreground)', fontSize: '1.05rem', marginBottom: '3px', lineHeight: 1.2 }}>{a.name}</p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'rgba(245,240,235,.45)' }}>{a.category}</span>
-                  <span style={{ fontFamily: 'Georgia, serif', fontSize: '.9rem', color: '#c9a96e' }}>{a.price}</span>
+                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '.9rem', color: 'var(--accent)' }}>{a.price}</span>
                 </div>
               </div>
             </div>
 
             {/* Actions bar */}
-            <div style={{ padding: '10px 12px', display: 'flex', gap: '6px', alignItems: 'center', borderTop: '1px solid #1a1a14' }}>
+            <div style={{ padding: '10px 12px', display: 'flex', gap: '6px', alignItems: 'center', borderTop: '1px solid var(--border)' }}>
               <button onClick={() => togglePublish(a.id, a.published)}
                 style={{
                   flex: 1, padding: '7px 10px', fontSize: '8px', letterSpacing: '.15em', textTransform: 'uppercase',
@@ -215,7 +215,7 @@ export default function AdminArticles() {
                 }
               </button>
               <button onClick={() => openEdit(a)} title="Modifier"
-                style={{ padding: '7px 10px', background: 'none', border: '1px solid #1a1a14', color: '#6b6560', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>
+                style={{ padding: '7px 10px', background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               </button>
               {deleteConfirm === a.id ? (
@@ -225,7 +225,7 @@ export default function AdminArticles() {
                 </button>
               ) : (
                 <button onClick={() => setDeleteConfirm(a.id)} title="Supprimer"
-                  style={{ padding: '7px 10px', background: 'none', border: '1px solid #1a1a14', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>
+                  style={{ padding: '7px 10px', background: 'none', border: '1px solid var(--border)', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                 </button>
               )}
@@ -240,15 +240,15 @@ export default function AdminArticles() {
           <div onClick={() => setShowForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.8)', zIndex: 50 }} />
           <div className="article-modal" style={{
             position: 'fixed', zIndex: 51, top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-            width: 'min(560px, 96vw)', maxHeight: '90vh', background: '#0d0d0d', border: '1px solid #1a1a14',
+            width: 'min(560px, 96vw)', maxHeight: '90vh', background: 'var(--surface)', border: '1px solid var(--border)',
             display: 'flex', flexDirection: 'column', overflow: 'hidden',
           }}>
             {/* Header */}
-            <div style={{ padding: '18px 22px', borderBottom: '1px solid #1a1a14', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
-              <p style={{ fontFamily: 'Georgia, serif', fontSize: '1.2rem', color: '#f5f0eb', fontWeight: 300 }}>
+            <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--foreground)', fontWeight: 300 }}>
                 {editing ? "Modifier l'article" : 'Nouvel article'}
               </p>
-              <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', color: '#6b6560', cursor: 'pointer', fontSize: '20px' }}>×</button>
+              <button onClick={() => setShowForm(false)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '20px' }}>×</button>
             </div>
 
             {/* Body */}
@@ -256,7 +256,7 @@ export default function AdminArticles() {
 
               {/* Image upload */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: errors.image ? '#e07070' : '#6b6560', marginBottom: '8px' }}>
+                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: errors.image ? '#e07070' : 'var(--muted)', marginBottom: '8px' }}>
                   Image *
                 </label>
 
@@ -267,28 +267,28 @@ export default function AdminArticles() {
                   onDragLeave={() => setDragging(false)}
                   onDrop={onDrop}
                   style={{
-                    border: `2px dashed ${errors.image ? '#c05050' : dragging ? '#c9a96e' : '#2a2520'}`,
-                    background: dragging ? 'rgba(201,169,110,.05)' : '#111',
+                    border: `2px dashed ${errors.image ? '#c05050' : dragging ? 'var(--accent)' : 'var(--border)'}`,
+                    background: dragging ? 'rgba(201,169,110,.05)' : 'var(--surface)',
                     cursor: 'pointer', transition: 'all .2s',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                     minHeight: form.images.length === 0 ? '140px' : '60px', padding: '24px',
                     position: 'relative', overflow: 'hidden',
                   }}>
                   {uploading ? (
-                    <p style={{ fontSize: '11px', color: '#c9a96e', letterSpacing: '.2em' }}>Envoi en cours...</p>
+                    <p style={{ fontSize: '11px', color: 'var(--accent)', letterSpacing: '.2em' }}>Envoi en cours...</p>
                   ) : form.images.length === 0 ? (
                     <>
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b6560" strokeWidth="1.5" style={{ marginBottom: '12px' }}>
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="1.5" style={{ marginBottom: '12px' }}>
                         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                         <polyline points="17 8 12 3 7 8"/>
                         <line x1="12" y1="3" x2="12" y2="15"/>
                       </svg>
-                      <p style={{ fontSize: '12px', color: '#6b6560', marginBottom: '4px' }}>Glissez vos images ici</p>
-                      <p style={{ fontSize: '10px', color: '#444' }}>ou cliquez pour choisir depuis votre PC</p>
-                      <p style={{ fontSize: '9px', color: '#333', marginTop: '6px' }}>JPG, PNG, WEBP — plusieurs images acceptées</p>
+                      <p style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '4px' }}>Glissez vos images ici</p>
+                      <p style={{ fontSize: '10px', color: 'var(--muted)' }}>ou cliquez pour choisir depuis votre PC</p>
+                      <p style={{ fontSize: '9px', color: 'var(--muted)', marginTop: '6px' }}>JPG, PNG, WEBP — plusieurs images acceptées</p>
                     </>
                   ) : (
-                    <p style={{ fontSize: '10px', color: '#6b6560' }}>+ Cliquer pour ajouter d'autres images</p>
+                    <p style={{ fontSize: '10px', color: 'var(--muted)' }}>+ Cliquer pour ajouter d'autres images</p>
                   )}
                 </div>
 
@@ -299,12 +299,12 @@ export default function AdminArticles() {
                 {form.images.length > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '6px', marginTop: '10px' }}>
                     {form.images.map((img, idx) => (
-                      <div key={idx} style={{ position: 'relative', aspectRatio: '1', background: '#111', overflow: 'hidden' }}>
+                      <div key={idx} style={{ position: 'relative', aspectRatio: '1', background: 'var(--surface)', overflow: 'hidden' }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={img} alt={`img-${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                         {idx === 0 && (
-                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '2px 4px', background: '#c9a96e', textAlign: 'center' }}>
-                            <span style={{ fontSize: '7px', color: '#0a0a0a', letterSpacing: '.1em', textTransform: 'uppercase', fontWeight: 700 }}>Principale</span>
+                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '2px 4px', background: 'var(--accent)', textAlign: 'center' }}>
+                            <span style={{ fontSize: '7px', color: 'var(--background)', letterSpacing: '.1em', textTransform: 'uppercase', fontWeight: 700 }}>Principale</span>
                           </div>
                         )}
                         <button type="button" onClick={() => setForm(p => ({ ...p, images: p.images.filter((_, i) => i !== idx), image: idx === 0 ? (p.images[1] || '') : p.image }))}
@@ -312,19 +312,19 @@ export default function AdminArticles() {
                       </div>
                     ))}
                     <button type="button" onClick={() => fileRef.current?.click()}
-                      style={{ aspectRatio: '1', background: 'none', border: '2px dashed #2a2520', color: '#6b6560', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>+</button>
+                      style={{ aspectRatio: '1', background: 'none', border: '2px dashed var(--border)', color: 'var(--muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>+</button>
                   </div>
                 )}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px', marginBottom: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: errors.name ? '#e07070' : '#6b6560', marginBottom: '6px' }}>Nom *</label>
+                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: errors.name ? '#e07070' : 'var(--muted)', marginBottom: '6px' }}>Nom *</label>
                   <input value={form.name} onChange={e => { setForm(p => ({ ...p, name: e.target.value })); setErrors(p => ({ ...p, name: '' })); }} placeholder="Nom de l'article" style={inp(!!errors.name)} />
                   {errors.name && <p style={{ fontSize: '10px', color: '#e07070', marginTop: '3px' }}>{errors.name}</p>}
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: errors.price ? '#e07070' : '#6b6560', marginBottom: '6px' }}>Prix (TND) *</label>
+                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: errors.price ? '#e07070' : 'var(--muted)', marginBottom: '6px' }}>Prix (TND) *</label>
                   <input value={form.price} onChange={e => { setForm(p => ({ ...p, price: e.target.value })); setErrors(p => ({ ...p, price: '' })); }} placeholder="ex: 79000" style={inp(!!errors.price)} />
                   {errors.price && <p style={{ fontSize: '10px', color: '#e07070', marginTop: '3px' }}>{errors.price}</p>}
                 </div>
@@ -332,13 +332,13 @@ export default function AdminArticles() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '6px' }}>Catégorie</label>
+                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '6px' }}>Catégorie</label>
                   <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} style={{ ...inp(), appearance: 'none' as const }}>
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '6px' }}>Tag</label>
+                  <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '6px' }}>Tag</label>
                   <select value={form.tag} onChange={e => setForm(p => ({ ...p, tag: e.target.value }))} style={{ ...inp(), appearance: 'none' as const }}>
                     {TAGS.map(t => <option key={t} value={t}>{t}</option>)}
                   </select>
@@ -347,15 +347,15 @@ export default function AdminArticles() {
 
               {/* Sizes */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Tailles disponibles</label>
+                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Tailles disponibles</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {SIZES.map(s => (
                     <button key={s} type="button" onClick={() => setForm(p => ({ ...p, sizes: p.sizes.includes(s) ? p.sizes.filter(x => x !== s) : [...p.sizes, s] }))}
                       style={{
                         padding: '6px 14px', fontSize: '10px', fontFamily: 'inherit', cursor: 'pointer',
-                        background: form.sizes.includes(s) ? '#c9a96e' : 'none',
-                        border: `1px solid ${form.sizes.includes(s) ? '#c9a96e' : '#2a2520'}`,
-                        color: form.sizes.includes(s) ? '#0a0a0a' : '#6b6560',
+                        background: form.sizes.includes(s) ? 'var(--accent)' : 'none',
+                        border: `1px solid ${form.sizes.includes(s) ? 'var(--accent)' : 'var(--border)'}`,
+                        color: form.sizes.includes(s) ? 'var(--background)' : 'var(--muted)',
                         fontWeight: form.sizes.includes(s) ? 700 : 400,
                         transition: 'all .2s',
                       }}>{s}</button>
@@ -365,7 +365,7 @@ export default function AdminArticles() {
 
               {/* Colors */}
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Couleurs disponibles</label>
+                <label style={{ display: 'block', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Couleurs disponibles</label>
                 {/* Preset color chips */}
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                   {PRESET_COLORS.map(c => (
@@ -373,8 +373,8 @@ export default function AdminArticles() {
                       style={{
                         padding: '5px 12px', fontSize: '10px', fontFamily: 'inherit', cursor: 'pointer',
                         background: form.colors.includes(c) ? 'rgba(201,169,110,.15)' : 'none',
-                        border: `1px solid ${form.colors.includes(c) ? '#c9a96e' : '#2a2520'}`,
-                        color: form.colors.includes(c) ? '#c9a96e' : '#6b6560',
+                        border: `1px solid ${form.colors.includes(c) ? 'var(--accent)' : 'var(--border)'}`,
+                        color: form.colors.includes(c) ? 'var(--accent)' : 'var(--muted)',
                         transition: 'all .2s',
                       }}>{c}</button>
                   ))}
@@ -385,16 +385,16 @@ export default function AdminArticles() {
                     onKeyDown={e => { if (e.key === 'Enter' && form.colorInput.trim()) { e.preventDefault(); setForm(p => ({ ...p, colors: [...p.colors, p.colorInput.trim()], colorInput: '' })); }}}
                     placeholder="Autre couleur..." style={{ ...inp(), flex: 1, padding: '8px 12px' }} />
                   <button type="button" onClick={() => { if (form.colorInput.trim()) setForm(p => ({ ...p, colors: [...p.colors, p.colorInput.trim()], colorInput: '' })); }}
-                    style={{ padding: '8px 14px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '11px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>+</button>
+                    style={{ padding: '8px 14px', background: 'var(--accent)', border: 'none', color: 'var(--background)', fontSize: '11px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>+</button>
                 </div>
                 {/* Selected colors */}
                 {form.colors.length > 0 && (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginTop: '8px' }}>
                     {form.colors.map(c => (
-                      <span key={c} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', background: 'rgba(201,169,110,.1)', border: '1px solid rgba(201,169,110,.3)', fontSize: '10px', color: '#c9a96e' }}>
+                      <span key={c} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px', background: 'rgba(201,169,110,.1)', border: '1px solid rgba(201,169,110,.3)', fontSize: '10px', color: 'var(--accent)' }}>
                         {c}
                         <button type="button" onClick={() => setForm(p => ({ ...p, colors: p.colors.filter(x => x !== c) }))}
-                          style={{ background: 'none', border: 'none', color: '#c9a96e', cursor: 'pointer', fontSize: '12px', lineHeight: 1, padding: 0 }}>×</button>
+                          style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px', lineHeight: 1, padding: 0 }}>×</button>
                       </span>
                     ))}
                   </div>
@@ -403,15 +403,15 @@ export default function AdminArticles() {
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <input type="checkbox" id="pub" checked={form.published} onChange={e => setForm(p => ({ ...p, published: e.target.checked }))}
-                  style={{ width: '14px', height: '14px', accentColor: '#c9a96e', cursor: 'pointer' }} />
-                <label htmlFor="pub" style={{ fontSize: '11px', color: '#6b6560', cursor: 'pointer' }}>Publier immédiatement sur la boutique</label>
+                  style={{ width: '14px', height: '14px', accentColor: 'var(--accent)', cursor: 'pointer' }} />
+                <label htmlFor="pub" style={{ fontSize: '11px', color: 'var(--muted)', cursor: 'pointer' }}>Publier immédiatement sur la boutique</label>
               </div>
             </div>
 
             {/* Footer */}
-            <div style={{ flexShrink: 0, padding: '16px 22px', borderTop: '1px solid #1a1a14', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setShowForm(false)} style={{ padding: '11px 22px', background: 'none', border: '1px solid #1a1a14', color: '#6b6560', fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}>Annuler</button>
-              <button onClick={handleSave} style={{ padding: '11px 28px', background: '#c9a96e', border: 'none', color: '#0a0a0a', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+            <div style={{ flexShrink: 0, padding: '16px 22px', borderTop: '1px solid var(--border)', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setShowForm(false)} style={{ padding: '11px 22px', background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}>Annuler</button>
+              <button onClick={handleSave} style={{ padding: '11px 28px', background: 'var(--accent)', border: 'none', color: 'var(--background)', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
                 {editing ? 'Enregistrer' : "Créer l'article"}
               </button>
             </div>

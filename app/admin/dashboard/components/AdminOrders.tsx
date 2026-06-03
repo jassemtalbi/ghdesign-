@@ -17,7 +17,7 @@ function Celebration({ onDone }: { onDone: () => void }) {
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height - canvas.height,
       size: Math.random() * 8 + 4,
-      color: ['#c9a96e','#4ade80','#60a5fa','#f59e0b','#f5f0eb','#a78bfa'][Math.floor(Math.random() * 6)],
+      color: ['var(--accent)','#4ade80','#60a5fa','#f59e0b','var(--foreground)','#a78bfa'][Math.floor(Math.random() * 6)],
       speed: Math.random() * 4 + 2,
       angle: Math.random() * Math.PI * 2,
       spin: (Math.random() - 0.5) * 0.2,
@@ -57,7 +57,7 @@ function Celebration({ onDone }: { onDone: () => void }) {
 const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND';
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: '#6b6560',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)',
 };
 const STATUS_LABELS: Record<OrderStatus, string> = {
   pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée',
@@ -151,15 +151,15 @@ export default function AdminOrders() {
           <Celebration onDone={() => setCelebrating(false)} />
           <div style={{
             position: 'fixed', top: '32px', left: '50%', transform: 'translateX(-50%)',
-            zIndex: 10000, background: '#0d0d0d', border: '1px solid #4ade80',
+            zIndex: 10000, background: 'var(--surface)', border: '1px solid #4ade80',
             padding: '14px 28px', display: 'flex', alignItems: 'center', gap: '12px',
             boxShadow: '0 0 32px rgba(74,222,128,.2)',
             animation: 'fadeInDown .4s ease',
           }}>
             <span style={{ fontSize: '20px' }}>🎉</span>
             <div>
-              <p style={{ fontFamily: 'Georgia, serif', fontSize: '.95rem', color: '#4ade80', fontWeight: 300 }}>Commande livrée !</p>
-              <p style={{ fontFamily: 'inherit', fontSize: '9px', color: '#6b6560', letterSpacing: '.1em', marginTop: '2px' }}>Félicitations 🎊</p>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.95rem', color: '#4ade80', fontWeight: 300 }}>Commande livrée !</p>
+              <p style={{ fontFamily: 'inherit', fontSize: '9px', color: 'var(--muted)', letterSpacing: '.1em', marginTop: '2px' }}>Félicitations 🎊</p>
             </div>
           </div>
           <style>{`@keyframes fadeInDown { from { opacity:0; transform:translateX(-50%) translateY(-16px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
@@ -170,7 +170,7 @@ export default function AdminOrders() {
           .orders-table-header { display: none !important; }
           .order-row { grid-template-columns: 1fr !important; }
           .order-row-articles, .order-row-total-desktop, .order-row-date { display: none !important; }
-          .order-detail-panel { width: 100% !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; top: auto !important; max-height: 80vh !important; overflow-y: auto !important; z-index: 100 !important; border-top: 1px solid #1a1a14 !important; }
+          .order-detail-panel { width: 100% !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; top: auto !important; max-height: 80vh !important; overflow-y: auto !important; z-index: 100 !important; border-top: 1px solid var(--border) !important; }
           .filter-scroll { overflow-x: auto; scrollbar-width: none; }
           .pagination { flex-wrap: wrap !important; }
         }
@@ -183,11 +183,11 @@ export default function AdminOrders() {
           <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Rechercher par nom, téléphone..."
-              style={{ flex: 1, minWidth: '180px', padding: '10px 14px', background: '#0d0d0d', border: '1px solid #1a1a14', color: '#f5f0eb', fontSize: '11px', fontFamily: 'inherit', outline: 'none', borderRadius: 0 }} />
+              style={{ flex: 1, minWidth: '180px', padding: '10px 14px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '11px', fontFamily: 'inherit', outline: 'none', borderRadius: 0 }} />
             <button onClick={exportXLSX} disabled={filtered.length === 0}
               style={{
-                padding: '10px 16px', background: filtered.length === 0 ? '#111' : '#166534',
-                border: `1px solid ${filtered.length === 0 ? '#1a1a14' : '#4ade80'}`,
+                padding: '10px 16px', background: filtered.length === 0 ? 'var(--surface)' : '#166534',
+                border: `1px solid ${filtered.length === 0 ? 'var(--border)' : '#4ade80'}`,
                 color: filtered.length === 0 ? '#333' : '#4ade80',
                 fontSize: '9px', letterSpacing: '.15em', textTransform: 'uppercase',
                 cursor: filtered.length === 0 ? 'default' : 'pointer', fontFamily: 'inherit',
@@ -203,9 +203,9 @@ export default function AdminOrders() {
                 <button key={k} onClick={() => toggleSort(k)}
                   style={{
                     padding: '8px 12px', fontSize: '8px', letterSpacing: '.15em', textTransform: 'uppercase',
-                    background: sortKey === k ? 'rgba(201,169,110,.1)' : '#0d0d0d',
-                    border: `1px solid ${sortKey === k ? 'rgba(201,169,110,.3)' : '#1a1a14'}`,
-                    color: sortKey === k ? '#c9a96e' : '#6b6560',
+                    background: sortKey === k ? 'rgba(201,169,110,.1)' : 'var(--surface)',
+                    border: `1px solid ${sortKey === k ? 'rgba(201,169,110,.3)' : 'var(--border)'}`,
+                    color: sortKey === k ? 'var(--accent)' : 'var(--muted)',
                     cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center',
                   }}>
                   {label}<SortIcon k={k} />
@@ -221,9 +221,9 @@ export default function AdminOrders() {
                 <button key={s} onClick={() => { setFilter(s); setPage(1); }}
                   style={{
                     padding: '7px 12px', fontSize: '8px', letterSpacing: '.15em', textTransform: 'uppercase',
-                    background: filter === s ? (s === 'all' ? '#c9a96e' : STATUS_COLORS[s as OrderStatus]) : '#0d0d0d',
-                    color: filter === s ? '#0a0a0a' : '#6b6560',
-                    border: `1px solid ${filter === s ? (s === 'all' ? '#c9a96e' : STATUS_COLORS[s as OrderStatus]) : '#1a1a14'}`,
+                    background: filter === s ? (s === 'all' ? 'var(--accent)' : STATUS_COLORS[s as OrderStatus]) : 'var(--surface)',
+                    color: filter === s ? 'var(--background)' : 'var(--muted)',
+                    border: `1px solid ${filter === s ? (s === 'all' ? 'var(--accent)' : STATUS_COLORS[s as OrderStatus]) : 'var(--border)'}`,
                     cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap',
                   }}>
                   {s === 'all' ? `Toutes (${orders.length})` : STATUS_LABELS[s as OrderStatus]}
@@ -234,27 +234,27 @@ export default function AdminOrders() {
           </div>
 
           {/* Table */}
-          <div style={{ background: '#0d0d0d', border: '1px solid #1a1a14' }}>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
             {/* Header */}
-            <div className="orders-table-header" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.8fr 90px 110px', padding: '10px 18px', borderBottom: '1px solid #1a1a14', background: '#0a0a0a' }}>
-              <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560' }}>Client</span>
-              <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#6b6560' }}>Articles</span>
+            <div className="orders-table-header" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.8fr 90px 110px', padding: '10px 18px', borderBottom: '1px solid var(--border)', background: 'var(--background)' }}>
+              <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Client</span>
+              <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Articles</span>
               <button onClick={() => toggleSort('total')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center' }}>
-                <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'total' ? '#c9a96e' : '#6b6560' }}>Total</span>
+                <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'total' ? 'var(--accent)' : 'var(--muted)' }}>Total</span>
                 <SortIcon k="total" />
               </button>
               <button onClick={() => toggleSort('date')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center' }}>
-                <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'date' ? '#c9a96e' : '#6b6560' }}>Date</span>
+                <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'date' ? 'var(--accent)' : 'var(--muted)' }}>Date</span>
                 <SortIcon k="date" />
               </button>
               <button onClick={() => toggleSort('status')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center' }}>
-                <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'status' ? '#c9a96e' : '#6b6560' }}>Statut</span>
+                <span style={{ fontSize: '8px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'status' ? 'var(--accent)' : 'var(--muted)' }}>Statut</span>
                 <SortIcon k="status" />
               </button>
             </div>
 
             {paginated.length === 0 && (
-              <p style={{ padding: '32px', textAlign: 'center', color: '#444', fontSize: '12px' }}>Aucune commande trouvée</p>
+              <p style={{ padding: '32px', textAlign: 'center', color: 'var(--muted)', fontSize: '12px' }}>Aucune commande trouvée</p>
             )}
 
             {paginated.map((o, i) => (
@@ -267,24 +267,24 @@ export default function AdminOrders() {
                   transition: 'background .2s', alignItems: 'center',
                 }}>
                 <div>
-                  <p style={{ fontSize: '.85rem', color: '#f5f0eb', fontFamily: 'Georgia, serif', marginBottom: '2px' }}>
+                  <p style={{ fontSize: '.85rem', color: 'var(--foreground)', fontFamily: 'var(--font-serif)', marginBottom: '2px' }}>
                     {o.customer.firstName} {o.customer.lastName}
                   </p>
-                  <p style={{ fontSize: '10px', color: '#6b6560' }}>{o.customer.phone}</p>
+                  <p style={{ fontSize: '10px', color: 'var(--muted)' }}>{o.customer.phone}</p>
                   {/* Mobile summary */}
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '5px' }}>
-                    <span style={{ fontFamily: 'Georgia, serif', fontSize: '.8rem', color: '#c9a96e' }}>{fmt(o.total)}</span>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '.8rem', color: 'var(--accent)' }}>{fmt(o.total)}</span>
                     <span style={{ fontSize: '7px', padding: '2px 6px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                       {STATUS_LABELS[o.status]}
                     </span>
                   </div>
                 </div>
                 <div className="order-row-articles">
-                  <p style={{ fontSize: '11px', color: '#f5f0eb', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.items.map(it => it.name).join(', ')}</p>
-                  <p style={{ fontSize: '10px', color: '#6b6560' }}>{o.items.reduce((s, it) => s + it.qty, 0)} art.</p>
+                  <p style={{ fontSize: '11px', color: 'var(--foreground)', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.items.map(it => it.name).join(', ')}</p>
+                  <p style={{ fontSize: '10px', color: 'var(--muted)' }}>{o.items.reduce((s, it) => s + it.qty, 0)} art.</p>
                 </div>
-                <p className="order-row-total-desktop" style={{ fontFamily: 'Georgia, serif', fontSize: '.9rem', color: '#c9a96e' }}>{fmt(o.total)}</p>
-                <p className="order-row-date" style={{ fontSize: '10px', color: '#6b6560' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
+                <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.9rem', color: 'var(--accent)' }}>{fmt(o.total)}</p>
+                <p className="order-row-date" style={{ fontSize: '10px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
                 <div>
                   <span style={{ fontSize: '8px', padding: '4px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                     {STATUS_LABELS[o.status]}
@@ -297,16 +297,16 @@ export default function AdminOrders() {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="pagination" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', gap: '8px' }}>
-              <p style={{ fontSize: '10px', color: '#6b6560' }}>
+              <p style={{ fontSize: '10px', color: 'var(--muted)' }}>
                 {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} sur {filtered.length} commandes
               </p>
               <div style={{ display: 'flex', gap: '4px' }}>
                 <button onClick={() => setPage(1)} disabled={page === 1}
-                  style={{ padding: '6px 10px', background: 'none', border: '1px solid #1a1a14', color: page === 1 ? '#333' : '#6b6560', cursor: page === 1 ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
+                  style={{ padding: '6px 10px', background: 'none', border: '1px solid var(--border)', color: page === 1 ? '#333' : 'var(--muted)', cursor: page === 1 ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
                   «
                 </button>
                 <button onClick={() => setPage(p => p - 1)} disabled={page === 1}
-                  style={{ padding: '6px 10px', background: 'none', border: '1px solid #1a1a14', color: page === 1 ? '#333' : '#6b6560', cursor: page === 1 ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
+                  style={{ padding: '6px 10px', background: 'none', border: '1px solid var(--border)', color: page === 1 ? '#333' : 'var(--muted)', cursor: page === 1 ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
                   ‹
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -317,18 +317,18 @@ export default function AdminOrders() {
                     return acc;
                   }, [])
                   .map((p, i) => p === '...'
-                    ? <span key={`dots-${i}`} style={{ padding: '6px 8px', color: '#444', fontSize: '11px' }}>…</span>
+                    ? <span key={`dots-${i}`} style={{ padding: '6px 8px', color: 'var(--muted)', fontSize: '11px' }}>…</span>
                     : <button key={p} onClick={() => setPage(p as number)}
-                        style={{ padding: '6px 10px', background: page === p ? '#c9a96e' : 'none', border: `1px solid ${page === p ? '#c9a96e' : '#1a1a14'}`, color: page === p ? '#0a0a0a' : '#6b6560', cursor: 'pointer', fontFamily: 'inherit', fontSize: '11px', fontWeight: page === p ? 600 : 400 }}>
+                        style={{ padding: '6px 10px', background: page === p ? 'var(--accent)' : 'none', border: `1px solid ${page === p ? 'var(--accent)' : 'var(--border)'}`, color: page === p ? 'var(--background)' : 'var(--muted)', cursor: 'pointer', fontFamily: 'inherit', fontSize: '11px', fontWeight: page === p ? 600 : 400 }}>
                         {p}
                       </button>
                   )}
                 <button onClick={() => setPage(p => p + 1)} disabled={page === totalPages}
-                  style={{ padding: '6px 10px', background: 'none', border: '1px solid #1a1a14', color: page === totalPages ? '#333' : '#6b6560', cursor: page === totalPages ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
+                  style={{ padding: '6px 10px', background: 'none', border: '1px solid var(--border)', color: page === totalPages ? '#333' : 'var(--muted)', cursor: page === totalPages ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
                   ›
                 </button>
                 <button onClick={() => setPage(totalPages)} disabled={page === totalPages}
-                  style={{ padding: '6px 10px', background: 'none', border: '1px solid #1a1a14', color: page === totalPages ? '#333' : '#6b6560', cursor: page === totalPages ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
+                  style={{ padding: '6px 10px', background: 'none', border: '1px solid var(--border)', color: page === totalPages ? '#333' : 'var(--muted)', cursor: page === totalPages ? 'default' : 'pointer', fontFamily: 'inherit', fontSize: '11px' }}>
                   »
                 </button>
               </div>
@@ -338,9 +338,9 @@ export default function AdminOrders() {
 
         {/* Detail panel */}
         {selected && (
-          <div className="order-detail-panel" style={{ width: '300px', flexShrink: 0, background: '#0d0d0d', border: '1px solid #1a1a14', position: 'sticky', top: '90px' }}>
-            <div style={{ padding: '16px 18px', borderBottom: '1px solid #1a1a14', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e' }}>Détail · {selected.id}</p>
+          <div className="order-detail-panel" style={{ width: '300px', flexShrink: 0, background: 'var(--surface)', border: '1px solid var(--border)', position: 'sticky', top: '90px' }}>
+            <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)' }}>Détail · {selected.id}</p>
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                 {/* Delete button */}
                 {deleteConfirm ? (
@@ -350,68 +350,68 @@ export default function AdminOrders() {
                       Confirmer
                     </button>
                     <button onClick={() => setDeleteConfirm(false)}
-                      style={{ padding: '4px 8px', background: 'none', border: '1px solid #1a1a14', color: '#6b6560', fontSize: '8px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                      style={{ padding: '4px 8px', background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', fontSize: '8px', cursor: 'pointer', fontFamily: 'inherit' }}>
                       Annuler
                     </button>
                   </>
                 ) : (
                   <button onClick={() => setDeleteConfirm(true)}
-                    style={{ background: 'none', border: '1px solid #1a1a14', color: '#f87171', cursor: 'pointer', padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '8px', letterSpacing: '.1em', textTransform: 'uppercase', fontFamily: 'inherit' }}>
+                    style={{ background: 'none', border: '1px solid var(--border)', color: '#f87171', cursor: 'pointer', padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '8px', letterSpacing: '.1em', textTransform: 'uppercase', fontFamily: 'inherit' }}>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                     Supprimer
                   </button>
                 )}
-                <button onClick={() => { setSelected(null); setDeleteConfirm(false); }} style={{ background: 'none', border: 'none', color: '#6b6560', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <button onClick={() => { setSelected(null); setDeleteConfirm(false); }} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
             </div>
             <div style={{ padding: '14px 18px', borderBottom: '1px solid #111' }}>
-              <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Client</p>
-              <p style={{ fontFamily: 'Georgia, serif', color: '#f5f0eb', marginBottom: '4px' }}>{selected.customer.firstName} {selected.customer.lastName}</p>
-              <p style={{ fontSize: '11px', color: '#6b6560', marginBottom: '2px' }}>{selected.customer.phone}</p>
-              {selected.customer.email && <p style={{ fontSize: '11px', color: '#6b6560', marginBottom: '2px' }}>{selected.customer.email}</p>}
-              <p style={{ fontSize: '11px', color: '#6b6560', marginBottom: '2px' }}>{selected.customer.address}</p>
-              <p style={{ fontSize: '11px', color: '#6b6560' }}>{selected.customer.city}, {selected.customer.wilaya}</p>
-              {selected.customer.notes && <p style={{ fontSize: '11px', color: '#c9a96e', marginTop: '6px', fontStyle: 'italic' }}>Note: {selected.customer.notes}</p>}
+              <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Client</p>
+              <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--foreground)', marginBottom: '4px' }}>{selected.customer.firstName} {selected.customer.lastName}</p>
+              <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '2px' }}>{selected.customer.phone}</p>
+              {selected.customer.email && <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '2px' }}>{selected.customer.email}</p>}
+              <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '2px' }}>{selected.customer.address}</p>
+              <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{selected.customer.city}, {selected.customer.wilaya}</p>
+              {selected.customer.notes && <p style={{ fontSize: '11px', color: 'var(--accent)', marginTop: '6px', fontStyle: 'italic' }}>Note: {selected.customer.notes}</p>}
             </div>
             <div style={{ padding: '14px 18px', borderBottom: '1px solid #111' }}>
-              <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Articles</p>
+              <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '8px' }}>Articles</p>
               {selected.items.map((it, i) => (
                 <div key={i} style={{ marginBottom: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '11px', color: '#f5f0eb' }}>{it.name} × {it.qty}</span>
-                    <span style={{ fontSize: '11px', color: '#c9a96e' }}>{fmt(it.priceNum * it.qty)}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--foreground)' }}>{it.name} × {it.qty}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--accent)' }}>{fmt(it.priceNum * it.qty)}</span>
                   </div>
                   {(it.size || it.color) && (
                     <div style={{ display: 'flex', gap: '5px', marginTop: '3px' }}>
-                      {it.size && <span style={{ fontSize: '8px', padding: '1px 6px', border: '1px solid #2a2520', color: '#6b6560', letterSpacing: '.1em' }}>{it.size}</span>}
-                      {it.color && <span style={{ fontSize: '8px', padding: '1px 6px', border: '1px solid rgba(201,169,110,.3)', color: '#c9a96e', letterSpacing: '.1em' }}>{it.color}</span>}
+                      {it.size && <span style={{ fontSize: '8px', padding: '1px 6px', border: '1px solid var(--border)', color: 'var(--muted)', letterSpacing: '.1em' }}>{it.size}</span>}
+                      {it.color && <span style={{ fontSize: '8px', padding: '1px 6px', border: '1px solid rgba(201,169,110,.3)', color: 'var(--accent)', letterSpacing: '.1em' }}>{it.color}</span>}
                     </div>
                   )}
                 </div>
               ))}
-              <div style={{ borderTop: '1px solid #1a1a14', marginTop: '8px', paddingTop: '8px' }}>
+              <div style={{ borderTop: '1px solid var(--border)', marginTop: '8px', paddingTop: '8px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '10px', color: '#6b6560' }}>Livraison</span>
-                  <span style={{ fontSize: '10px', color: selected.delivery === 0 ? '#4ade80' : '#f5f0eb' }}>{selected.delivery === 0 ? 'Gratuite' : fmt(selected.delivery)}</span>
+                  <span style={{ fontSize: '10px', color: 'var(--muted)' }}>Livraison</span>
+                  <span style={{ fontSize: '10px', color: selected.delivery === 0 ? '#4ade80' : 'var(--foreground)' }}>{selected.delivery === 0 ? 'Gratuite' : fmt(selected.delivery)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '10px', color: '#6b6560' }}>Total</span>
-                  <span style={{ fontFamily: 'Georgia, serif', color: '#c9a96e' }}>{fmt(selected.total)}</span>
+                  <span style={{ fontSize: '10px', color: 'var(--muted)' }}>Total</span>
+                  <span style={{ fontFamily: 'var(--font-serif)', color: 'var(--accent)' }}>{fmt(selected.total)}</span>
                 </div>
               </div>
             </div>
             <div style={{ padding: '14px 18px' }}>
-              <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '10px' }}>Changer le statut</p>
+              <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '10px' }}>Changer le statut</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                 {ALL_STATUSES.map(s => (
                   <button key={s} onClick={() => { updateOrderStatus(selected.id, s); setSelected(prev => prev ? { ...prev, status: s } : prev); if (s === 'delivered') setCelebrating(true); }}
                     style={{
                       padding: '9px 10px', fontSize: '9px', letterSpacing: '.1em', textTransform: 'uppercase',
                       background: selected.status === s ? `${STATUS_COLORS[s]}18` : 'none',
-                      border: `1px solid ${selected.status === s ? STATUS_COLORS[s] : '#1a1a14'}`,
-                      color: selected.status === s ? STATUS_COLORS[s] : '#6b6560',
+                      border: `1px solid ${selected.status === s ? STATUS_COLORS[s] : 'var(--border)'}`,
+                      color: selected.status === s ? STATUS_COLORS[s] : 'var(--muted)',
                       cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s',
                       display: 'flex', alignItems: 'center', gap: '6px',
                     }}>

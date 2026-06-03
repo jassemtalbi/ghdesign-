@@ -78,13 +78,13 @@ export default function AdminNotifications() {
       {/* Bell */}
       <div ref={panelRef} style={{ position: 'relative' }}>
         <button onClick={() => { setOpen(o => !o); setUnread(0); }}
-          style={{ position: 'relative', background: 'none', border: '1px solid #1a1a14', padding: '7px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', color: unread > 0 ? '#c9a96e' : '#6b6560', transition: 'all .2s' }}>
+          style={{ position: 'relative', background: 'none', border: '1px solid var(--border)', padding: '7px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', color: unread > 0 ? 'var(--accent)' : 'var(--muted)', transition: 'all .2s' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
             <path d="M13.73 21a2 2 0 01-3.46 0"/>
           </svg>
           {unread > 0 && (
-            <span style={{ position: 'absolute', top: '-6px', right: '-6px', width: '18px', height: '18px', background: '#c9a96e', borderRadius: '50%', fontSize: '9px', fontWeight: 700, color: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <span style={{ position: 'absolute', top: '-6px', right: '-6px', width: '18px', height: '18px', background: 'var(--accent)', borderRadius: '50%', fontSize: '9px', fontWeight: 700, color: 'var(--background)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               {unread > 9 ? '9+' : unread}
             </span>
           )}
@@ -92,23 +92,23 @@ export default function AdminNotifications() {
 
         {/* Dropdown */}
         {open && (
-          <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 8px)', width: '300px', maxHeight: '380px', background: '#0d0d0d', border: '1px solid #1a1a14', zIndex: 100, overflowY: 'auto', boxShadow: '0 8px 32px rgba(0,0,0,.6)' }}>
-            <div style={{ padding: '12px 16px', borderBottom: '1px solid #1a1a14', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: '#c9a96e' }}>Notifications</p>
+          <div style={{ position: 'absolute', right: 0, top: 'calc(100% + 8px)', width: '300px', maxHeight: '380px', background: 'var(--surface)', border: '1px solid var(--border)', zIndex: 100, overflowY: 'auto', boxShadow: '0 8px 32px rgba(0,0,0,.6)' }}>
+            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--accent)' }}>Notifications</p>
               {notifs.length > 0 && (
-                <button onClick={() => setNotifs([])} style={{ fontSize: '8px', color: '#6b6560', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Effacer</button>
+                <button onClick={() => setNotifs([])} style={{ fontSize: '8px', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', letterSpacing: '.1em', textTransform: 'uppercase' }}>Effacer</button>
               )}
             </div>
             {notifs.length === 0 ? (
-              <p style={{ padding: '24px', textAlign: 'center', fontSize: '11px', color: '#444' }}>Aucune notification</p>
+              <p style={{ padding: '24px', textAlign: 'center', fontSize: '11px', color: 'var(--muted)' }}>Aucune notification</p>
             ) : notifs.map(n => (
               <div key={n.id} style={{ padding: '12px 16px', borderBottom: '1px solid #111', display: 'flex', gap: '10px' }}>
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#c9a96e', flexShrink: 0, marginTop: '4px' }} />
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', flexShrink: 0, marginTop: '4px' }} />
                 <div>
-                  <p style={{ fontFamily: 'Georgia, serif', fontSize: '.85rem', color: '#f5f0eb', marginBottom: '2px' }}>Nouvelle commande 🎉</p>
-                  <p style={{ fontSize: '10px', color: '#6b6560', marginBottom: '2px' }}>{n.customer} · {n.city}, {n.wilaya}</p>
-                  <p style={{ fontSize: '10px', color: '#c9a96e' }}>{fmt(n.total)}</p>
-                  <p style={{ fontSize: '9px', color: '#333', marginTop: '2px' }}>{new Date(n.createdAt).toLocaleTimeString('fr-TN')}</p>
+                  <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.85rem', color: 'var(--foreground)', marginBottom: '2px' }}>Nouvelle commande 🎉</p>
+                  <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '2px' }}>{n.customer} · {n.city}, {n.wilaya}</p>
+                  <p style={{ fontSize: '10px', color: 'var(--accent)' }}>{fmt(n.total)}</p>
+                  <p style={{ fontSize: '9px', color: 'var(--muted)', marginTop: '2px' }}>{new Date(n.createdAt).toLocaleTimeString('fr-TN')}</p>
                 </div>
               </div>
             ))}
@@ -118,19 +118,19 @@ export default function AdminNotifications() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ position: 'fixed', top: '24px', right: '24px', zIndex: 9999, background: '#0d0d0d', border: '1px solid #c9a96e', padding: '16px 20px', width: '300px', boxShadow: '0 0 32px rgba(201,169,110,.2)', animation: 'slideIn .4s ease' }}>
+        <div style={{ position: 'fixed', top: '24px', right: '24px', zIndex: 9999, background: 'var(--surface)', border: '1px solid var(--accent)', padding: '16px 20px', width: '300px', boxShadow: '0 0 32px rgba(201,169,110,.2)', animation: 'slideIn .4s ease' }}>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '20px' }}>🛍️</span>
             <div style={{ flex: 1 }}>
-              <p style={{ fontFamily: 'Georgia, serif', fontSize: '.9rem', color: '#c9a96e', marginBottom: '4px' }}>Nouvelle commande !</p>
-              <p style={{ fontSize: '11px', color: '#f5f0eb', marginBottom: '2px' }}>{toast.customer}</p>
-              <p style={{ fontSize: '10px', color: '#6b6560', marginBottom: '4px' }}>{toast.city}, {toast.wilaya}</p>
-              <p style={{ fontSize: '11px', color: '#c9a96e', fontFamily: 'Georgia, serif' }}>{fmt(toast.total)}</p>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.9rem', color: 'var(--accent)', marginBottom: '4px' }}>Nouvelle commande !</p>
+              <p style={{ fontSize: '11px', color: 'var(--foreground)', marginBottom: '2px' }}>{toast.customer}</p>
+              <p style={{ fontSize: '10px', color: 'var(--muted)', marginBottom: '4px' }}>{toast.city}, {toast.wilaya}</p>
+              <p style={{ fontSize: '11px', color: 'var(--accent)', fontFamily: 'var(--font-serif)' }}>{fmt(toast.total)}</p>
             </div>
-            <button onClick={() => setToast(null)} style={{ background: 'none', border: 'none', color: '#6b6560', cursor: 'pointer', fontSize: '18px', lineHeight: 1, flexShrink: 0 }}>×</button>
+            <button onClick={() => setToast(null)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '18px', lineHeight: 1, flexShrink: 0 }}>×</button>
           </div>
-          <div style={{ height: '2px', background: '#1a1a14', marginTop: '12px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', background: '#c9a96e', animation: 'shrink 5s linear forwards' }} />
+          <div style={{ height: '2px', background: 'var(--border)', marginTop: '12px', overflow: 'hidden' }}>
+            <div style={{ height: '100%', background: 'var(--accent)', animation: 'shrink 5s linear forwards' }} />
           </div>
         </div>
       )}
