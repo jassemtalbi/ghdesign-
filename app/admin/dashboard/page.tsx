@@ -5,6 +5,7 @@ import { useAdmin } from '../../context/AdminContext';
 import AdminStats from './components/AdminStats';
 import AdminOrders from './components/AdminOrders';
 import AdminArticles from './components/AdminArticles';
+import AdminNotifications from './components/AdminNotifications';
 
 type Tab = 'stats' | 'orders' | 'articles';
 
@@ -110,6 +111,7 @@ export default function Dashboard() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 8px #4ade8066' }} />
               <span style={{ fontSize: '10px', color: '#6b6560', letterSpacing: '.1em' }}>En ligne</span>
+              <AdminNotifications />
               {/* Mobile logout */}
               <button onClick={logout} className="mobile-logout" style={{ background: 'none', border: '1px solid #1a1a14', color: '#6b6560', cursor: 'pointer', padding: '6px 10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '9px', letterSpacing: '.1em', textTransform: 'uppercase', fontFamily: 'inherit' }}>
                 <IconLogout />

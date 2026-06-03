@@ -70,7 +70,8 @@ type SortDir = 'asc' | 'desc';
 const PAGE_SIZE = 10;
 
 export default function AdminOrders() {
-  const { orders, updateOrderStatus } = useAdmin();
+  const { orders, updateOrderStatus, deleteOrder } = useAdmin();
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
   const [selected, setSelected] = useState<Order | null>(null);
   const [search, setSearch] = useState('');
@@ -257,7 +258,7 @@ export default function AdminOrders() {
             )}
 
             {paginated.map((o, i) => (
-              <div key={o.id} onClick={() => setSelected(o === selected ? null : o)}
+              <div key={o.id} onClick={() => { setSelected(o === selected ? null : o); setDeleteConfirm(false); }}
                 className="order-row"
                 style={{
                   display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.8fr 90px 110px',
@@ -340,9 +341,30 @@ export default function AdminOrders() {
           <div className="order-detail-panel" style={{ width: '300px', flexShrink: 0, background: '#0d0d0d', border: '1px solid #1a1a14', position: 'sticky', top: '90px' }}>
             <div style={{ padding: '16px 18px', borderBottom: '1px solid #1a1a14', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <p style={{ fontSize: '9px', letterSpacing: '.35em', textTransform: 'uppercase', color: '#c9a96e' }}>Détail · {selected.id}</p>
-              <button onClick={() => setSelected(null)} style={{ background: 'none', border: 'none', color: '#6b6560', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                {/* Delete button */}
+                {deleteConfirm ? (
+                  <>
+                    <button onClick={async () => { await deleteOrder(selected.id); setSelected(null); setDeleteConfirm(false); }}
+                      style={{ padding: '4px 10px', background: '#7f1d1d', border: '1px solid #f87171', color: '#fca5a5', fontSize: '8px', letterSpacing: '.1em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}>
+                      Confirmer
+                    </button>
+                    <button onClick={() => setDeleteConfirm(false)}
+                      style={{ padding: '4px 8px', background: 'none', border: '1px solid #1a1a14', color: '#6b6560', fontSize: '8px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                      Annuler
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={() => setDeleteConfirm(true)}
+                    style={{ background: 'none', border: '1px solid #1a1a14', color: '#f87171', cursor: 'pointer', padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '8px', letterSpacing: '.1em', textTransform: 'uppercase', fontFamily: 'inherit' }}>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    Supprimer
+                  </button>
+                )}
+                <button onClick={() => { setSelected(null); setDeleteConfirm(false); }} style={{ background: 'none', border: 'none', color: '#6b6560', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
             </div>
             <div style={{ padding: '14px 18px', borderBottom: '1px solid #111' }}>
               <p style={{ fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#6b6560', marginBottom: '8px' }}>Client</p>

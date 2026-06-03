@@ -35,6 +35,7 @@ type AdminCtx = {
   loading: boolean;
   addOrder: (o: Omit<Order, 'id' | 'createdAt' | 'status'>) => Promise<void>;
   updateOrderStatus: (id: string, status: OrderStatus) => Promise<void>;
+  deleteOrder: (id: string) => Promise<void>;
   addArticle: (a: Omit<Article, 'id' | 'createdAt'>) => Promise<void>;
   updateArticle: (id: string, updates: Partial<Article>) => Promise<void>;
   deleteArticle: (id: string) => Promise<void>;
@@ -76,6 +77,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     if (res.ok) setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
   }, []);
 
+  const deleteOrder = useCallback(async (id: string) => {
+    const res = await fetch(`/api/orders/${id}`, { method: 'DELETE' });
+    if (res.ok) setOrders(prev => prev.filter(o => o.id !== id));
+  }, []);
+
   const addArticle = useCallback(async (a: Omit<Article, 'id' | 'createdAt'>) => {
     const res = await fetch('/api/articles', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(a) });
     if (res.ok) { const article = await res.json(); setArticles(prev => [article, ...prev]); }
@@ -97,7 +103,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <Ctx.Provider value={{ orders, articles, loading, addOrder, updateOrderStatus, addArticle, updateArticle, deleteArticle, togglePublish, refresh: fetchAll }}>
+    <Ctx.Provider value={{ orders, articles, loading, addOrder, updateOrderStatus, deleteOrder, addArticle, updateArticle, deleteArticle, togglePublish, refresh: fetchAll }}>
       {children}
     </Ctx.Provider>
   );
