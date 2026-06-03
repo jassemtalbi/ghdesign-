@@ -24,7 +24,7 @@ export default function Footer() {
           {/* Brand column */}
           <div>
             <div style={{ marginBottom: '20px' }}>
-              <div className="text-gold" style={{ fontFamily: 'var(--font-sans)', fontSize: '2rem', letterSpacing: '.32em', fontWeight: 900, lineHeight: 1 }}>GH</div>
+              <div className="text-gold" style={{ fontFamily: 'var(--font-sans)', fontSize: '1.2rem', letterSpacing: '.32em', fontWeight: 900, lineHeight: 1 }}>GH</div>
               <div style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.46em', textTransform: 'uppercase', color: 'var(--muted)', marginTop: '4px', fontWeight: 400 }}>Design</div>
             </div>
             <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '.78rem', lineHeight: 1.9, color: 'var(--muted)', maxWidth: '175px', marginBottom: '24px' }}>

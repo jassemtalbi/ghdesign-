@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useCart } from '../context/CartContext';
 import { useAdmin } from '../context/AdminContext';
 
@@ -110,6 +111,7 @@ export default function Collections() {
                     {/* Image gallery */}
                     <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
                       {/* Current image */}
+                      <Link href={`/article/${p.id}`} style={{ display: 'block', width: '100%', height: '100%', position: 'absolute', inset: 0, zIndex: 1 }} />
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={allImages[activeImg[p.id] ?? 0]} alt={p.name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'opacity .3s' }}
