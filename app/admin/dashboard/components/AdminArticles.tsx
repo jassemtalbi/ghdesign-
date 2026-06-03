@@ -21,7 +21,7 @@ const TAGS = ['Bestseller', 'New', 'Limited', 'Exclusive', 'Just Arrived', 'Sale
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL'];
 const PRESET_COLORS = ['Noir', 'Blanc', 'Beige', 'Doré', 'Rouge', 'Bleu', 'Vert', 'Rose', 'Bordeaux', 'Gris'];
 
-const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', published: true };
+const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', description: '', published: true };
 
 export default function AdminArticles() {
   const { articles, addArticle, updateArticle, deleteArticle, togglePublish } = useAdmin();
@@ -47,7 +47,7 @@ export default function AdminArticles() {
 
   const openEdit = (a: Article) => {
     setEditing(a);
-    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, images: a.images || [], sizes: a.sizes || [], colors: a.colors || [], colorInput: '', published: a.published });
+    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, images: a.images || [], sizes: a.sizes || [], colors: a.colors || [], colorInput: '', description: a.description || '', published: a.published });
     setErrors({});
     setShowForm(true);
   };
@@ -113,7 +113,7 @@ export default function AdminArticles() {
     const formatted = `${num.toLocaleString('fr-FR').replace(/\s/g, ',')} TND`;
     const { colorInput, ...rest } = form;
     const finalImages = form.images.length > 0 ? form.images : (form.image ? [form.image] : []);
-    const payload = { ...rest, priceNum: num, price: formatted, image: finalImages[0] || '', images: finalImages };
+    const payload = { ...rest, priceNum: num, price: formatted, image: finalImages[0] || '', images: finalImages, description: form.description || '' };
     if (editing) {
       await updateArticle(editing.id, payload);
     } else {
@@ -240,7 +240,7 @@ export default function AdminArticles() {
           <div onClick={() => setShowForm(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.8)', zIndex: 50 }} />
           <div className="article-modal" style={{
             position: 'fixed', zIndex: 51, top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-            width: 'min(560px, 96vw)', maxHeight: '90vh', background: 'var(--surface)', border: '1px solid var(--border)',
+            width: 'min(760px, 96vw)', maxHeight: '92vh', background: 'var(--surface)', border: '1px solid var(--border)',
             display: 'flex', flexDirection: 'column', overflow: 'hidden',
           }}>
             {/* Header */}
@@ -328,6 +328,15 @@ export default function AdminArticles() {
                   <input value={form.price} onChange={e => { setForm(p => ({ ...p, price: e.target.value })); setErrors(p => ({ ...p, price: '' })); }} placeholder="ex: 79000" style={inp(!!errors.price)} />
                   {errors.price && <p style={{ fontSize: '11px', color: '#e07070', marginTop: '3px' }}>{errors.price}</p>}
                 </div>
+              </div>
+
+              {/* Description */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '6px' }}>Description</label>
+                <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
+                  placeholder="Décrivez l'article, le tissu, les détails de coupe..."
+                  rows={3}
+                  style={{ ...inp(), resize: 'vertical', lineHeight: 1.6 }} />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>

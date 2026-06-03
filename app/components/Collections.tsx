@@ -110,7 +110,7 @@ export default function Collections() {
 
                     {/* Image gallery */}
                     <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
-                      {/* Current image */}
+                      {/* Clickable image → detail page (behind arrows) */}
                       <Link href={`/article/${p.id}`} style={{ display: 'block', width: '100%', height: '100%', position: 'absolute', inset: 0, zIndex: 1 }} />
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={allImages[activeImg[p.id] ?? 0]} alt={p.name}
@@ -119,19 +119,19 @@ export default function Collections() {
                       />
                       <div className="card-overlay" />
 
-                      {/* Arrows */}
+                      {/* Arrows — z-index above the Link overlay */}
                       {allImages.length > 1 && (
                         <>
                           <button onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: ((prev[p.id] ?? 0) - 1 + allImages.length) % allImages.length })); }}
-                            style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)' }}>
+                            style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)', zIndex: 2 }}>
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
                           </button>
                           <button onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: ((prev[p.id] ?? 0) + 1) % allImages.length })); }}
-                            style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)' }}>
+                            style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)', zIndex: 2 }}>
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
                           </button>
                           {/* Dots */}
-                          <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px' }}>
+                          <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', zIndex: 2 }}>
                             {allImages.map((_, idx) => (
                               <div key={idx} onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: idx })); }}
                                 style={{ width: '5px', height: '5px', borderRadius: '50%', background: idx === (activeImg[p.id] ?? 0) ? 'var(--accent)' : 'rgba(255,255,255,.5)', cursor: 'pointer', transition: 'background .2s' }} />
@@ -140,7 +140,7 @@ export default function Collections() {
                         </>
                       )}
 
-                      <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)' }}>
+                      <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)', zIndex: 2 }}>
                         <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
                       </div>
                     </div>
@@ -151,6 +151,7 @@ export default function Collections() {
                         <div style={{ minWidth: 0 }}>
                           <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px', fontWeight: 600 }}>{p.category}</p>
                           <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
+                          {p.description && <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--muted)', marginTop: '5px', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{p.description}</p>}
                         </div>
                         <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.92rem', fontWeight: 700, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
                       </div>

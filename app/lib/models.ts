@@ -8,9 +8,10 @@ const ArticleSchema = new Schema({
   tag:       { type: String, required: true },
   image:     { type: String, required: true },
   images:    { type: [String], default: [] },
-  sizes:     { type: [String], default: [] },
-  colors:    { type: [String], default: [] },
-  published: { type: Boolean, default: false },
+  sizes:       { type: [String], default: [] },
+  colors:      { type: [String], default: [] },
+  description: { type: String, default: '' },
+  published:   { type: Boolean, default: false },
   createdAt: { type: String, default: () => new Date().toISOString() },
 });
 

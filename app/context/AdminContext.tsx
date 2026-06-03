@@ -25,6 +25,7 @@ export type Article = {
   images: string[];
   sizes: string[];
   colors: string[];
+  description: string;
   published: boolean;
   createdAt: string;
 };
