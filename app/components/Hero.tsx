@@ -24,7 +24,7 @@ export default function Hero() {
   });
 
   return (
-    <section ref={ref} style={{ position: 'relative', width: '100%', height: '100vh', minHeight: '600px', overflow: 'hidden', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <section ref={ref} style={{ position: 'relative', width: '100%',marginTop: '60px', height: '100vh', minHeight: '600px', overflow: 'hidden', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 
       {/* Parallax bg */}
       <div style={{ position: 'absolute', inset: 0, transform: `translateY(${sy * .3}px)` }}>
@@ -54,11 +54,11 @@ export default function Hero() {
       <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '0 24px', maxWidth: '900px', width: '100%', margin: '0 auto' }}>
 
         {/* Pre-title */}
-        <div style={{ ...show(200), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '28px' }}>
+        {/* <div style={{ ...show(200), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '28px' }}>
           <div style={{ width: '36px', height: '1px', background: 'var(--accent)' }} />
           <span style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.5em', textTransform: 'uppercase', color: 'var(--accent)' }}>Collection 2025</span>
           <div style={{ width: '36px', height: '1px', background: 'var(--accent)' }} />
-        </div>
+        </div> */}
 
         {/* Heading */}
         <h1 style={{ ...show(420), fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(2.6rem,8.5vw,7.5rem)', lineHeight: 1.06, letterSpacing: '.02em', marginBottom: '22px' }}>
@@ -72,7 +72,7 @@ export default function Hero() {
         </p>
 
         {/* CTAs */}
-        <div style={{ ...show(860), display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
+        <div style={{ ...show(860), display: 'flex', marginBottom: '74px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
           <a href="#collections" className="btn-gold">Explore Collection</a>
           <a href="#about" className="btn-light">Our Story</a>
         </div>
