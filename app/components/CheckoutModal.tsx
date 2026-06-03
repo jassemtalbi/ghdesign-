@@ -296,11 +296,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
               Merci, {form.firstName} {form.lastName}
             </p>
             <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: '.85rem', color: 'var(--muted)', lineHeight: 1.9, maxWidth: '400px', marginBottom: '28px' }}>
-              Votre commande a été reçue. Notre équipe vous contactera au{' '}
-              <span style={{ color: 'var(--foreground)' }}>{form.phone}</span>{' '}
-              pour confirmer la livraison à{' '}
-              <span style={{ color: 'var(--foreground)' }}>{form.city}, {form.wilaya}</span>.<br/>
-              Délai estimé : <span style={{ color: 'var(--accent)' }}>3–5 jours ouvrables</span>
+              Votre commande a été reçue. Livraison à{' '}
+              <span style={{ color: 'var(--foreground)' }}>{form.city}, {form.wilaya}</span>.
             </p>
 
             <div style={{ width: '100%', maxWidth: '380px', padding: '16px 18px', border: '1px solid var(--border)', marginBottom: '28px', textAlign: 'left' }}>
