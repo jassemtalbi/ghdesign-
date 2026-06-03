@@ -7,6 +7,7 @@ const ArticleSchema = new Schema({
   priceNum:  { type: Number, required: true },
   tag:       { type: String, required: true },
   image:     { type: String, required: true },
+  images:    { type: [String], default: [] },
   sizes:     { type: [String], default: [] },
   colors:    { type: [String], default: [] },
   published: { type: Boolean, default: false },

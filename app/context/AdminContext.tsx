@@ -22,6 +22,7 @@ export type Article = {
   priceNum: number;
   tag: string;
   image: string;
+  images: string[];
   sizes: string[];
   colors: string[];
   published: boolean;

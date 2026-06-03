@@ -9,7 +9,7 @@ export default function Collections() {
   const ref = useRef<HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [added, setAdded] = useState<string | null>(null);
-  // per-card selected size & color: { [articleId]: { size, color } }
+  const [activeImg, setActiveImg] = useState<Record<string, number>>({});
   const [selections, setSelections] = useState<Record<string, { size: string; color: string }>>({});
   const { addItem } = useCart();
   const { articles, loading } = useAdmin();
@@ -101,19 +101,43 @@ export default function Collections() {
               const isAdded = added === cartKey;
               const hasSizes = p.sizes?.length > 0;
               const hasColors = p.colors?.length > 0;
+              const allImages = (p.images && p.images.length > 0) ? p.images : (p.image ? [p.image] : []);
 
               return (
                 <div key={p.id} style={{ transitionDelay: `${i * 80}ms` }}>
-                  <div style={{ position: 'relative', background: 'var(--surface)', overflow: 'hidden' }}>
+                  <div style={{ position: 'relative', background: 'var(--surface)' }}>
 
-                    {/* Image */}
+                    {/* Image gallery */}
                     <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
+                      {/* Current image */}
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={p.image} alt={p.name}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)', display: 'block' }}
+                      <img src={allImages[activeImg[p.id] ?? 0]} alt={p.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'opacity .3s' }}
                         className="pimg"
                       />
                       <div className="card-overlay" />
+
+                      {/* Arrows */}
+                      {allImages.length > 1 && (
+                        <>
+                          <button onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: ((prev[p.id] ?? 0) - 1 + allImages.length) % allImages.length })); }}
+                            style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)' }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+                          </button>
+                          <button onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: ((prev[p.id] ?? 0) + 1) % allImages.length })); }}
+                            style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)' }}>
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                          </button>
+                          {/* Dots */}
+                          <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px' }}>
+                            {allImages.map((_, idx) => (
+                              <div key={idx} onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: idx })); }}
+                                style={{ width: '5px', height: '5px', borderRadius: '50%', background: idx === (activeImg[p.id] ?? 0) ? 'var(--accent)' : 'rgba(255,255,255,.5)', cursor: 'pointer', transition: 'background .2s' }} />
+                            ))}
+                          </div>
+                        </>
+                      )}
+
                       <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)' }}>
                         <span style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
                       </div>
@@ -197,8 +221,9 @@ export default function Collections() {
       </div>
 
       <style jsx>{`
-        .pimg:hover, div:hover .pimg { transform: scale(1.07); }
+        .pimg:hover { transform: scale(1.04); }
         .qadd:hover { border-color: var(--accent) !important; color: var(--foreground) !important; }
+        div::-webkit-scrollbar { display: none !important; height: 0 !important; }
       `}</style>
     </section>
   );

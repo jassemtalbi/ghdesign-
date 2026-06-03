@@ -21,7 +21,7 @@ const TAGS = ['Bestseller', 'New', 'Limited', 'Exclusive', 'Just Arrived', 'Sale
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const PRESET_COLORS = ['Noir', 'Blanc', 'Beige', 'Doré', 'Rouge', 'Bleu', 'Vert', 'Rose', 'Bordeaux', 'Gris'];
 
-const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', sizes: [] as string[], colors: [] as string[], colorInput: '', published: true };
+const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', published: true };
 
 export default function AdminArticles() {
   const { articles, addArticle, updateArticle, deleteArticle, togglePublish } = useAdmin();
@@ -47,42 +47,60 @@ export default function AdminArticles() {
 
   const openEdit = (a: Article) => {
     setEditing(a);
-    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, sizes: a.sizes || [], colors: a.colors || [], colorInput: '', published: a.published });
+    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, images: a.images || [], sizes: a.sizes || [], colors: a.colors || [], colorInput: '', published: a.published });
     setErrors({});
     setShowForm(true);
   };
 
-  const handleFile = (file: File) => {
-    if (!file.type.startsWith('image/')) {
-      setErrors(p => ({ ...p, image: 'Fichier invalide — choisir une image (JPG, PNG, WEBP)' }));
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = e => {
-      const result = e.target?.result as string;
-      setForm(p => ({ ...p, image: result }));
-      setErrors(p => ({ ...p, image: '' }));
-    };
-    reader.readAsDataURL(file);
+  const [uploading, setUploading] = useState(false);
+
+  const uploadOne = (file: File): Promise<string | null> => {
+    return new Promise((resolve) => {
+      if (!file.type.startsWith('image/')) { resolve(null); return; }
+      const reader = new FileReader();
+      reader.onload = async e => {
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: e.target?.result }),
+          });
+          const { url } = await res.json();
+          resolve(url);
+        } catch { resolve(null); }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
+  const handleFiles = async (files: FileList) => {
+    setUploading(true);
+    const urls = (await Promise.all(Array.from(files).map(uploadOne))).filter(Boolean) as string[];
+    setForm(p => {
+      const merged = [...p.images, ...urls.filter(u => !p.images.includes(u))];
+      return { ...p, images: merged, image: p.image || merged[0] || '' };
+    });
+    setErrors(p => ({ ...p, image: '' }));
+    setUploading(false);
+  };
+
+  const handleFile = (file: File) => handleFiles({ length: 1, 0: file, item: () => file, [Symbol.iterator]: [][Symbol.iterator] } as unknown as FileList);
+
   const onFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
+    if (e.target.files?.length) handleFiles(e.target.files);
   };
 
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) handleFile(file);
+    if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files);
   };
 
   const validate = () => {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = 'Requis';
     if (!form.price.trim()) e.price = 'Requis';
-    if (!form.image) e.image = 'Veuillez choisir une image';
+    if (form.images.length === 0 && !form.image) e.image = 'Veuillez choisir une image';
     const num = parseFloat(form.price.replace(/[^0-9.]/g, ''));
     if (isNaN(num) || num <= 0) e.price = 'Prix invalide';
     setErrors(e);
@@ -94,10 +112,12 @@ export default function AdminArticles() {
     const num = Math.round(parseFloat(form.price.replace(/[^0-9.]/g, '')));
     const formatted = `${num.toLocaleString('fr-FR').replace(/\s/g, ',')} TND`;
     const { colorInput, ...rest } = form;
+    const finalImages = form.images.length > 0 ? form.images : (form.image ? [form.image] : []);
+    const payload = { ...rest, priceNum: num, price: formatted, image: finalImages[0] || '', images: finalImages };
     if (editing) {
-      await updateArticle(editing.id, { ...rest, priceNum: num, price: formatted });
+      await updateArticle(editing.id, payload);
     } else {
-      await addArticle({ ...rest, priceNum: num, price: formatted });
+      await addArticle(payload);
     }
     setShowForm(false);
   };
@@ -251,42 +271,49 @@ export default function AdminArticles() {
                     background: dragging ? 'rgba(201,169,110,.05)' : '#111',
                     cursor: 'pointer', transition: 'all .2s',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    minHeight: form.image ? '0' : '140px', padding: form.image ? '0' : '24px',
+                    minHeight: form.images.length === 0 ? '140px' : '60px', padding: '24px',
                     position: 'relative', overflow: 'hidden',
                   }}>
-
-                  {form.image ? (
-                    <div style={{ position: 'relative', width: '100%', height: '200px' }}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={form.image} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity .2s' }}
-                        onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-                        onMouseLeave={e => (e.currentTarget.style.opacity = '0')}>
-                        <p style={{ fontSize: '11px', color: '#f5f0eb', letterSpacing: '.2em', textTransform: 'uppercase' }}>Changer l'image</p>
-                      </div>
-                    </div>
-                  ) : (
+                  {uploading ? (
+                    <p style={{ fontSize: '11px', color: '#c9a96e', letterSpacing: '.2em' }}>Envoi en cours...</p>
+                  ) : form.images.length === 0 ? (
                     <>
                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b6560" strokeWidth="1.5" style={{ marginBottom: '12px' }}>
                         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
                         <polyline points="17 8 12 3 7 8"/>
                         <line x1="12" y1="3" x2="12" y2="15"/>
                       </svg>
-                      <p style={{ fontSize: '12px', color: '#6b6560', marginBottom: '4px' }}>Glissez une image ici</p>
+                      <p style={{ fontSize: '12px', color: '#6b6560', marginBottom: '4px' }}>Glissez vos images ici</p>
                       <p style={{ fontSize: '10px', color: '#444' }}>ou cliquez pour choisir depuis votre PC</p>
-                      <p style={{ fontSize: '9px', color: '#333', marginTop: '6px' }}>JPG, PNG, WEBP</p>
+                      <p style={{ fontSize: '9px', color: '#333', marginTop: '6px' }}>JPG, PNG, WEBP — plusieurs images acceptées</p>
                     </>
+                  ) : (
+                    <p style={{ fontSize: '10px', color: '#6b6560' }}>+ Cliquer pour ajouter d'autres images</p>
                   )}
                 </div>
 
-                <input ref={fileRef} type="file" accept="image/*" onChange={onFileInput} style={{ display: 'none' }} />
+                <input ref={fileRef} type="file" accept="image/*" multiple onChange={onFileInput} style={{ display: 'none' }} />
                 {errors.image && <p style={{ fontSize: '10px', color: '#e07070', marginTop: '4px' }}>{errors.image}</p>}
 
-                {form.image && (
-                  <button onClick={() => { setForm(p => ({ ...p, image: '' })); if (fileRef.current) fileRef.current.value = ''; }}
-                    style={{ marginTop: '6px', fontSize: '9px', color: '#f87171', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '.1em', textTransform: 'uppercase' }}>
-                    ✕ Supprimer l'image
-                  </button>
+                {/* Multi-image grid */}
+                {form.images.length > 0 && (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))', gap: '6px', marginTop: '10px' }}>
+                    {form.images.map((img, idx) => (
+                      <div key={idx} style={{ position: 'relative', aspectRatio: '1', background: '#111', overflow: 'hidden' }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img} alt={`img-${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                        {idx === 0 && (
+                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '2px 4px', background: '#c9a96e', textAlign: 'center' }}>
+                            <span style={{ fontSize: '7px', color: '#0a0a0a', letterSpacing: '.1em', textTransform: 'uppercase', fontWeight: 700 }}>Principale</span>
+                          </div>
+                        )}
+                        <button type="button" onClick={() => setForm(p => ({ ...p, images: p.images.filter((_, i) => i !== idx), image: idx === 0 ? (p.images[1] || '') : p.image }))}
+                          style={{ position: 'absolute', top: '3px', right: '3px', width: '18px', height: '18px', background: 'rgba(0,0,0,.75)', border: 'none', color: '#f87171', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', borderRadius: '50%' }}>×</button>
+                      </div>
+                    ))}
+                    <button type="button" onClick={() => fileRef.current?.click()}
+                      style={{ aspectRatio: '1', background: 'none', border: '2px dashed #2a2520', color: '#6b6560', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>+</button>
+                  </div>
                 )}
               </div>
 
