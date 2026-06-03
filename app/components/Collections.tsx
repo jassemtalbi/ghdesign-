@@ -155,15 +155,15 @@ export default function Collections() {
 
                       {/* Size selector */}
                       {hasSizes && (
-                        <div style={{ marginBottom: '8px' }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '5px' }}>
+                        <div style={{ marginBottom: '10px' }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px' }}>
                             Taille {sel.size && <span style={{ color: 'var(--accent)' }}>· {sel.size}</span>}
                           </p>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                             {p.sizes.map(s => (
                               <button key={s} onClick={() => setSel(p.id, 'size', sel.size === s ? '' : s)}
                                 style={{
-                                  fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '3px 9px',
+                                  fontFamily: 'var(--font-sans)', fontSize: '10px', padding: '6px 14px',
                                   background: sel.size === s ? 'var(--accent)' : 'none',
                                   border: `1px solid ${sel.size === s ? 'var(--accent)' : 'var(--border)'}`,
                                   color: sel.size === s ? '#0a0a0a' : 'var(--muted)',
@@ -176,15 +176,15 @@ export default function Collections() {
 
                       {/* Color selector */}
                       {hasColors && (
-                        <div style={{ marginBottom: '10px' }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '5px' }}>
+                        <div style={{ marginBottom: '12px' }}>
+                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px' }}>
                             Couleur {sel.color && <span style={{ color: 'var(--accent)' }}>· {sel.color}</span>}
                           </p>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                             {p.colors.map(c => (
                               <button key={c} onClick={() => setSel(p.id, 'color', sel.color === c ? '' : c)}
                                 style={{
-                                  fontFamily: 'var(--font-sans)', fontSize: '8px', padding: '3px 10px',
+                                  fontFamily: 'var(--font-sans)', fontSize: '10px', padding: '6px 14px',
                                   background: sel.color === c ? 'rgba(201,169,110,.12)' : 'none',
                                   border: `1px solid ${sel.color === c ? 'var(--accent)' : 'var(--border)'}`,
                                   color: sel.color === c ? 'var(--accent)' : 'var(--muted)',
