@@ -80,8 +80,7 @@ export default function Hero() {
 
       {/* Scroll indicator */}
       <div style={{ position: 'absolute', bottom: '80px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', ...show(1100) }}>
-        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.4em', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600 }}>Scroll</span>
-        <div style={{ width: '1px', height: '44px', overflow: 'hidden', background: 'rgba(184,146,74,.2)', position: 'relative' }}>
+<div style={{ width: '1px', height: '44px', overflow: 'hidden', background: 'rgba(184,146,74,.2)', position: 'relative' }}>
           <div className="scroll-line" />
         </div>
       </div>
