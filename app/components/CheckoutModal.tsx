@@ -19,8 +19,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
   const { addOrder, articles } = useAdmin();
 
   const subtotal = items.reduce((s, it) => s + it.priceNum * it.qty, 0);
-  const delivery  = subtotal >= 100000 ? 0 : 8000;
-  const grandTotal = subtotal + delivery;
+  const delivery  = 0;
+  const grandTotal = subtotal;
 
   const [step, setStep] = useState<Step>('form');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -60,6 +60,17 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
     if (!form.address.trim()) e.address = 'Requis';
     if (!form.city.trim())    e.city    = 'Requis';
     if (!form.wilaya)         e.wilaya  = 'Requis';
+
+    // Validate size & color per item
+    items.forEach(item => {
+      const article = getArticle(item.id);
+      const sel = getSel(item.cartKey);
+      if ((article?.sizes?.length ?? 0) > 0 && !sel.size)
+        e[`size_${item.cartKey}`] = `Veuillez choisir une taille pour "${item.name}"`;
+      if ((article?.colors?.length ?? 0) > 0 && !sel.color)
+        e[`color_${item.cartKey}`] = `Veuillez choisir une couleur pour "${item.name}"`;
+    });
+
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -182,16 +193,16 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                       const hasColors = (article?.colors?.length ?? 0) > 0;
                       if (!hasSizes && !hasColors) return null;
                       return (
-                        <div key={item.cartKey} style={{ marginBottom: '14px', padding: '12px 14px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                        <div key={item.cartKey} style={{ marginBottom: '14px', padding: '12px 14px', background: 'var(--surface)', border: `1px solid ${errors[`size_${item.cartKey}`] || errors[`color_${item.cartKey}`] ? '#c05050' : 'var(--border)'}` }}>
                           <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--foreground)', marginBottom: '10px' }}>{item.name}</p>
                           {hasSizes && (
                             <div style={{ marginBottom: '10px' }}>
-                              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '6px' }}>
-                                Taille {sel.size && <span style={{ color: 'var(--accent)' }}>· {sel.size}</span>}
+                              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.28em', textTransform: 'uppercase', color: errors[`size_${item.cartKey}`] ? '#e07070' : 'var(--muted)', marginBottom: '6px' }}>
+                                Taille * {sel.size && <span style={{ color: 'var(--accent)' }}>· {sel.size}</span>}
                               </p>
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
                                 {article!.sizes.map(s => (
-                                  <button key={s} type="button" onClick={() => setSel(item.cartKey, 'size', sel.size === s ? '' : s)}
+                                  <button key={s} type="button" onClick={() => { setSel(item.cartKey, 'size', sel.size === s ? '' : s); setErrors(p => ({ ...p, [`size_${item.cartKey}`]: '' })); }}
                                     style={{
                                       fontFamily: 'var(--font-sans)', fontSize: '9px', padding: '5px 12px', cursor: 'pointer',
                                       background: sel.size === s ? 'var(--accent)' : 'none',
@@ -201,16 +212,17 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                                     }}>{s}</button>
                                 ))}
                               </div>
+                              {errors[`size_${item.cartKey}`] && <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: '#e07070', marginTop: '5px' }}>Veuillez choisir une taille</p>}
                             </div>
                           )}
                           {hasColors && (
                             <div>
-                              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '6px' }}>
-                                Couleur {sel.color && <span style={{ color: 'var(--accent)' }}>· {sel.color}</span>}
+                              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.28em', textTransform: 'uppercase', color: errors[`color_${item.cartKey}`] ? '#e07070' : 'var(--muted)', marginBottom: '6px' }}>
+                                Couleur * {sel.color && <span style={{ color: 'var(--accent)' }}>· {sel.color}</span>}
                               </p>
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
                                 {article!.colors.map(c => (
-                                  <button key={c} type="button" onClick={() => setSel(item.cartKey, 'color', sel.color === c ? '' : c)}
+                                  <button key={c} type="button" onClick={() => { setSel(item.cartKey, 'color', sel.color === c ? '' : c); setErrors(p => ({ ...p, [`color_${item.cartKey}`]: '' })); }}
                                     style={{
                                       fontFamily: 'var(--font-sans)', fontSize: '9px', padding: '5px 12px', cursor: 'pointer',
                                       background: sel.color === c ? 'rgba(184,146,74,.1)' : 'none',
@@ -220,6 +232,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                                     }}>{c}</button>
                                 ))}
                               </div>
+                              {errors[`color_${item.cartKey}`] && <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: '#e07070', marginTop: '5px' }}>Veuillez choisir une couleur</p>}
                             </div>
                           )}
                         </div>
