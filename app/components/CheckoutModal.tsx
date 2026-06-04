@@ -19,8 +19,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
   const { addOrder, articles } = useAdmin();
 
   const subtotal = items.reduce((s, it) => s + it.priceNum * it.qty, 0);
-  const delivery  = 0;
-  const grandTotal = subtotal;
+  const delivery: number = 8000;
+  const grandTotal = subtotal + delivery;
 
   const [step, setStep] = useState<Step>('form');
   const [errors, setErrors] = useState<Record<string, string>>({});
