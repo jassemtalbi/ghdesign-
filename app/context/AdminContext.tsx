@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 
-export type OrderStatus = 'pending' | 'confirmed' | 'no_response' | 'delivered' | 'cancelled';
+export type OrderStatus = 'pending' | 'confirmed' | 'no_response' | 'delivered' | 'cancelled' | 'traite';
 
 export type Order = {
   id: string;

@@ -57,12 +57,12 @@ function Celebration({ onDone }: { onDone: () => void }) {
 const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND';
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)', traite: '#a78bfa',
 };
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée',
+  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée', traite: 'Traité',
 };
-const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'delivered', 'cancelled'];
+const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'traite', 'delivered', 'cancelled'];
 
 type SortKey = 'date' | 'total' | 'status';
 type SortDir = 'asc' | 'desc';
@@ -408,14 +408,14 @@ export default function AdminOrders() {
                   <span style={{ width: '28px', height: '28px', background: 'rgba(74,222,128,.1)', border: '1px solid rgba(74,222,128,.25)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
                   </span>
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--foreground)' }}>{selected.customer.phone}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--foreground)', userSelect: 'text', cursor: 'text' }}>{selected.customer.phone}</span>
                 </a>
                 {selected.customer.email && (
                   <a href={`mailto:${selected.customer.email}`} style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
                     <span style={{ width: '28px', height: '28px', background: 'rgba(96,165,250,.1)', border: '1px solid rgba(96,165,250,.25)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                     </span>
-                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#60a5fa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selected.customer.email}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#60a5fa', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', userSelect: 'text', cursor: 'text' }}>{selected.customer.email}</span>
                   </a>
                 )}
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
