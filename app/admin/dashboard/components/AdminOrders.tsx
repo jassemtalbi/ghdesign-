@@ -67,7 +67,7 @@ const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'tra
 type SortKey = 'date' | 'total' | 'status';
 type SortDir = 'asc' | 'desc';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 50;
 
 export default function AdminOrders() {
   const { orders, updateOrderStatus, deleteOrder } = useAdmin();
