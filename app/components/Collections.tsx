@@ -31,11 +31,13 @@ export default function Collections() {
     return () => obs.disconnect();
   }, [articles, activeTab]);
 
+  const pinFirst = (arr: typeof published) => [...arr].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
   const filtered = activeTab === 0
-    ? published
+    ? pinFirst(published)
     : activeTab === 1
-    ? [...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6)
-    : published.filter(p => p.category.toLowerCase().includes(tabs[activeTab].toLowerCase()));
+    ? pinFirst([...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6))
+    : pinFirst(published.filter(p => p.category.toLowerCase().includes(tabs[activeTab].toLowerCase())));
 
   const getSel = (id: string) => selections[id] || { size: '', color: '' };
 

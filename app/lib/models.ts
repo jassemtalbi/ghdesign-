@@ -11,6 +11,7 @@ const ArticleSchema = new Schema({
   sizes:       { type: [String], default: [] },
   colors:      { type: [String], default: [] },
   description: { type: String, default: '' },
+  pinned:      { type: Boolean, default: false },
   published:   { type: Boolean, default: false },
   createdAt: { type: String, default: () => new Date().toISOString() },
 });

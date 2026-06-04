@@ -21,10 +21,10 @@ const TAGS = ['Bestseller', 'New', 'Limited', 'Exclusive', 'Just Arrived', 'Sale
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL'];
 const PRESET_COLORS = ['Noir', 'Blanc', 'Beige', 'Doré', 'Rouge', 'Bleu', 'Vert', 'Rose', 'Bordeaux', 'Gris'];
 
-const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', description: '', published: true };
+const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', description: '', pinned: false, published: true };
 
 export default function AdminArticles() {
-  const { articles, addArticle, updateArticle, deleteArticle, togglePublish } = useAdmin();
+  const { articles, addArticle, updateArticle, deleteArticle, togglePublish, togglePin } = useAdmin();
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Article | null>(null);
   const [form, setForm] = useState(emptyForm);
@@ -48,7 +48,7 @@ export default function AdminArticles() {
 
   const openEdit = (a: Article) => {
     setEditing(a);
-    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, images: a.images || [], sizes: a.sizes || [], colors: a.colors || [], colorInput: '', description: a.description || '', published: a.published });
+    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, images: a.images || [], sizes: a.sizes || [], colors: a.colors || [], colorInput: '', description: a.description || '', pinned: a.pinned ?? false, published: a.published });
     setErrors({});
     setShowForm(true);
   };
@@ -186,6 +186,14 @@ export default function AdminArticles() {
               )}
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.1) 55%, transparent 100%)' }} />
 
+              {/* Pin badge */}
+              {a.pinned && (
+                <div style={{ position: 'absolute', top: '12px', left: '50%', transform: 'translateX(-50%)', padding: '3px 10px', background: 'rgba(184,146,74,.9)', zIndex: 2, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="#fff" stroke="#fff" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <span style={{ fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#fff', fontWeight: 700 }}>Épinglé</span>
+                </div>
+              )}
+
               {/* Published badge — top left */}
               <div style={{
                 position: 'absolute', top: '12px', left: '12px',
@@ -239,6 +247,10 @@ export default function AdminArticles() {
                   ? <><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Dépublier</>
                   : <><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Publier</>
                 }
+              </button>
+              <button onClick={() => togglePin(a.id, a.pinned ?? false)} title={a.pinned ? 'Désépingler' : 'Épingler'}
+                style={{ padding: '7px 10px', background: a.pinned ? 'rgba(184,146,74,.12)' : 'none', border: `1px solid ${a.pinned ? 'var(--accent)' : 'var(--border)'}`, color: a.pinned ? 'var(--accent)' : 'var(--muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill={a.pinned ? 'var(--accent)' : 'none'} stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </button>
               <button onClick={() => openEdit(a)} title="Modifier"
                 style={{ padding: '7px 10px', background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s' }}>

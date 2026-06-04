@@ -26,6 +26,7 @@ export type Article = {
   sizes: string[];
   colors: string[];
   description: string;
+  pinned: boolean;
   published: boolean;
   createdAt: string;
 };
@@ -41,6 +42,7 @@ type AdminCtx = {
   updateArticle: (id: string, updates: Partial<Article>) => Promise<void>;
   deleteArticle: (id: string) => Promise<void>;
   togglePublish: (id: string, current: boolean) => Promise<void>;
+  togglePin: (id: string, current: boolean) => Promise<void>;
   refresh: () => Promise<void>;
 };
 
@@ -103,8 +105,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     if (res.ok) setArticles(prev => prev.map(a => a.id === id ? { ...a, published: !current } : a));
   }, []);
 
+  const togglePin = useCallback(async (id: string, current: boolean) => {
+    const res = await fetch(`/api/articles/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pinned: !current }) });
+    if (res.ok) setArticles(prev => prev.map(a => a.id === id ? { ...a, pinned: !current } : a));
+  }, []);
+
   return (
-    <Ctx.Provider value={{ orders, articles, loading, addOrder, updateOrderStatus, deleteOrder, addArticle, updateArticle, deleteArticle, togglePublish, refresh: fetchAll }}>
+    <Ctx.Provider value={{ orders, articles, loading, addOrder, updateOrderStatus, deleteOrder, addArticle, updateArticle, deleteArticle, togglePublish, togglePin, refresh: fetchAll }}>
       {children}
     </Ctx.Provider>
   );
