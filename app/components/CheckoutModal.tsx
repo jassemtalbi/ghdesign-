@@ -302,16 +302,33 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
         ) : (
           /* Success screen */
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 32px', textAlign: 'center', overflowY: 'auto' }}>
-            <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(1.5rem,4vw,2.2rem)', color: 'var(--foreground)', marginBottom: '10px' }}>
+
+            {/* Checkmark */}
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(74,222,128,.12)', border: '1px solid rgba(74,222,128,.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+
+            <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(1.5rem,4vw,2.2rem)', color: 'var(--foreground)', marginBottom: '8px' }}>
               Commande confirmée !
             </h3>
             <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '.95rem', color: 'var(--accent)', marginBottom: '20px' }}>
               Merci, {form.firstName} {form.lastName}
             </p>
-            <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 300, fontSize: '.85rem', color: 'var(--muted)', lineHeight: 1.9, maxWidth: '400px', marginBottom: '28px' }}>
-              Votre commande a été reçue. Livraison à {' '}
-              <span style={{ color: 'var(--foreground)' }}>{form.city}, {form.wilaya}</span>.
-            </p>
+
+            {/* Main message */}
+            <div style={{ maxWidth: '420px', marginBottom: '20px', padding: '18px 22px', background: 'var(--surface)', border: '1px solid var(--border)', borderLeft: '3px solid var(--accent)' }}>
+              <p style={{ fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: '.88rem', color: 'var(--foreground)', lineHeight: 1.9 }}>
+                Merci pour votre confiance à <strong>GH Design</strong>. Vous recevrez plus tard un appel téléphonique pour la confirmation.
+              </p>
+            </div>
+
+            {/* Delivery highlight */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 20px', background: 'rgba(184,146,74,.08)', border: '1px solid rgba(184,146,74,.25)', marginBottom: '24px' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '.85rem', color: 'var(--accent)', fontWeight: 700 }}>
+                Livraison — 8 TND
+              </p>
+            </div>
 
             <div style={{ width: '100%', maxWidth: '380px', padding: '16px 18px', border: '1px solid var(--border)', marginBottom: '28px', textAlign: 'left' }}>
               <p style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.4em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '12px' }}>Récapitulatif</p>
