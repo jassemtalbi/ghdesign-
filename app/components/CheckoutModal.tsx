@@ -286,8 +286,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                   <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--muted)' }}>Livraison</span>
-                  <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: delivery === 0 ? 'var(--accent)' : 'var(--foreground)' }}>
-                    {delivery === 0 ? 'Gratuite' : fmt(delivery)}
+                  <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--foreground)' }}>
+                    {fmt(delivery)}
                   </span>
                 </div>
                 <div style={{ height: '1px', background: 'var(--border)', marginBottom: '10px' }} />
@@ -351,7 +351,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
               })}
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', marginTop: '4px' }}>
                 <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--muted)' }}>Livraison</span>
-                <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: delivery === 0 ? 'var(--accent)' : 'var(--foreground)' }}>{delivery === 0 ? 'Gratuite' : fmt(delivery)}</span>
+                <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--foreground)' }}>{fmt(delivery)}</span>
               </div>
               <div style={{ height: '1px', background: 'var(--border)', margin: '10px 0' }} />
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
