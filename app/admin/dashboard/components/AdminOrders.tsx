@@ -301,7 +301,7 @@ export default function AdminOrders() {
                   <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.customer.phone}</p>
                   {/* Mobile summary */}
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '5px' }}>
-                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--accent)' }}>{fmt(o.total)}</span>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</span>
                     <span style={{ fontSize: '11px', padding: '2px 6px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                       {STATUS_LABELS[o.status]}
                     </span>
@@ -311,7 +311,7 @@ export default function AdminOrders() {
                   <p style={{ fontSize: '11px', color: 'var(--foreground)', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.items.map(it => it.name).join(', ')}</p>
                   <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.items.reduce((s, it) => s + it.qty, 0)} art.</p>
                 </div>
-                <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)' }}>{fmt(o.total)}</p>
+                <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</p>
                 <p className="order-row-date" style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
                 <div>
                   <span style={{ fontSize: '11px', padding: '4px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
@@ -461,7 +461,7 @@ export default function AdminOrders() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--foreground)', letterSpacing: '.1em', textTransform: 'uppercase' }}>Total</span>
-                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent)' }}>{fmt(selected.total)}</span>
+                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent)' }}>{fmt(selected.subtotal)}</span>
                 </div>
               </div>
             </div>

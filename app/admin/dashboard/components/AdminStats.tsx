@@ -92,7 +92,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
     fetch('/api/stats').then(r => r.json()).then(d => setVisits(d.visits));
   }, []);
 
-  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0);
+  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.subtotal, 0);
   const pending   = orders.filter(o => o.status === 'pending').length;
   const noResponse = orders.filter(o => o.status === 'no_response').length; // eslint-disable-line
   const published = articles.filter(a => a.published).length;
@@ -110,7 +110,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       orders.filter(o => o.status !== 'cancelled').forEach(o => {
         const d = new Date(o.createdAt);
         const key = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-        if (key in map) map[key].total += o.total;
+        if (key in map) map[key].total += o.subtotal;
       });
       orders.forEach(o => {
         const d = new Date(o.createdAt);
@@ -135,7 +135,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
         const d = new Date(o.createdAt);
         if (d.getMonth() === selectedMonth && d.getFullYear() === selectedYear) {
           const key = String(d.getDate()).padStart(2, '0');
-          if (key in map) map[key].total += o.total;
+          if (key in map) map[key].total += o.subtotal;
         }
       });
       orders.forEach(o => {
@@ -159,7 +159,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       const d = new Date(o.createdAt);
       if (d.getFullYear() === selectedYear) {
         const key = MONTHS_FR[d.getMonth()].slice(0, 3);
-        map[key].total += o.total;
+        map[key].total += o.subtotal;
       }
     });
     orders.forEach(o => {
@@ -331,7 +331,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
               <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
             </div>
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)', marginBottom: '4px' }}>{fmt(o.total)}</p>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)', marginBottom: '4px' }}>{fmt(o.subtotal)}</p>
               <span style={{ fontSize: '11px', padding: '3px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                 {STATUS_LABELS[o.status]}
               </span>
