@@ -56,6 +56,26 @@ export default function AdminNotifications() {
         setToast(newNotifs[0]);
         refresh();
         setTimeout(() => setToast(null), 5000);
+
+        // Play notification chime
+        try {
+          const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const play = (freq: number, start: number, dur: number) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.frequency.value = freq;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0, ctx.currentTime + start);
+            gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + start + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+            osc.start(ctx.currentTime + start);
+            osc.stop(ctx.currentTime + start + dur);
+          };
+          play(880, 0,    0.18);
+          play(1100, 0.18, 0.18);
+          play(1320, 0.36, 0.3);
+        } catch {}
       } catch {}
     };
 
