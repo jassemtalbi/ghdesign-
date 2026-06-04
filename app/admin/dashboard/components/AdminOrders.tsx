@@ -79,6 +79,8 @@ export default function AdminOrders() {
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [page, setPage] = useState(1);
   const [celebrating, setCelebrating] = useState(false);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
 
   const exportXLSX = () => {
     const data = filtered.map(o => ({
@@ -104,7 +106,8 @@ export default function AdminOrders() {
     // Auto column width
     const cols = Object.keys(data[0] || {}).map(k => ({ wch: Math.max(k.length, 14) }));
     ws['!cols'] = cols;
-    XLSX.writeFile(wb, `commandes_${new Date().toISOString().slice(0,10)}.xlsx`);
+    const suffix = dateFrom || dateTo ? `_${dateFrom || ''}${dateFrom && dateTo ? '_au_' : ''}${dateTo || ''}` : `_${new Date().toISOString().slice(0,10)}`;
+    XLSX.writeFile(wb, `commandes${suffix}.xlsx`);
   };
 
   const toggleSort = (key: SortKey) => {
@@ -122,6 +125,12 @@ export default function AdminOrders() {
         return o.id.toLowerCase().includes(q) ||
           `${o.customer.firstName} ${o.customer.lastName}`.toLowerCase().includes(q) ||
           o.customer.phone.includes(q);
+      })
+      .filter(o => {
+        const d = o.createdAt.slice(0, 10);
+        if (dateFrom && d < dateFrom) return false;
+        if (dateTo   && d > dateTo)   return false;
+        return true;
       });
 
     list = [...list].sort((a, b) => {
@@ -133,7 +142,7 @@ export default function AdminOrders() {
     });
 
     return list;
-  }, [orders, filter, search, sortKey, sortDir]);
+  }, [orders, filter, search, sortKey, sortDir, dateFrom, dateTo]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -184,6 +193,25 @@ export default function AdminOrders() {
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Rechercher par nom, téléphone..."
               style={{ flex: 1, minWidth: '180px', padding: '10px 14px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '11px', fontFamily: 'inherit', outline: 'none', borderRadius: 0 }} />
+
+            {/* Date range */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 12px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <input type="date" value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(1); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--foreground)', fontSize: '11px', fontFamily: 'inherit', outline: 'none', cursor: 'pointer' }} />
+                <span style={{ color: 'var(--muted)', fontSize: '11px' }}>→</span>
+                <input type="date" value={dateTo} onChange={e => { setDateTo(e.target.value); setPage(1); }}
+                  style={{ background: 'none', border: 'none', color: 'var(--foreground)', fontSize: '11px', fontFamily: 'inherit', outline: 'none', cursor: 'pointer' }} />
+              </div>
+              {(dateFrom || dateTo) && (
+                <button onClick={() => { setDateFrom(''); setDateTo(''); setPage(1); }}
+                  style={{ padding: '8px 10px', background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                  ✕
+                </button>
+              )}
+            </div>
+
             <button onClick={exportXLSX} disabled={filtered.length === 0}
               style={{
                 padding: '10px 16px', background: filtered.length === 0 ? 'var(--surface)' : '#166534',
@@ -372,7 +400,7 @@ export default function AdminOrders() {
             </div>
 
             {/* Client */}
-            <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)', userSelect: 'text' }}>
               <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700, marginBottom: '12px' }}>Client</p>
               <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--foreground)', marginBottom: '10px' }}>{selected.customer.firstName} {selected.customer.lastName}</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -408,7 +436,7 @@ export default function AdminOrders() {
             </div>
 
             {/* Articles */}
-            <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)' }}>
+            <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)', userSelect: 'text' }}>
               <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700, marginBottom: '12px' }}>Articles</p>
               {selected.items.map((it, i) => (
                 <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '10px', paddingBottom: '10px', borderBottom: i < selected.items.length - 1 ? '1px solid var(--border)' : 'none' }}>
