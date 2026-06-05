@@ -10,10 +10,10 @@ const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND
 const fmtShort = (n: number) => n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? (n/1000).toFixed(0)+'k' : String(n);
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)', traite: '#a78bfa',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)', traite: '#a78bfa', urgent: '#ef4444',
 };
 const STATUS_LABELS: Record<string, string> = {
-  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée', traite: 'Traité',
+  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée', traite: 'Traité', urgent: 'Urgent',
 };
 
 const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];

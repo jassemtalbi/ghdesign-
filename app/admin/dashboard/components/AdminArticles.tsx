@@ -19,7 +19,7 @@ const CATEGORIES = ['Traditional', 'Evening', 'Casual Chic', 'Modest'];
 const TAGS = ['Bestseller', 'New', 'Limited', 'Exclusive', 'Just Arrived', 'Sale'];
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL'];
-const PRESET_COLORS = ['Noir', 'Blanc', 'Beige', 'Doré', 'Rouge', 'Bleu', 'Vert', 'Rose', 'Bordeaux', 'Gris'];
+const PRESET_COLORS = ['Noir', 'Blanc', 'Beige', 'Doré', 'Rouge', 'Bleu', 'Vert', 'Rose', 'Bordeaux', 'Gris', 'Marron', 'Jaune'];
 
 const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', description: '', pinned: false, published: true };
 

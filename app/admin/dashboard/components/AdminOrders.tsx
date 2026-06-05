@@ -57,12 +57,12 @@ function Celebration({ onDone }: { onDone: () => void }) {
 const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND';
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)', traite: '#a78bfa',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)', traite: '#a78bfa', urgent: '#ef4444',
 };
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée', traite: 'Traité',
+  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée', traite: 'Traité', urgent: 'Urgent',
 };
-const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'traite', 'delivered', 'cancelled'];
+const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'traite', 'urgent', 'delivered', 'cancelled'];
 
 type SortKey = 'date' | 'total' | 'status';
 type SortDir = 'asc' | 'desc';
