@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '../context/CartContext';
@@ -73,7 +73,7 @@ export default function Collections() {
                   color: activeTab === i ? 'var(--accent)' : 'var(--muted)',
                   borderTop: 'none', borderLeft: 'none', borderRight: 'none',
                   borderBottom: `1px solid ${activeTab === i ? 'var(--accent)' : 'transparent'}`,
-                  paddingBottom: '5px', background: 'none', cursor: 'none', transition: 'color .3s',
+                  paddingBottom: '5px', background: 'none', cursor: 'pointer', transition: 'color .3s',
                 }}>{t}</button>
             ))}
           </div>
@@ -172,7 +172,7 @@ export default function Collections() {
                                   background: sel.size === s ? 'var(--accent)' : 'none',
                                   border: `1px solid ${sel.size === s ? 'var(--accent)' : 'var(--border)'}`,
                                   color: sel.size === s ? '#0a0a0a' : 'var(--muted)',
-                                  cursor: 'none', transition: 'all .2s', fontWeight: sel.size === s ? 700 : 400,
+                                  cursor: 'pointer', transition: 'all .2s', fontWeight: sel.size === s ? 700 : 400,
                                 }}>{s}</button>
                             ))}
                           </div>
@@ -193,7 +193,7 @@ export default function Collections() {
                                   background: sel.color === c ? 'rgba(201,169,110,.12)' : 'none',
                                   border: `1px solid ${sel.color === c ? 'var(--accent)' : 'var(--border)'}`,
                                   color: sel.color === c ? 'var(--accent)' : 'var(--muted)',
-                                  cursor: 'none', transition: 'all .2s',
+                                  cursor: 'pointer', transition: 'all .2s',
                                 }}>{c}</button>
                             ))}
                           </div>
@@ -208,7 +208,7 @@ export default function Collections() {
                           border: `1px solid ${isAdded ? 'var(--accent)' : 'var(--border)'}`,
                           fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.2em', textTransform: 'uppercase',
                           color: isAdded ? 'var(--accent)' : 'var(--muted)',
-                          cursor: 'none', transition: 'all .3s',
+                          cursor: 'pointer', transition: 'all .3s',
                           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
                         }} className="qadd">
                         {isAdded
@@ -233,3 +233,4 @@ export default function Collections() {
     </section>
   );
 }
+

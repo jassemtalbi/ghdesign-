@@ -29,7 +29,6 @@ body {
   font-family: var(--font-sans);
   font-weight: 400;
   overflow-x: hidden;
-  cursor: none;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -38,29 +37,6 @@ body {
 ::-webkit-scrollbar-track { background: var(--border); }
 ::-webkit-scrollbar-thumb { background: var(--accent); }
 
-/* ── Custom cursor ── */
-.cursor {
-  width: 10px; height: 10px;
-  background: var(--accent);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 99999;
-  transform: translate(-50%, -50%);
-  transition: width .25s, height .25s, background .25s, opacity .3s;
-  opacity: 0;
-}
-.cursor-follower {
-  width: 38px; height: 38px;
-  border: 1px solid rgba(184,146,74,.45);
-  border-radius: 50%;
-  position: fixed; top: 0; left: 0;
-  pointer-events: none; z-index: 99998;
-  transform: translate(-50%, -50%);
-  transition: width .3s, height .3s, border-color .3s, opacity .3s;
-  opacity: 0;
-}
-.cursor.hover { width: 6px; height: 6px; background: var(--foreground); }
-.cursor-follower.hover { width: 56px; height: 56px; border-color: rgba(184,146,74,.9); }
 
 /* ── Keyframes ── */
 @keyframes marquee {
@@ -146,19 +122,10 @@ body {
   position: relative;
   overflow: hidden;
   transition: color .4s;
-  cursor: none;
+  cursor: pointer;
 }
-.btn-gold::before {
-  content: '';
-  position: absolute; top: 0; left: -100%;
-  width: 100%; height: 100%;
-  background: var(--accent);
-  transition: left .4s cubic-bezier(.22,1,.36,1);
-  z-index: -1;
-}
-.btn-gold:hover { color: var(--background) !important; }
-.btn-gold:hover::before { left: 0; }
-.btn-gold:hover svg { stroke: var(--background) !important; }
+.btn-gold:hover { color: var(--accent) !important; background: rgba(184,146,74,.08); }
+.btn-gold:hover svg { stroke: var(--accent) !important; }
 
 .btn-light {
   display: inline-block;
@@ -173,7 +140,7 @@ body {
   text-transform: uppercase;
   text-decoration: none;
   transition: border-color .35s, color .35s, background .35s;
-  cursor: none;
+  cursor: pointer;
 }
 .btn-light:hover { border-color: var(--foreground); background: var(--foreground); color: var(--background); }
 

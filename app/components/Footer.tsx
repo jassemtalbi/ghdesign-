@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 const cols = [
   { title: 'Collections', links: [
@@ -39,7 +39,7 @@ export default function Footer() {
               ].map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                   className="footer-social"
-                  style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'all .3s' }}>
+                  style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--muted)', textDecoration: 'none', cursor: 'pointer', transition: 'all .3s' }}>
                   {s.label}
                 </a>
               ))}
@@ -56,7 +56,7 @@ export default function Footer() {
                 {col.links.map(l => (
                   <li key={l.label}>
                     <a href={l.href} className="footer-link"
-                      style={{ fontFamily: 'var(--font-sans)', fontSize: '.9rem', fontWeight: 600, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s', display: 'inline-block' }}>
+                      style={{ fontFamily: 'var(--font-sans)', fontSize: '.9rem', fontWeight: 600, color: 'var(--muted)', textDecoration: 'none', cursor: 'pointer', transition: 'color .3s', display: 'inline-block' }}>
                       {l.label}
                     </a>
                   </li>
@@ -92,3 +92,4 @@ export default function Footer() {
     </footer>
   );
 }
+

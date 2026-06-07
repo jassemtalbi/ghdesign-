@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { useAdmin } from '../context/AdminContext';
@@ -38,7 +38,7 @@ export default function NewArrivals() {
             <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>Fresh In</p>
             <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 'clamp(1.8rem,5vw,3.2rem)', color: 'var(--foreground)', lineHeight: 1.1 }}>New Arrivals</h2>
           </div>
-          <a href="#" className="view-all" style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--muted)', textDecoration: 'none', cursor: 'none', transition: 'color .3s' }}>
+          <a href="#" className="view-all" style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--muted)', textDecoration: 'none', cursor: 'pointer', transition: 'color .3s' }}>
             Voir tout →
           </a>
         </div>
@@ -71,7 +71,7 @@ export default function NewArrivals() {
                         backdropFilter: 'blur(10px)',
                         fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.22em', textTransform: 'uppercase',
                         color: added === item.id ? '#0a0a0a' : 'var(--foreground)',
-                        cursor: 'none', transition: 'all .3s',
+                        cursor: 'pointer', transition: 'all .3s',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                       }} className="nadd">
                       {added === item.id
@@ -95,3 +95,4 @@ export default function NewArrivals() {
     </section>
   );
 }
+

@@ -24,6 +24,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
 
   const [step, setStep] = useState<Step>('form');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     firstName: '', lastName: '', phone: '', email: '',
     address: '', city: '', wilaya: '', notes: '',
@@ -77,6 +78,8 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
 
   const handleSubmit = async () => {
     if (!validate()) return;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     await addOrder({
       customer: form,
       items: items.map(it => {
@@ -126,7 +129,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
             )}
           </div>
           <button onClick={handleClose} className="close-modal"
-            style={{ background: 'none', border: '1px solid var(--border)', cursor: 'none', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', transition: 'all .3s', flexShrink: 0, padding: 0 }}>
+            style={{ background: 'none', border: '1px solid var(--border)', cursor: 'pointer', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', transition: 'all .3s', flexShrink: 0, padding: 0 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
@@ -244,10 +247,10 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
               </div>
 
               <div style={{ flexShrink: 0, padding: '16px 28px 20px', borderTop: '1px solid var(--border)', background: 'var(--background)' }}>
-                <button onClick={handleSubmit} className="btn-gold"
-                  style={{ width: '100%', padding: '15px', fontSize: '10px', cursor: 'none', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', border: 'none' }}>
-                  Confirmer la commande
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <button onClick={handleSubmit} disabled={isSubmitting} className="btn-gold"
+                  style={{ width: '100%', padding: '15px', fontSize: '10px', cursor: isSubmitting ? 'default' : 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: isSubmitting ? 0.6 : 1 }}>
+                  {isSubmitting ? 'Envoi en cours…' : 'Confirmer la commande'}
+                  {!isSubmitting && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 12h14M12 5l7 7-7 7"/></svg>}
                 </button>
               </div>
             </div>
@@ -360,7 +363,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
               </div>
             </div>
 
-            <button onClick={handleClose} className="btn-gold" style={{ cursor: 'none', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button onClick={handleClose} className="btn-gold" style={{ cursor: 'pointer', fontSize: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
               Retour à la boutique
             </button>
@@ -418,6 +421,7 @@ function sel(err: boolean): React.CSSProperties {
   return {
     ...inp(err), appearance: 'none' as const,
     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b6560'/%3E%3C/svg%3E")`,
-    backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', cursor: 'none',
+    backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', cursor: 'pointer',
   };
 }
+

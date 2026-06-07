@@ -60,7 +60,7 @@ export default function ArticlePage() {
         {/* Back */}
         <div style={{ maxWidth: '1320px', margin: '0 auto', padding: '24px clamp(16px,5vw,64px) 0' }}>
           <button onClick={() => router.back()}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.25em', textTransform: 'uppercase', fontWeight: 400, transition: 'color .3s' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.25em', textTransform: 'uppercase', fontWeight: 400, transition: 'color .3s' }}
             className="back-btn">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
             Retour
@@ -88,11 +88,11 @@ export default function ArticlePage() {
                 {allImages.length > 1 && (
                   <>
                     <button onClick={() => setActiveImg(i => (i - 1 + allImages.length) % allImages.length)}
-                      style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '36px', height: '36px', background: 'rgba(250,249,247,.85)', border: '1px solid var(--border)', cursor: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', transition: 'all .2s' }} className="arrow-btn">
+                      style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', width: '36px', height: '36px', background: 'rgba(250,249,247,.85)', border: '1px solid var(--border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', transition: 'all .2s' }} className="arrow-btn">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
                     </button>
                     <button onClick={() => setActiveImg(i => (i + 1) % allImages.length)}
-                      style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '36px', height: '36px', background: 'rgba(250,249,247,.85)', border: '1px solid var(--border)', cursor: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', transition: 'all .2s' }} className="arrow-btn">
+                      style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '36px', height: '36px', background: 'rgba(250,249,247,.85)', border: '1px solid var(--border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', transition: 'all .2s' }} className="arrow-btn">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
                     </button>
                   </>
@@ -104,7 +104,7 @@ export default function ArticlePage() {
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {allImages.map((img, idx) => (
                     <button key={idx} onClick={() => setActiveImg(idx)}
-                      style={{ width: '72px', height: '90px', padding: 0, border: `2px solid ${activeImg === idx ? 'var(--accent)' : 'var(--border)'}`, cursor: 'none', overflow: 'hidden', background: 'var(--surface)', flexShrink: 0, transition: 'border-color .2s' }}>
+                      style={{ width: '72px', height: '90px', padding: 0, border: `2px solid ${activeImg === idx ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', overflow: 'hidden', background: 'var(--surface)', flexShrink: 0, transition: 'border-color .2s' }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={img} alt={`${article.name} ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     </button>
@@ -138,7 +138,7 @@ export default function ArticlePage() {
                     {article.sizes.map(s => (
                       <button key={s} onClick={() => setSize(size === s ? '' : s)}
                         style={{
-                          fontFamily: 'var(--font-sans)', fontSize: '11px', padding: '9px 18px', cursor: 'none',
+                          fontFamily: 'var(--font-sans)', fontSize: '11px', padding: '9px 18px', cursor: 'pointer',
                           background: size === s ? 'var(--accent)' : 'none',
                           border: `1px solid ${size === s ? 'var(--accent)' : 'var(--border)'}`,
                           color: size === s ? 'var(--background)' : 'var(--muted)',
@@ -159,7 +159,7 @@ export default function ArticlePage() {
                     {article.colors.map(c => (
                       <button key={c} onClick={() => setColor(color === c ? '' : c)}
                         style={{
-                          fontFamily: 'var(--font-sans)', fontSize: '11px', padding: '9px 18px', cursor: 'none',
+                          fontFamily: 'var(--font-sans)', fontSize: '11px', padding: '9px 18px', cursor: 'pointer',
                           background: color === c ? 'rgba(184,146,74,.1)' : 'none',
                           border: `1px solid ${color === c ? 'var(--accent)' : 'var(--border)'}`,
                           color: color === c ? 'var(--accent)' : 'var(--muted)',
@@ -173,7 +173,7 @@ export default function ArticlePage() {
               {/* Add to cart */}
               <button onClick={handleAdd}
                 style={{
-                  width: '100%', padding: '18px', cursor: 'none',
+                  width: '100%', padding: '18px', cursor: 'pointer',
                   background: added ? 'var(--foreground)' : 'var(--accent)',
                   border: 'none', color: 'var(--background)',
                   fontFamily: 'var(--font-sans)', fontSize: '10px', letterSpacing: '.3em',

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useCart } from '../context/CartContext';
@@ -44,7 +44,7 @@ export default function Navbar() {
         <div style={{ maxWidth: '1320px', margin: '0 auto', padding: '0 clamp(16px,4vw,48px)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px' }}>
 
           {/* Logo */}
-          <a href="#" style={{ cursor: 'none', textDecoration: 'none', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <a href="#" style={{ cursor: 'pointer', textDecoration: 'none', flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '2rem', letterSpacing: '.1em', lineHeight: 1, color: 'var(--accent)' }}>GH</div>
             <div style={{ width: '100%', height: '1px', background: 'var(--accent)', margin: '3px 0 3px', opacity: .6 }} />
             <div style={{ fontFamily: 'var(--font-sans)', fontSize: '7px', letterSpacing: '.7em', color: 'var(--muted)', textTransform: 'uppercase', fontWeight: 700 }}>Design</div>
@@ -54,7 +54,7 @@ export default function Navbar() {
           <div className="hidden md:flex" style={{ gap: 'clamp(20px,2.5vw,38px)', alignItems: 'center' }}>
             {links.map(l => (
               <a key={l.label} href={l.href} className="navlink"
-                style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', letterSpacing: '.24em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--muted)', textDecoration: 'none', cursor: 'none', position: 'relative', paddingBottom: '3px', transition: 'color .3s' }}>
+                style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', letterSpacing: '.24em', textTransform: 'uppercase', fontWeight: 600, color: 'var(--muted)', textDecoration: 'none', cursor: 'pointer', position: 'relative', paddingBottom: '3px', transition: 'color .3s' }}>
                 {l.label}
               </a>
             ))}
@@ -65,7 +65,7 @@ export default function Navbar() {
 
             {/* Cart button */}
             <button onClick={() => setCartOpen(true)} className="cart-trigger"
-              style={{ position: 'relative', background: 'none', border: '1px solid rgba(184,146,74,.4)', cursor: 'none', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: '9px', transition: 'border-color .3s, background .3s' }}>
+              style={{ position: 'relative', background: 'none', border: '1px solid rgba(184,146,74,.4)', cursor: 'pointer', padding: '9px 20px', display: 'flex', alignItems: 'center', gap: '9px', transition: 'border-color .3s, background .3s' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--foreground)' }}>
                 <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
               </svg>
@@ -80,7 +80,7 @@ export default function Navbar() {
 
           {/* Mobile right */}
           <div className="flex md:hidden" style={{ alignItems: 'center', gap: '16px' }}>
-            <button onClick={() => setCartOpen(true)} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'none', color: 'var(--foreground)', padding: '4px' }}>
+            <button onClick={() => setCartOpen(true)} style={{ position: 'relative', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--foreground)', padding: '4px' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
               </svg>
@@ -89,7 +89,7 @@ export default function Navbar() {
               )}
             </button>
             <button onClick={() => setMenuOpen(!menuOpen)}
-              style={{ background: 'none', border: 'none', cursor: 'none', padding: '4px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
               <span style={{ display: 'block', width: '24px', height: '1px', background: 'var(--accent)', transition: 'transform .3s', transform: menuOpen ? 'rotate(45deg) translateY(3px)' : 'none' }} />
               <span style={{ display: 'block', width: '16px', height: '1px', background: 'var(--foreground)', transition: 'opacity .3s', opacity: menuOpen ? 0 : 1 }} />
               <span style={{ display: 'block', width: '24px', height: '1px', background: 'var(--accent)', transition: 'transform .3s', transform: menuOpen ? 'rotate(-45deg) translateY(-3px)' : 'none' }} />
@@ -111,7 +111,7 @@ export default function Navbar() {
           <a key={l.label} href={l.href} onClick={() => setMenuOpen(false)}
             style={{
               fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2.2rem,8vw,3.5rem)',
-              color: 'var(--foreground)', textDecoration: 'none', cursor: 'none', marginBottom: '20px',
+              color: 'var(--foreground)', textDecoration: 'none', cursor: 'pointer', marginBottom: '20px',
               transform: menuOpen ? 'translateY(0)' : 'translateY(18px)',
               opacity: menuOpen ? 1 : 0,
               transition: `transform .55s ease ${i * 70}ms, opacity .55s ease ${i * 70}ms`,
@@ -120,7 +120,7 @@ export default function Navbar() {
           </a>
         ))}
         <div style={{ marginTop: '32px', display: 'flex', gap: '12px', opacity: menuOpen ? 1 : 0, transform: menuOpen ? 'translateY(0)' : 'translateY(14px)', transition: 'all .5s ease .35s' }}>
-          <button onClick={() => { setMenuOpen(false); setCartOpen(true); }} className="btn-gold" style={{ cursor: 'none' }}>
+          <button onClick={() => { setMenuOpen(false); setCartOpen(true); }} className="btn-gold" style={{ cursor: 'pointer' }}>
             Panier {total > 0 ? `(${total})` : ''}
           </button>
         </div>
@@ -153,7 +153,7 @@ export default function Navbar() {
             </p>
           </div>
           <button onClick={() => setCartOpen(false)} className="close-x"
-            style={{ background: 'none', border: '1px solid var(--border)', cursor: 'none', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '20px', lineHeight: 1, transition: 'all .3s' }}>
+            style={{ background: 'none', border: '1px solid var(--border)', cursor: 'pointer', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)', fontSize: '20px', lineHeight: 1, transition: 'all .3s' }}>
             ×
           </button>
         </div>
@@ -166,7 +166,7 @@ export default function Navbar() {
                 <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
               </svg>
               <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: '1.15rem', color: 'var(--muted)' }}>Votre panier est vide</p>
-              <button onClick={() => setCartOpen(false)} className="btn-gold" style={{ fontSize: '11px', cursor: 'none' }}>
+              <button onClick={() => setCartOpen(false)} className="btn-gold" style={{ fontSize: '11px', cursor: 'pointer' }}>
                 Découvrir la collection
               </button>
             </div>
@@ -192,16 +192,16 @@ export default function Navbar() {
                         )}
                       </div>
                       <button onClick={() => removeItem(item.cartKey)} className="remove-x"
-                        style={{ background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', fontSize: '14px', padding: '0', flexShrink: 0, transition: 'color .2s', lineHeight: 1 }}>✕</button>
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '14px', padding: '0', flexShrink: 0, transition: 'color .2s', lineHeight: 1 }}>✕</button>
                     </div>
                     <p style={{ fontFamily: 'var(--font-sans)', fontSize: '.92rem', color: 'var(--accent)', margin: '10px 0' }}>{item.price}</p>
                     {/* Qty */}
                     <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--border)', width: 'fit-content' }}>
                       <button onClick={() => changeQty(item.cartKey, -1)} className="qty-btn"
-                        style={{ width: '32px', height: '30px', background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color .2s' }}>−</button>
+                        style={{ width: '32px', height: '30px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color .2s' }}>−</button>
                       <span style={{ width: '34px', textAlign: 'center', fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--foreground)', borderLeft: '1px solid var(--border)', borderRight: '1px solid var(--border)', lineHeight: '30px' }}>{item.qty}</span>
                       <button onClick={() => changeQty(item.cartKey, 1)} className="qty-btn"
-                        style={{ width: '32px', height: '30px', background: 'none', border: 'none', cursor: 'none', color: 'var(--muted)', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color .2s' }}>+</button>
+                        style={{ width: '32px', height: '30px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color .2s' }}>+</button>
                     </div>
                   </div>
                 </div>
@@ -220,11 +220,11 @@ export default function Navbar() {
               </span>
             </div>
             <p style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--muted)', marginBottom: '20px' }}>Livraison (8 TND) calculée à la commande</p>
-            <button onClick={() => { setCartOpen(false); setTimeout(() => setCheckoutOpen(true), 300); }} className="btn-gold" style={{ width: '100%', textAlign: 'center', padding: '16px', fontSize: '12px', cursor: 'none', display: 'block' }}>
+            <button onClick={() => { setCartOpen(false); setTimeout(() => setCheckoutOpen(true), 300); }} className="btn-gold" style={{ width: '100%', textAlign: 'center', padding: '16px', fontSize: '12px', cursor: 'pointer', display: 'block' }}>
               Passer la commande →
             </button>
             <button onClick={() => setCartOpen(false)} className="continue-btn"
-              style={{ width: '100%', marginTop: '10px', padding: '13px', background: 'none', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '12px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--muted)', cursor: 'none', transition: 'all .3s' }}>
+              style={{ width: '100%', marginTop: '10px', padding: '13px', background: 'none', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '12px', letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--muted)', cursor: 'pointer', transition: 'all .3s' }}>
               Continuer les achats
             </button>
           </div>
@@ -247,3 +247,4 @@ export default function Navbar() {
     </>
   );
 }
+
