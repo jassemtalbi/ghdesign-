@@ -7,7 +7,7 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ user: '', pass: '' });
 
   useEffect(() => {
-    if (localStorage.getItem('gh_admin') === '1') {
+    if (typeof window !== 'undefined' && localStorage.getItem('gh_admin') === '1') {
       router.replace('/admin/dashboard');
     }
   }, [router]);
@@ -24,7 +24,9 @@ export default function AdminLogin() {
         body: JSON.stringify({ username: form.user, password: form.pass }),
       });
       if (res.ok) {
+        const data = await res.json();
         localStorage.setItem('gh_admin', '1');
+        localStorage.setItem('gh_admin_role', data.role || 'admin');
         router.push('/admin/dashboard');
       } else {
         const data = await res.json();

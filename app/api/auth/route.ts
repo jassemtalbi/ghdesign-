@@ -7,6 +7,7 @@ import crypto from 'crypto';
 const AdminSchema = new Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role:     { type: String, default: 'admin' },
 });
 const Admin = models.Admin || model('Admin', AdminSchema);
 
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
   if (!admin || (admin as any).password !== hash(password))
     return NextResponse.json({ error: 'Identifiants incorrects' }, { status: 401 });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, role: (admin as any).role || 'admin' });
 }
 
 // DELETE /api/auth — remove an admin account
@@ -40,7 +41,7 @@ export async function DELETE(req: Request) {
 // PUT /api/auth — create or update admin (called once from setup)
 export async function PUT(req: Request) {
   await dbConnect;
-  const { username, password, secret } = await req.json();
+  const { username, password, secret, role } = await req.json();
 
   // Require a setup secret to prevent unauthorized access
   if (secret !== process.env.SETUP_SECRET)
@@ -52,7 +53,7 @@ export async function PUT(req: Request) {
   const hashed = hash(password);
   await Admin.findOneAndUpdate(
     { username: username.trim() },
-    { username: username.trim(), password: hashed },
+    { username: username.trim(), password: hashed, role: role || 'admin' },
     { upsert: true, new: true }
   );
 

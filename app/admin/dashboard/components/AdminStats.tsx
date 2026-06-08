@@ -80,7 +80,7 @@ function RangeBar({ range, setRange, selectedMonth, setSelectedMonth, selectedYe
   );
 }
 
-export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' | 'orders' | 'articles') => void }) {
+export default function AdminStats({ onNavigate, isViewer }: { onNavigate: (tab: 'stats' | 'orders' | 'articles') => void; isViewer: boolean }) {
   const { orders, articles } = useAdmin();
   const [visits, setVisits] = useState<number | null>(null);
   const [range, setRange] = useState<Range>('7d');
@@ -188,12 +188,12 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
   const recentOrders = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
 
   const kpis = [
-    { label: 'Visiteurs',          value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites',   color: '#34d399', icon: <IconVisits /> },
-    { label: "Chiffre d'affaires", value: fmt(totalRevenue), sub: `${orders.filter(o=>o.status!=='cancelled').length} commandes`, color: 'var(--accent)', icon: <IconRevenue /> },
-    { label: 'En attente',         value: String(pending),   sub: 'À traiter',  color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending /> },
-    { label: 'Ne répond pas',      value: String(noResponse), sub: 'Sans réponse', color: '#f87171', icon: <IconShipped /> },
-    { label: 'Articles publiés',   value: String(published), sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle /> },
-  ];
+    { label: 'Visiteurs',          value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites',   color: '#34d399', icon: <IconVisits />, moneyOnly: false },
+    { label: "Chiffre d'affaires", value: fmt(totalRevenue), sub: `${orders.filter(o=>o.status!=='cancelled').length} commandes`, color: 'var(--accent)', icon: <IconRevenue />, moneyOnly: true },
+    { label: 'En attente',         value: String(pending),   sub: 'À traiter',  color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending />, moneyOnly: false },
+    { label: 'Ne répond pas',      value: String(noResponse), sub: 'Sans réponse', color: '#f87171', icon: <IconShipped />, moneyOnly: false },
+    { label: 'Articles publiés',   value: String(published), sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle />, moneyOnly: false },
+  ].filter(k => !isViewer || !k.moneyOnly);
 
   return (
     <div>
@@ -221,9 +221,10 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
       </div>
 
       {/* Charts row 1 */}
-      <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+      <div className="stats-bottom" style={{ display: 'grid', gridTemplateColumns: isViewer ? '1fr' : '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
 
-        {/* Revenue area */}
+        {/* Revenue area — hidden for viewer */}
+        {!isViewer && (
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
           <p style={{ fontSize: '12px', letterSpacing: '.35em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '4px' }}>Chiffre d'affaires</p>
           <p style={{ fontSize: '11px', color: 'var(--muted)', marginBottom: '16px' }}>{rangeLabel}</p>
@@ -243,6 +244,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
             </AreaChart>
           </ResponsiveContainer>
         </div>
+        )}
 
         {/* Orders bar */}
         <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', padding: '20px' }}>
@@ -331,7 +333,7 @@ export default function AdminStats({ onNavigate }: { onNavigate: (tab: 'stats' |
               <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')} · {o.items.length} article{o.items.length > 1 ? 's' : ''}</p>
             </div>
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)', marginBottom: '4px' }}>{fmt(o.subtotal)}</p>
+              {!isViewer && <p style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)', marginBottom: '4px' }}>{fmt(o.subtotal)}</p>}
               <span style={{ fontSize: '11px', padding: '3px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                 {STATUS_LABELS[o.status]}
               </span>

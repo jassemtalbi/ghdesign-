@@ -14,12 +14,14 @@ export default function Dashboard() {
   const [tab, setTab] = useState<Tab>('stats');
   const [ready, setReady] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isViewer, setIsViewer] = useState(false);
   const { orders, articles } = useAdmin();
 
   useEffect(() => {
     if (localStorage.getItem('gh_admin') !== '1') {
       router.replace('/admin/login');
     } else {
+      setIsViewer(localStorage.getItem('gh_admin_role') === 'viewer');
       setReady(true);
     }
   }, [router]);
@@ -120,8 +122,8 @@ export default function Dashboard() {
           </div>
 
           <div className="main-pad" style={{ padding: '32px' }}>
-            {tab === 'stats'    && <AdminStats onNavigate={setTab} />}
-            {tab === 'orders'   && <AdminOrders />}
+            {tab === 'stats'    && <AdminStats onNavigate={setTab} isViewer={isViewer} />}
+            {tab === 'orders'   && <AdminOrders isViewer={isViewer} />}
             {tab === 'articles' && <AdminArticles />}
           </div>
         </main>

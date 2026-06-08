@@ -69,7 +69,7 @@ type SortDir = 'asc' | 'desc';
 
 const PAGE_SIZE = 50;
 
-export default function AdminOrders() {
+export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }) {
   const { orders, updateOrderStatus, deleteOrder } = useAdmin();
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
@@ -81,25 +81,45 @@ export default function AdminOrders() {
   const [celebrating, setCelebrating] = useState(false);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [quickFilter, setQuickFilter] = useState<string>('');
+
+  const applyQuick = (key: string) => {
+    const today = new Date();
+    const fmt = (d: Date) => d.toISOString().slice(0, 10);
+    const daysAgo = (n: number) => { const d = new Date(today); d.setDate(d.getDate() - n); return fmt(d); };
+    setQuickFilter(key);
+    setPage(1);
+    if (key === 'today')   { setDateFrom(fmt(today));  setDateTo(fmt(today)); }
+    if (key === 'yesterday'){ setDateFrom(daysAgo(1)); setDateTo(daysAgo(1)); }
+    if (key === '3d')      { setDateFrom(daysAgo(2));  setDateTo(fmt(today)); }
+    if (key === '7d')      { setDateFrom(daysAgo(6));  setDateTo(fmt(today)); }
+    if (key === 'month')   { setDateFrom(fmt(new Date(today.getFullYear(), today.getMonth(), 1))); setDateTo(fmt(today)); }
+    if (key === '')        { setDateFrom(''); setDateTo(''); }
+  };
 
   const exportXLSX = () => {
-    const data = filtered.map(o => ({
-      'ID': o.id,
-      'Date': new Date(o.createdAt).toLocaleDateString('fr-TN'),
-      'Prénom': o.customer.firstName,
-      'Nom': o.customer.lastName,
-      'Téléphone': o.customer.phone,
-      'Email': o.customer.email || '',
-      'Adresse': o.customer.address,
-      'Ville': o.customer.city,
-      'Gouvernorat': o.customer.wilaya,
-      'Articles': o.items.map(it => `${it.name}${it.size ? ` (${it.size})` : ''}${it.color ? ` - ${it.color}` : ''} x${it.qty}`).join(', '),
-      'Sous-total (TND)': o.subtotal,
-      'Livraison (TND)': o.delivery,
-      'Total (TND)': o.total,
-      'Statut': STATUS_LABELS[o.status],
-      'Note': o.customer.notes || '',
-    }));
+    const data = filtered.map(o => {
+      const row: Record<string, string | number> = {
+        'ID': o.id,
+        'Date': new Date(o.createdAt).toLocaleDateString('fr-TN'),
+        'Prénom': o.customer.firstName,
+        'Nom': o.customer.lastName,
+        'Téléphone': o.customer.phone,
+        'Email': o.customer.email || '',
+        'Adresse': o.customer.address,
+        'Ville': o.customer.city,
+        'Gouvernorat': o.customer.wilaya,
+        'Articles': o.items.map(it => `${it.name}${it.size ? ` (${it.size})` : ''}${it.color ? ` - ${it.color}` : ''} x${it.qty}`).join(', '),
+        'Statut': STATUS_LABELS[o.status],
+        'Note': o.customer.notes || '',
+      };
+      if (!isViewer) {
+        row['Sous-total (TND)'] = o.subtotal;
+        row['Livraison (TND)'] = o.delivery;
+        row['Total (TND)'] = o.total;
+      }
+      return row;
+    });
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Commandes');
@@ -188,6 +208,20 @@ export default function AdminOrders() {
       <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
 
+          {/* Quick date filters */}
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
+            {([['', 'Tout'], ['today', "Aujourd'hui"], ['yesterday', 'Hier'], ['3d', '3 derniers jours'], ['7d', '7 derniers jours'], ['month', 'Ce mois']] as [string, string][]).map(([key, label]) => (
+              <button key={key} onClick={() => applyQuick(key)}
+                style={{
+                  padding: '6px 12px', fontSize: '11px', letterSpacing: '.1em', textTransform: 'uppercase',
+                  background: quickFilter === key ? 'var(--accent)' : 'var(--surface)',
+                  border: `1px solid ${quickFilter === key ? 'var(--accent)' : 'var(--border)'}`,
+                  color: quickFilter === key ? 'var(--background)' : 'var(--muted)',
+                  cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s', whiteSpace: 'nowrap',
+                }}>{label}</button>
+            ))}
+          </div>
+
           {/* Search + sort controls */}
           <div style={{ display: 'flex', gap: '8px', marginBottom: '10px', flexWrap: 'wrap' }}>
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
@@ -198,14 +232,14 @@ export default function AdminOrders() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 12px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <input type="date" value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(1); }}
+                <input type="date" value={dateFrom} onChange={e => { setDateFrom(e.target.value); setQuickFilter(''); setPage(1); }}
                   style={{ background: 'none', border: 'none', color: 'var(--foreground)', fontSize: '11px', fontFamily: 'inherit', outline: 'none', cursor: 'pointer' }} />
                 <span style={{ color: 'var(--muted)', fontSize: '11px' }}>→</span>
-                <input type="date" value={dateTo} onChange={e => { setDateTo(e.target.value); setPage(1); }}
+                <input type="date" value={dateTo} onChange={e => { setDateTo(e.target.value); setQuickFilter(''); setPage(1); }}
                   style={{ background: 'none', border: 'none', color: 'var(--foreground)', fontSize: '11px', fontFamily: 'inherit', outline: 'none', cursor: 'pointer' }} />
               </div>
               {(dateFrom || dateTo) && (
-                <button onClick={() => { setDateFrom(''); setDateTo(''); setPage(1); }}
+                <button onClick={() => applyQuick('')}
                   style={{ padding: '8px 10px', background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', fontSize: '11px', cursor: 'pointer', fontFamily: 'inherit' }}>
                   ✕
                 </button>
@@ -227,7 +261,7 @@ export default function AdminOrders() {
               Export XLSX {filtered.length > 0 && `(${filtered.length})`}
             </button>
             <div style={{ display: 'flex', gap: '6px' }}>
-              {([['date', 'Date'], ['total', 'Montant'], ['status', 'Statut']] as [SortKey, string][]).map(([k, label]) => (
+              {(([['date', 'Date'], ['total', 'Montant'], ['status', 'Statut']] as [SortKey, string][]).filter(([k]) => !isViewer || k !== 'total')).map(([k, label]) => (
                 <button key={k} onClick={() => toggleSort(k)}
                   style={{
                     padding: '8px 12px', fontSize: '11px', letterSpacing: '.15em', textTransform: 'uppercase',
@@ -264,13 +298,15 @@ export default function AdminOrders() {
           {/* Table */}
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
             {/* Header */}
-            <div className="orders-table-header" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.8fr 90px 110px', padding: '10px 18px', borderBottom: '1px solid var(--border)', background: 'var(--background)' }}>
+            <div className="orders-table-header" style={{ display: 'grid', gridTemplateColumns: isViewer ? '1.2fr 1fr 90px 110px' : '1.2fr 1fr 0.8fr 90px 110px', padding: '10px 18px', borderBottom: '1px solid var(--border)', background: 'var(--background)' }}>
               <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Client</span>
               <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Articles</span>
-              <button onClick={() => toggleSort('total')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center' }}>
-                <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'total' ? 'var(--accent)' : 'var(--muted)' }}>Total</span>
-                <SortIcon k="total" />
-              </button>
+              {!isViewer && (
+                <button onClick={() => toggleSort('total')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center' }}>
+                  <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'total' ? 'var(--accent)' : 'var(--muted)' }}>Total</span>
+                  <SortIcon k="total" />
+                </button>
+              )}
               <button onClick={() => toggleSort('date')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center' }}>
                 <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'date' ? 'var(--accent)' : 'var(--muted)' }}>Date</span>
                 <SortIcon k="date" />
@@ -289,7 +325,7 @@ export default function AdminOrders() {
               <div key={o.id} onClick={() => { setSelected(o === selected ? null : o); setDeleteConfirm(false); }}
                 className="order-row"
                 style={{
-                  display: 'grid', gridTemplateColumns: '1.2fr 1fr 0.8fr 90px 110px',
+                  display: 'grid', gridTemplateColumns: isViewer ? '1.2fr 1fr 90px 110px' : '1.2fr 1fr 0.8fr 90px 110px',
                   padding: '14px 18px', borderBottom: i < paginated.length - 1 ? '1px solid #111' : 'none',
                   cursor: 'pointer', background: selected?.id === o.id ? 'rgba(201,169,110,.05)' : 'none',
                   transition: 'background .2s', alignItems: 'center',
@@ -301,7 +337,7 @@ export default function AdminOrders() {
                   <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.customer.phone}</p>
                   {/* Mobile summary */}
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '5px' }}>
-                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</span>
+                    {!isViewer && <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</span>}
                     <span style={{ fontSize: '11px', padding: '2px 6px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                       {STATUS_LABELS[o.status]}
                     </span>
@@ -311,7 +347,7 @@ export default function AdminOrders() {
                   <p style={{ fontSize: '11px', color: 'var(--foreground)', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.items.map(it => it.name).join(', ')}</p>
                   <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.items.reduce((s, it) => s + it.qty, 0)} art.</p>
                 </div>
-                <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</p>
+                {!isViewer && <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</p>}
                 <p className="order-row-date" style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
                 <div>
                   <span style={{ fontSize: '11px', padding: '4px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
@@ -443,7 +479,7 @@ export default function AdminOrders() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '6px' }}>
                       <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--foreground)', lineHeight: 1.3 }}>{it.name} <span style={{ color: 'var(--muted)', fontWeight: 400 }}>× {it.qty}</span></span>
-                      <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent)', flexShrink: 0 }}>{fmt(it.priceNum * it.qty)}</span>
+                      {!isViewer && <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent)', flexShrink: 0 }}>{fmt(it.priceNum * it.qty)}</span>}
                     </div>
                     {(it.size || it.color) && (
                       <div style={{ display: 'flex', gap: '5px', marginTop: '5px' }}>
@@ -454,6 +490,7 @@ export default function AdminOrders() {
                   </div>
                 </div>
               ))}
+              {!isViewer && (
               <div style={{ background: 'var(--surface)', padding: '10px 12px', marginTop: '4px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                   <span style={{ fontSize: '11px', color: 'var(--muted)' }}>Livraison</span>
@@ -464,6 +501,7 @@ export default function AdminOrders() {
                   <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent)' }}>{fmt(selected.subtotal)}</span>
                 </div>
               </div>
+              )}
             </div>
 
             {/* Status */}
