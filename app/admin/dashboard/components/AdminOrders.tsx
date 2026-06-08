@@ -70,7 +70,9 @@ type SortDir = 'asc' | 'desc';
 const PAGE_SIZE = 50;
 
 export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }) {
-  const { orders, updateOrderStatus, deleteOrder } = useAdmin();
+  const { orders, updateOrderStatus, updateOrderNote, deleteOrder } = useAdmin();
+  const [noteText, setNoteText] = useState<Record<string, string>>({});
+  const [noteSaved, setNoteSaved] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all');
   const [selected, setSelected] = useState<Order | null>(null);
@@ -504,6 +506,29 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
                 </div>
               </div>
               )}
+            </div>
+
+            {/* Admin note */}
+            <div style={{ padding: '16px 18px', borderBottom: '1px solid var(--border)' }}>
+              <p style={{ fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700, marginBottom: '10px' }}>Note interne</p>
+              <textarea
+                value={noteText[selected.id] ?? (selected.adminNote || '')}
+                onChange={e => setNoteText(prev => ({ ...prev, [selected.id]: e.target.value }))}
+                placeholder="Ajouter une note interne..."
+                rows={3}
+                style={{ width: '100%', padding: '10px 12px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '12px', fontFamily: 'inherit', outline: 'none', resize: 'vertical', borderRadius: 0 }}
+              />
+              <button
+                onClick={async () => {
+                  const note = noteText[selected.id] ?? (selected.adminNote || '');
+                  await updateOrderNote(selected.id, note);
+                  setSelected(prev => prev ? { ...prev, adminNote: note } : prev);
+                  setNoteSaved(selected.id);
+                  setTimeout(() => setNoteSaved(null), 2000);
+                }}
+                style={{ marginTop: '8px', padding: '8px 18px', background: noteSaved === selected.id ? 'rgba(74,222,128,.12)' : 'var(--surface)', border: `1px solid ${noteSaved === selected.id ? '#4ade80' : 'var(--border)'}`, color: noteSaved === selected.id ? '#4ade80' : 'var(--muted)', fontSize: '11px', letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', transition: 'all .2s' }}>
+                {noteSaved === selected.id ? '✓ Enregistré' : 'Enregistrer'}
+              </button>
             </div>
 
             {/* Status */}

@@ -25,6 +25,7 @@ const OrderSchema = new Schema({
   subtotal:  { type: Number, required: true },
   delivery:  { type: Number, required: true },
   total:     { type: Number, required: true },
+  adminNote: { type: String, default: '' },
 });
 
 // Delete cached models in dev so schema changes take effect on hot reload
