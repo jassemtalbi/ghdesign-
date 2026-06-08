@@ -199,7 +199,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
           .orders-table-header { display: none !important; }
           .order-row { grid-template-columns: 1fr !important; }
           .order-row-articles, .order-row-total-desktop, .order-row-date { display: none !important; }
-          .order-detail-panel { width: 100% !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; top: auto !important; max-height: 80vh !important; overflow-y: auto !important; z-index: 100 !important; border-top: 1px solid var(--border) !important; }
+          .order-detail-panel { width: 96vw !important; top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important; transform: translate(-50%, -50%) !important; max-height: 88vh !important; }
           .filter-scroll { overflow-x: auto; scrollbar-width: none; }
           .pagination { flex-wrap: wrap !important; }
         }
