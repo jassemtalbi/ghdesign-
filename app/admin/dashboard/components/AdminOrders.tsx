@@ -205,7 +205,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         }
       `}</style>
 
-      <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+      <div>
         <div style={{ flex: 1, minWidth: 0 }}>
 
           {/* Quick date filters */}
@@ -400,9 +400,11 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
           )}
         </div>
 
-        {/* Detail panel */}
+        {/* Detail modal */}
         {selected && (
-          <div className="order-detail-panel" style={{ width: '320px', flexShrink: 0, background: 'var(--background)', border: '1px solid var(--border)', position: 'sticky', top: '90px', overflow: 'hidden' }}>
+          <>
+          <div onClick={() => { setSelected(null); setDeleteConfirm(false); }} style={{ position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0,0,0,.45)', backdropFilter: 'blur(4px)' }} />
+          <div className="order-detail-panel" style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 201, width: 'min(960px, 96vw)', maxHeight: '90vh', overflowY: 'auto', background: 'var(--background)', border: '1px solid var(--border)', boxShadow: '0 24px 64px rgba(0,0,0,.18)' }}>
 
             {/* Header */}
             <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', background: 'var(--surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -525,6 +527,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
               </div>
             </div>
           </div>
+          </>
         )}
       </div>
     </>
