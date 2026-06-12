@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     siteName: 'GH Design',
     images: [
       {
-        url: '/api/og',
+        url: 'https://ghdesign.vercel.app/api/og',
         width: 1200,
         height: 630,
         alt: 'GH Design — Tunisian Fashion',
@@ -43,13 +43,21 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "GH Design — Tunisian Women's Fashion",
     description: "Handcrafted fashion for men & women, inspired by the soul of North Africa.",
-    images: ['/api/og'],
+    images: ['https://ghdesign.vercel.app/api/og'],
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${cormorant.variable} ${montserrat.variable} h-full`}>
+      <head>
+        <meta property="og:image" content="https://ghdesign.vercel.app/api/og" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="GH Design" />
+      </head>
       <body className="min-h-full flex flex-col antialiased">
         <AdminProvider><CartProvider>{children}</CartProvider></AdminProvider>
       </body>
