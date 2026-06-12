@@ -17,9 +17,34 @@ const montserrat = Montserrat({
   weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
+const siteUrl = 'https://ghdesign.vercel.app';
+
 export const metadata: Metadata = {
   title: "GH Design — Tunisian Women's Fashion",
   description: "Handcrafted fashion for men & women, inspired by the soul of North Africa.",
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    title: "GH Design — Tunisian Women's Fashion",
+    description: "Handcrafted fashion for men & women, inspired by the soul of North Africa.",
+    url: 'https://ghdesign.vercel.app',
+    siteName: 'GH Design',
+    images: [
+      {
+        url: '/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'GH Design — Tunisian Fashion',
+      },
+    ],
+    locale: 'fr_TN',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "GH Design — Tunisian Women's Fashion",
+    description: "Handcrafted fashion for men & women, inspired by the soul of North Africa.",
+    images: ['/api/og'],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
