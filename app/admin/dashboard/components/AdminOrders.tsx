@@ -200,7 +200,12 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         @media (max-width: 768px) {
           .orders-table-header { display: none !important; }
           .order-row { grid-template-columns: 1fr !important; }
-          .order-row-articles, .order-row-total-desktop, .order-row-date { display: none !important; }
+          .order-row { grid-template-columns: 1fr !important; }
+          .order-row-articles { display: block !important; margin-top: 8px !important; border-top: 1px solid var(--border); padding-top: 6px !important; }
+          .order-row-total-desktop { display: block !important; margin-top: 4px !important; font-size: .88rem !important; }
+          .order-row-date { display: flex !important; margin-top: 6px !important; }
+          .order-row-status-desktop { display: none !important; }
+          .orders-table-header { display: none !important; }
           .order-detail-panel { width: 96vw !important; top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important; transform: translate(-50%, -50%) !important; max-height: 88vh !important; }
           .filter-scroll { overflow-x: auto; scrollbar-width: none; }
           .pagination { flex-wrap: wrap !important; }
@@ -338,20 +343,35 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
                   </p>
                   <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.customer.phone}</p>
                   {/* Mobile summary */}
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '5px' }}>
-                    {!isViewer && <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</span>}
-                    <span style={{ fontSize: '11px', padding: '2px 6px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
-                      {STATUS_LABELS[o.status]}
-                    </span>
-                  </div>
+                  {!isViewer && <div style={{ marginTop: '5px' }}>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</span>
+                  </div>}
                 </div>
                 <div className="order-row-articles">
-                  <p style={{ fontSize: '11px', color: 'var(--foreground)', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.items.map(it => it.name).join(', ')}</p>
-                  <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.items.reduce((s, it) => s + it.qty, 0)} art.</p>
+                  {o.items.map((it, idx) => (
+                    <div key={idx} style={{ marginBottom: idx < o.items.length - 1 ? '4px' : 0 }}>
+                      <p style={{ fontSize: '11px', color: 'var(--foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {it.name} <span style={{ color: 'var(--muted)' }}>×{it.qty}</span>
+                      </p>
+                      {(it.size || it.color) && (
+                        <p style={{ fontSize: '10px', color: 'var(--accent)', marginTop: '1px' }}>
+                          {it.size && <span>{it.size}</span>}
+                          {it.size && it.color && <span style={{ color: 'var(--muted)' }}> · </span>}
+                          {it.color && <span>{it.color}</span>}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
                 {!isViewer && <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</p>}
-                <p className="order-row-date" style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
-                <div>
+                <div className="order-row-date" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
+                  <p style={{ fontSize: '10px', color: 'var(--muted)', opacity: .7 }}>{new Date(o.createdAt).toLocaleTimeString('fr-TN', { hour: '2-digit', minute: '2-digit' })}</p>
+                  <span style={{ fontSize: '11px', padding: '2px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
+                    {STATUS_LABELS[o.status]}
+                  </span>
+                </div>
+                <div className="order-row-status-desktop" style={{ display: 'block' }}>
                   <span style={{ fontSize: '11px', padding: '4px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                     {STATUS_LABELS[o.status]}
                   </span>
