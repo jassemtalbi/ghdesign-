@@ -197,16 +197,21 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         </>
       )}
       <style>{`
+        /* Desktop: show grid columns, hide mobile block */
+        .mobile-order-extra { display: none; }
         .order-row-articles { display: block; }
         .order-row-total-desktop { display: block; }
-        .order-row-date { display: flex; align-items: center; gap: 8px; }
+        .order-row-date { display: block; }
         .order-row-status-desktop { display: block; }
         @media (max-width: 768px) {
+          /* Mobile: single column card layout */
           .orders-table-header { display: none !important; }
           .order-row { grid-template-columns: 1fr !important; }
-          .order-row-articles { margin-top: 8px !important; border-top: 1px solid var(--border); padding-top: 6px !important; }
-          .order-row-total-desktop { margin-top: 4px !important; font-size: .88rem !important; }
-          .order-row-date { margin-top: 6px !important; }
+          /* Show mobile block, hide desktop-only columns */
+          .mobile-order-extra { display: block !important; }
+          .order-row-articles { display: none !important; }
+          .order-row-total-desktop { display: none !important; }
+          .order-row-date { display: none !important; }
           .order-row-status-desktop { display: none !important; }
           .order-detail-panel { width: 96vw !important; top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important; transform: translate(-50%, -50%) !important; max-height: 88vh !important; }
           .filter-scroll { overflow-x: auto; scrollbar-width: none; }
@@ -339,16 +344,33 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
                   cursor: 'pointer', background: selected?.id === o.id ? 'rgba(201,169,110,.05)' : 'none',
                   transition: 'background .2s', alignItems: 'center',
                 }}>
+                {/* Client */}
                 <div>
                   <p style={{ fontSize: '.88rem', color: 'var(--foreground)', fontFamily: 'var(--font-serif)', marginBottom: '2px' }}>
                     {o.customer.firstName} {o.customer.lastName}
                   </p>
                   <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{o.customer.phone}</p>
-                  {/* Mobile summary */}
-                  {!isViewer && <div style={{ marginTop: '5px' }}>
-                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</span>
-                  </div>}
+                  {/* Mobile only: articles + price + date + status */}
+                  <div className="mobile-order-extra">
+                    {o.items.map((it, idx) => (
+                      <div key={idx} style={{ marginTop: '6px' }}>
+                        <p style={{ fontSize: '11px', color: 'var(--foreground)' }}>{it.name} <span style={{ color: 'var(--muted)' }}>×{it.qty}</span></p>
+                        {(it.size || it.color) && (
+                          <p style={{ fontSize: '10px', color: 'var(--accent)' }}>
+                            {it.size}{it.size && it.color ? ' · ' : ''}{it.color}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                    {!isViewer && <p style={{ fontSize: '.88rem', color: 'var(--accent)', fontFamily: 'var(--font-serif)', marginTop: '6px' }}>{fmt(o.subtotal)}</p>}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                      <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
+                      <p style={{ fontSize: '10px', color: 'var(--muted)', opacity: .7 }}>{new Date(o.createdAt).toLocaleTimeString('fr-TN', { hour: '2-digit', minute: '2-digit' })}</p>
+                      <span style={{ fontSize: '11px', padding: '2px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>{STATUS_LABELS[o.status]}</span>
+                    </div>
+                  </div>
                 </div>
+                {/* Desktop columns */}
                 <div className="order-row-articles">
                   {o.items.map((it, idx) => (
                     <div key={idx} style={{ marginBottom: idx < o.items.length - 1 ? '4px' : 0 }}>
@@ -357,23 +379,18 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
                       </p>
                       {(it.size || it.color) && (
                         <p style={{ fontSize: '10px', color: 'var(--accent)', marginTop: '1px' }}>
-                          {it.size && <span>{it.size}</span>}
-                          {it.size && it.color && <span style={{ color: 'var(--muted)' }}> · </span>}
-                          {it.color && <span>{it.color}</span>}
+                          {it.size}{it.size && it.color ? ' · ' : ''}{it.color}
                         </p>
                       )}
                     </div>
                   ))}
                 </div>
                 {!isViewer && <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</p>}
-                <div className="order-row-date" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="order-row-date">
                   <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
-                  <p style={{ fontSize: '10px', color: 'var(--muted)', opacity: .7 }}>{new Date(o.createdAt).toLocaleTimeString('fr-TN', { hour: '2-digit', minute: '2-digit' })}</p>
-                  <span style={{ fontSize: '11px', padding: '2px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
-                    {STATUS_LABELS[o.status]}
-                  </span>
+                  <p style={{ fontSize: '10px', color: 'var(--muted)', opacity: .7, marginTop: '2px' }}>{new Date(o.createdAt).toLocaleTimeString('fr-TN', { hour: '2-digit', minute: '2-digit' })}</p>
                 </div>
-                <div className="order-row-status-desktop" style={{ display: 'block' }}>
+                <div className="order-row-status-desktop">
                   <span style={{ fontSize: '11px', padding: '4px 8px', background: `${STATUS_COLORS[o.status]}18`, color: STATUS_COLORS[o.status], border: `1px solid ${STATUS_COLORS[o.status]}40` }}>
                     {STATUS_LABELS[o.status]}
                   </span>
