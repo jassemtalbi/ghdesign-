@@ -197,15 +197,17 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         </>
       )}
       <style>{`
+        .order-row-articles { display: block; }
+        .order-row-total-desktop { display: block; }
+        .order-row-date { display: flex; align-items: center; gap: 8px; }
+        .order-row-status-desktop { display: block; }
         @media (max-width: 768px) {
           .orders-table-header { display: none !important; }
           .order-row { grid-template-columns: 1fr !important; }
-          .order-row { grid-template-columns: 1fr !important; }
-          .order-row-articles { display: block !important; margin-top: 8px !important; border-top: 1px solid var(--border); padding-top: 6px !important; }
-          .order-row-total-desktop { display: block !important; margin-top: 4px !important; font-size: .88rem !important; }
-          .order-row-date { display: flex !important; margin-top: 6px !important; }
+          .order-row-articles { margin-top: 8px !important; border-top: 1px solid var(--border); padding-top: 6px !important; }
+          .order-row-total-desktop { margin-top: 4px !important; font-size: .88rem !important; }
+          .order-row-date { margin-top: 6px !important; }
           .order-row-status-desktop { display: none !important; }
-          .orders-table-header { display: none !important; }
           .order-detail-panel { width: 96vw !important; top: 50% !important; left: 50% !important; right: auto !important; bottom: auto !important; transform: translate(-50%, -50%) !important; max-height: 88vh !important; }
           .filter-scroll { overflow-x: auto; scrollbar-width: none; }
           .pagination { flex-wrap: wrap !important; }
