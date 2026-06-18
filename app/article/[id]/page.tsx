@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useAdmin, type Article } from '../../context/AdminContext';
 import { useCart } from '../../context/CartContext';
@@ -75,9 +76,10 @@ export default function ArticlePage() {
             <div>
               {/* Main image */}
               <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', background: 'var(--surface)', marginBottom: '12px' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={allImages[activeImg]} alt={article.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'opacity .3s' }} />
+                <Image src={allImages[activeImg]} alt={article.name} fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  style={{ objectFit: 'cover' }}
+                  preload loading="eager" />
 
                 {/* Tag */}
                 <div style={{ position: 'absolute', top: '16px', left: '16px', padding: '5px 13px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(184,146,74,.35)', backdropFilter: 'blur(8px)' }}>
@@ -104,9 +106,8 @@ export default function ArticlePage() {
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   {allImages.map((img, idx) => (
                     <button key={idx} onClick={() => setActiveImg(idx)}
-                      style={{ width: '72px', height: '90px', padding: 0, border: `2px solid ${activeImg === idx ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', overflow: 'hidden', background: 'var(--surface)', flexShrink: 0, transition: 'border-color .2s' }}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt={`${article.name} ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      style={{ position: 'relative', width: '72px', height: '90px', padding: 0, border: `2px solid ${activeImg === idx ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', overflow: 'hidden', background: 'var(--surface)', flexShrink: 0, transition: 'border-color .2s' }}>
+                      <Image src={img} alt={`${article.name} ${idx + 1}`} fill sizes="72px" style={{ objectFit: 'cover' }} quality={60} />
                     </button>
                   ))}
                 </div>

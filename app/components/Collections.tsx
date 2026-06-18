@@ -1,21 +1,22 @@
 ﻿'use client';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '../context/CartContext';
-import { useAdmin } from '../context/AdminContext';
+import { useAdmin, type Article } from '../context/AdminContext';
 
 const tabs = ['All', 'New', 'Traditional', 'Evening', 'Casual Chic', 'Modest'];
 
-export default function Collections() {
+const pinFirst = (arr: Article[]) => [...arr].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+
+function Collections() {
   const ref = useRef<HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [added, setAdded] = useState<string | null>(null);
-  const [activeImg, setActiveImg] = useState<Record<string, number>>({});
-  const [selections, setSelections] = useState<Record<string, { size: string; color: string }>>({});
   const { addItem } = useCart();
   const { articles, loading } = useAdmin();
 
-  const published = articles.filter(a => a.published);
+  const published = useMemo(() => articles.filter(a => a.published), [articles]);
 
   useEffect(() => {
     const els = ref.current?.querySelectorAll('.reveal') ?? [];
@@ -31,26 +32,20 @@ export default function Collections() {
     return () => obs.disconnect();
   }, [articles, activeTab]);
 
-  const pinFirst = (arr: typeof published) => [...arr].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
+  const filtered = useMemo(() => (
+    activeTab === 0
+      ? pinFirst(published)
+      : activeTab === 1
+      ? pinFirst([...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6))
+      : pinFirst(published.filter(p => p.category.toLowerCase().includes(tabs[activeTab].toLowerCase())))
+  ), [published, activeTab]);
 
-  const filtered = activeTab === 0
-    ? pinFirst(published)
-    : activeTab === 1
-    ? pinFirst([...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6))
-    : pinFirst(published.filter(p => p.category.toLowerCase().includes(tabs[activeTab].toLowerCase())));
-
-  const getSel = (id: string) => selections[id] || { size: '', color: '' };
-
-  const setSel = (id: string, key: 'size' | 'color', val: string) =>
-    setSelections(prev => ({ ...prev, [id]: { ...getSel(id), [key]: val } }));
-
-  const handleAdd = (p: typeof published[0]) => {
-    const { size, color } = getSel(p.id);
+  const handleAdd = useCallback((p: Article, size: string, color: string) => {
     const cartKey = `${p.id}-${size}-${color}`;
     addItem({ id: p.id, name: p.name, category: p.category, price: p.price, priceNum: p.priceNum, tag: p.tag, image: p.image, size: size || undefined, color: color || undefined });
     setAdded(cartKey);
     setTimeout(() => setAdded(null), 1600);
-  };
+  }, [addItem]);
 
   return (
     <section id="collections" ref={ref} style={{ padding: 'clamp(64px,10vw,120px) clamp(16px,5vw,64px)', background: 'var(--background)' }}>
@@ -98,139 +93,161 @@ export default function Collections() {
         {/* Product grid */}
         {filtered.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'clamp(14px,2vw,24px)' }}>
-            {filtered.map((p, i) => {
-              const sel = getSel(p.id);
-              const cartKey = `${p.id}-${sel.size}-${sel.color}`;
-              const isAdded = added === cartKey;
-              const hasSizes = p.sizes?.length > 0;
-              const hasColors = p.colors?.length > 0;
-              const allImages = (p.images && p.images.length > 0) ? p.images : (p.image ? [p.image] : []);
-
-              return (
-                <div key={p.id} style={{ transitionDelay: `${i * 80}ms` }}>
-                  <div style={{ position: 'relative', background: 'var(--surface)' }}>
-
-                    {/* Image gallery */}
-                    <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
-                      {/* Clickable image → detail page (behind arrows) */}
-                      <Link href={`/article/${p.id}`} style={{ display: 'block', width: '100%', height: '100%', position: 'absolute', inset: 0, zIndex: 1 }} />
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={allImages[activeImg[p.id] ?? 0]} alt={p.name}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'opacity .3s' }}
-                        className="pimg"
-                      />
-                      <div className="card-overlay" />
-
-                      {/* Arrows — z-index above the Link overlay */}
-                      {allImages.length > 1 && (
-                        <>
-                          <button onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: ((prev[p.id] ?? 0) - 1 + allImages.length) % allImages.length })); }}
-                            style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)', zIndex: 2 }}>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-                          </button>
-                          <button onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: ((prev[p.id] ?? 0) + 1) % allImages.length })); }}
-                            style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)', zIndex: 2 }}>
-                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
-                          </button>
-                          {/* Dots */}
-                          <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', zIndex: 2 }}>
-                            {allImages.map((_, idx) => (
-                              <div key={idx} onClick={e => { e.stopPropagation(); setActiveImg(prev => ({ ...prev, [p.id]: idx })); }}
-                                style={{ width: '5px', height: '5px', borderRadius: '50%', background: idx === (activeImg[p.id] ?? 0) ? 'var(--accent)' : 'rgba(255,255,255,.5)', cursor: 'pointer', transition: 'background .2s' }} />
-                            ))}
-                          </div>
-                        </>
-                      )}
-
-                      <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)', zIndex: 2 }}>
-                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
-                      </div>
-                    </div>
-
-                    {/* Info */}
-                    <div style={{ padding: '15px 16px', borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
-                        <div style={{ minWidth: 0 }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px', fontWeight: 600 }}>{p.category}</p>
-                          <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
-                          {p.description && <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--muted)', marginTop: '5px', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{p.description}</p>}
-                        </div>
-                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.92rem', fontWeight: 700, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
-                      </div>
-
-                      {/* Size selector */}
-                      {hasSizes && (
-                        <div style={{ marginBottom: '10px' }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px', fontWeight: 700 }}>
-                            Taille {sel.size && <span style={{ color: 'var(--accent)' }}>· {sel.size}</span>}
-                          </p>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                            {p.sizes.map(s => (
-                              <button key={s} onClick={() => setSel(p.id, 'size', sel.size === s ? '' : s)}
-                                style={{
-                                  fontFamily: 'var(--font-sans)', fontSize: '12px', padding: '6px 14px',
-                                  background: sel.size === s ? 'var(--accent)' : 'none',
-                                  border: `1px solid ${sel.size === s ? 'var(--accent)' : 'var(--border)'}`,
-                                  color: sel.size === s ? '#0a0a0a' : 'var(--muted)',
-                                  cursor: 'pointer', transition: 'all .2s', fontWeight: sel.size === s ? 700 : 400,
-                                }}>{s}</button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Color selector */}
-                      {hasColors && (
-                        <div style={{ marginBottom: '12px' }}>
-                          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px' }}>
-                            Couleur {sel.color && <span style={{ color: 'var(--accent)' }}>· {sel.color}</span>}
-                          </p>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                            {p.colors.map(c => (
-                              <button key={c} onClick={() => setSel(p.id, 'color', sel.color === c ? '' : c)}
-                                style={{
-                                  fontFamily: 'var(--font-sans)', fontSize: '12px', padding: '6px 14px',
-                                  background: sel.color === c ? 'rgba(201,169,110,.12)' : 'none',
-                                  border: `1px solid ${sel.color === c ? 'var(--accent)' : 'var(--border)'}`,
-                                  color: sel.color === c ? 'var(--accent)' : 'var(--muted)',
-                                  cursor: 'pointer', transition: 'all .2s',
-                                }}>{c}</button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Add to cart */}
-                      <button onClick={() => handleAdd(p)}
-                        style={{
-                          width: '100%', padding: '9px',
-                          background: isAdded ? 'rgba(201,169,110,.12)' : 'none',
-                          border: `1px solid ${isAdded ? 'var(--accent)' : 'var(--border)'}`,
-                          fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.2em', textTransform: 'uppercase',
-                          color: isAdded ? 'var(--accent)' : 'var(--muted)',
-                          cursor: 'pointer', transition: 'all .3s',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
-                        }} className="qadd">
-                        {isAdded
-                          ? <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Ajouté au panier</>
-                          : <>+ Ajouter au panier</>
-                        }
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {filtered.map((p, i) => (
+              <ProductCard key={p.id} p={p} delay={i * 80} added={added} onAdd={handleAdd} aboveFold={i < 4} />
+            ))}
           </div>
         )}
       </div>
 
       <style jsx>{`
-        .pimg:hover { transform: scale(1.04); }
-        .qadd:hover { border-color: var(--accent) !important; color: var(--foreground) !important; }
         div::-webkit-scrollbar { display: none !important; height: 0 !important; }
       `}</style>
     </section>
   );
 }
+
+export default memo(Collections);
+
+type ProductCardProps = {
+  p: Article;
+  delay: number;
+  added: string | null;
+  onAdd: (p: Article, size: string, color: string) => void;
+  aboveFold?: boolean;
+};
+
+const ProductCard = memo(function ProductCard({ p, delay, added, onAdd, aboveFold }: ProductCardProps) {
+  const [activeImg, setActiveImg] = useState(0);
+  const [size, setSize] = useState('');
+  const [color, setColor] = useState('');
+  const isAdded = added === `${p.id}-${size}-${color}`;
+
+  const hasSizes = p.sizes?.length > 0;
+  const hasColors = p.colors?.length > 0;
+  const allImages = (p.images && p.images.length > 0) ? p.images : (p.image ? [p.image] : []);
+
+  return (
+    <div style={{ transitionDelay: `${delay}ms` }}>
+      <div style={{ position: 'relative', background: 'var(--surface)' }}>
+
+        {/* Image gallery */}
+        <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
+          {/* Clickable image → detail page (behind arrows) */}
+          <Link href={`/article/${p.id}`} style={{ display: 'block', width: '100%', height: '100%', position: 'absolute', inset: 0, zIndex: 1 }} />
+          <Image src={allImages[activeImg] ?? allImages[0]} alt={p.name} fill
+            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
+            style={{ objectFit: 'cover' }}
+            className="pimg"
+            quality={60}
+            preload={aboveFold}
+            loading={aboveFold ? 'eager' : 'lazy'}
+          />
+          <div className="card-overlay" />
+
+          {/* Arrows — z-index above the Link overlay */}
+          {allImages.length > 1 && (
+            <>
+              <button onClick={e => { e.stopPropagation(); setActiveImg(idx => (idx - 1 + allImages.length) % allImages.length); }}
+                style={{ position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)', zIndex: 2 }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button onClick={e => { e.stopPropagation(); setActiveImg(idx => (idx + 1) % allImages.length); }}
+                style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', width: '28px', height: '28px', background: 'rgba(0,0,0,.6)', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backdropFilter: 'blur(4px)', zIndex: 2 }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+              {/* Dots */}
+              <div style={{ position: 'absolute', bottom: '8px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '4px', zIndex: 2 }}>
+                {allImages.map((_, idx) => (
+                  <div key={idx} onClick={e => { e.stopPropagation(); setActiveImg(idx); }}
+                    style={{ width: '5px', height: '5px', borderRadius: '50%', background: idx === activeImg ? 'var(--accent)' : 'rgba(255,255,255,.5)', cursor: 'pointer', transition: 'background .2s' }} />
+                ))}
+              </div>
+            </>
+          )}
+
+          <div style={{ position: 'absolute', top: '14px', left: '14px', padding: '4px 11px', background: 'rgba(8,8,8,.72)', border: '1px solid rgba(201,169,110,.35)', backdropFilter: 'blur(8px)', zIndex: 2 }}>
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.28em', textTransform: 'uppercase', color: 'var(--accent)' }}>{p.tag}</span>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div style={{ padding: '15px 16px', borderTop: '1px solid var(--border)', background: 'var(--surface)' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '10px' }}>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '4px', fontWeight: 600 }}>{p.category}</p>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: '1.05rem', color: 'var(--foreground)', letterSpacing: '.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</h3>
+              {p.description && <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--muted)', marginTop: '5px', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const, overflow: 'hidden' }}>{p.description}</p>}
+            </div>
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.92rem', fontWeight: 700, color: 'var(--accent)', flexShrink: 0, marginTop: '2px' }}>{p.price}</span>
+          </div>
+
+          {/* Size selector */}
+          {hasSizes && (
+            <div style={{ marginBottom: '10px' }}>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px', fontWeight: 700 }}>
+                Taille {size && <span style={{ color: 'var(--accent)' }}>· {size}</span>}
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {p.sizes.map(s => (
+                  <button key={s} onClick={() => setSize(prev => prev === s ? '' : s)}
+                    style={{
+                      fontFamily: 'var(--font-sans)', fontSize: '12px', padding: '6px 14px',
+                      background: size === s ? 'var(--accent)' : 'none',
+                      border: `1px solid ${size === s ? 'var(--accent)' : 'var(--border)'}`,
+                      color: size === s ? '#0a0a0a' : 'var(--muted)',
+                      cursor: 'pointer', transition: 'all .2s', fontWeight: size === s ? 700 : 400,
+                    }}>{s}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Color selector */}
+          {hasColors && (
+            <div style={{ marginBottom: '12px' }}>
+              <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '7px' }}>
+                Couleur {color && <span style={{ color: 'var(--accent)' }}>· {color}</span>}
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                {p.colors.map(c => (
+                  <button key={c} onClick={() => setColor(prev => prev === c ? '' : c)}
+                    style={{
+                      fontFamily: 'var(--font-sans)', fontSize: '12px', padding: '6px 14px',
+                      background: color === c ? 'rgba(201,169,110,.12)' : 'none',
+                      border: `1px solid ${color === c ? 'var(--accent)' : 'var(--border)'}`,
+                      color: color === c ? 'var(--accent)' : 'var(--muted)',
+                      cursor: 'pointer', transition: 'all .2s',
+                    }}>{c}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Add to cart */}
+          <button onClick={() => onAdd(p, size, color)}
+            style={{
+              width: '100%', padding: '9px',
+              background: isAdded ? 'rgba(201,169,110,.12)' : 'none',
+              border: `1px solid ${isAdded ? 'var(--accent)' : 'var(--border)'}`,
+              fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.2em', textTransform: 'uppercase',
+              color: isAdded ? 'var(--accent)' : 'var(--muted)',
+              cursor: 'pointer', transition: 'all .3s',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
+            }} className="qadd">
+            {isAdded
+              ? <><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>Ajouté au panier</>
+              : <>+ Ajouter au panier</>
+            }
+          </button>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .pimg:hover { transform: scale(1.04); }
+        .qadd:hover { border-color: var(--accent) !important; color: var(--foreground) !important; }
+      `}</style>
+    </div>
+  );
+});
 

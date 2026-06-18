@@ -92,10 +92,13 @@ export default function AdminStats({ onNavigate, isViewer }: { onNavigate: (tab:
     fetch('/api/stats').then(r => r.json()).then(d => setVisits(d.visits));
   }, []);
 
-  const totalRevenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.subtotal, 0);
-  const pending   = orders.filter(o => o.status === 'pending').length;
-  const noResponse = orders.filter(o => o.status === 'no_response').length; // eslint-disable-line
-  const published = articles.filter(a => a.published).length;
+  const { totalRevenue, pending, noResponse, activeOrdersCount } = useMemo(() => ({
+    totalRevenue: orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.subtotal, 0),
+    pending: orders.filter(o => o.status === 'pending').length,
+    noResponse: orders.filter(o => o.status === 'no_response').length,
+    activeOrdersCount: orders.filter(o => o.status !== 'cancelled').length,
+  }), [orders]);
+  const published = useMemo(() => articles.filter(a => a.published).length, [articles]);
 
   // Build chart data based on range
   const { revenueData, ordersData, rangeLabel } = useMemo(() => {
@@ -176,20 +179,23 @@ export default function AdminStats({ onNavigate, isViewer }: { onNavigate: (tab:
     };
   }, [range, selectedMonth, selectedYear, orders]);
 
-  const statusData = Object.entries(STATUS_LABELS).map(([key, label]) => ({
+  const statusData = useMemo(() => Object.entries(STATUS_LABELS).map(([key, label]) => ({
     name: label, value: orders.filter(o => o.status === key).length, color: STATUS_COLORS[key],
-  })).filter(d => d.value > 0);
+  })).filter(d => d.value > 0), [orders]);
 
-  const categoryData = articles.reduce((acc, a) => {
-    acc[a.category] = (acc[a.category] || 0) + 1; return acc;
-  }, {} as Record<string, number>);
-  const categoryChart = Object.entries(categoryData).map(([name, value]) => ({ name, value }));
+  const categoryChart = useMemo(() => {
+    const categoryData = articles.reduce((acc, a) => {
+      acc[a.category] = (acc[a.category] || 0) + 1; return acc;
+    }, {} as Record<string, number>);
+    return Object.entries(categoryData).map(([name, value]) => ({ name, value }));
+  }, [articles]);
 
-  const recentOrders = [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
+  const recentOrders = useMemo(() =>
+    [...orders].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4), [orders]);
 
   const kpis = [
     { label: 'Visiteurs',          value: visits === null ? '...' : visits.toLocaleString('fr-FR'), sub: 'Total visites',   color: '#34d399', icon: <IconVisits />, moneyOnly: false },
-    { label: "Chiffre d'affaires", value: fmt(totalRevenue), sub: `${orders.filter(o=>o.status!=='cancelled').length} commandes`, color: 'var(--accent)', icon: <IconRevenue />, moneyOnly: true },
+    { label: "Chiffre d'affaires", value: fmt(totalRevenue), sub: `${activeOrdersCount} commandes`, color: 'var(--accent)', icon: <IconRevenue />, moneyOnly: true },
     { label: 'En attente',         value: String(pending),   sub: 'À traiter',  color: pending > 0 ? '#f59e0b' : '#4ade80', icon: <IconPending />, moneyOnly: false },
     { label: 'Ne répond pas',      value: String(noResponse), sub: 'Sans réponse', color: '#f87171', icon: <IconShipped />, moneyOnly: false },
     { label: 'Articles publiés',   value: String(published), sub: `${articles.length} total`, color: '#a78bfa', icon: <IconArticle />, moneyOnly: false },

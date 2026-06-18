@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useCart } from '../context/CartContext';
 import CheckoutModal from './CheckoutModal';
@@ -28,7 +28,7 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [cartOpen, menuOpen]);
 
-  const subtotal = items.reduce((s, it) => s + it.priceNum * it.qty, 0);
+  const subtotal = useMemo(() => items.reduce((s, it) => s + it.priceNum * it.qty, 0), [items]);
 
   return (
     <>

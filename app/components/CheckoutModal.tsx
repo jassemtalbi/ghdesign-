@@ -1,5 +1,5 @@
 ﻿'use client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useCart } from '../context/CartContext';
 import { useAdmin } from '../context/AdminContext';
@@ -18,7 +18,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
   const { items, setCartOpen } = useCart();
   const { addOrder, articles } = useAdmin();
 
-  const subtotal = items.reduce((s, it) => s + it.priceNum * it.qty, 0);
+  const subtotal = useMemo(() => items.reduce((s, it) => s + it.priceNum * it.qty, 0), [items]);
   const delivery: number = 8000;
   const grandTotal = subtotal + delivery;
 

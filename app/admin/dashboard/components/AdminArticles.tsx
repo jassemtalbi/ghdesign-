@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { useAdmin, type Article } from '../../../context/AdminContext';
 
@@ -35,9 +35,9 @@ export default function AdminArticles() {
   const [activeImg, setActiveImg] = useState<Record<string, number>>({});
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const filtered = articles.filter(a =>
+  const filtered = useMemo(() => articles.filter(a =>
     filter === 'all' ? true : filter === 'published' ? a.published : !a.published
-  );
+  ), [articles, filter]);
 
   const openNew = () => {
     setEditing(null);

@@ -64,6 +64,11 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
 };
 const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'traite', 'urgent', 'delivered', 'cancelled'];
 
+const QUICK_DATE_FILTERS: [string, string][] = [
+  ['', 'Tout'], ['today', "Aujourd'hui"], ['yesterday', 'Hier'],
+  ['3d', '3 derniers jours'], ['7d', '7 derniers jours'], ['month', 'Ce mois'],
+];
+
 type SortKey = 'date' | 'total' | 'status';
 type SortDir = 'asc' | 'desc';
 
@@ -224,7 +229,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
 
           {/* Quick date filters */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
-            {([['', 'Tout'], ['today', "Aujourd'hui"], ['yesterday', 'Hier'], ['3d', '3 derniers jours'], ['7d', '7 derniers jours'], ['month', 'Ce mois']] as [string, string][]).map(([key, label]) => (
+            {QUICK_DATE_FILTERS.map(([key, label]) => (
               <button key={key} onClick={() => applyQuick(key)}
                 style={{
                   padding: '6px 12px', fontSize: '11px', letterSpacing: '.1em', textTransform: 'uppercase',

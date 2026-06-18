@@ -1,16 +1,19 @@
 ﻿'use client';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import { useCart } from '../context/CartContext';
-import { useAdmin } from '../context/AdminContext';
+import { useAdmin, type Article } from '../context/AdminContext';
 
-export default function NewArrivals() {
+function NewArrivals() {
   const ref = useRef<HTMLElement>(null);
   const [added, setAdded] = useState<string | null>(null);
   const { addItem } = useCart();
   const { articles } = useAdmin();
 
-  const published = articles.filter(a => a.published);
-  const newest = [...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 3);
+  const newest = useMemo(
+    () => articles.filter(a => a.published).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 3),
+    [articles]
+  );
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -21,11 +24,11 @@ export default function NewArrivals() {
     return () => obs.disconnect();
   }, [articles]);
 
-  const handleAdd = (p: typeof newest[0]) => {
+  const handleAdd = useCallback((p: Article) => {
     addItem({ id: p.id, name: p.name, category: p.category, price: p.price, priceNum: p.priceNum, tag: p.tag, image: p.image });
     setAdded(p.id);
     setTimeout(() => setAdded(null), 1600);
-  };
+  }, [addItem]);
 
   if (newest.length === 0) return null;
 
@@ -48,10 +51,13 @@ export default function NewArrivals() {
             <div key={item.id} className="reveal" style={{ transitionDelay: `${i * 100}ms` }}>
               <div style={{ position: 'relative', overflow: 'hidden', background: '#0f0c07' }}>
                 <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.image} alt={item.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)', display: 'block' }}
+                  <Image src={item.image} alt={item.name} fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 420px"
+                    style={{ objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)' }}
                     className="nimg"
+                    quality={60}
+                    preload={i < 3}
+                    loading={i < 3 ? 'eager' : 'lazy'}
                   />
                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.82) 0%, rgba(0,0,0,.15) 50%, transparent 100%)' }} />
                   <div style={{ position: 'absolute', top: '14px', right: '14px', padding: '4px 11px', background: 'var(--accent)' }}>
@@ -95,4 +101,6 @@ export default function NewArrivals() {
     </section>
   );
 }
+
+export default memo(NewArrivals);
 

@@ -13,6 +13,12 @@ const cols = [
   ]},
 ];
 
+const SOCIAL_LINKS = [
+  { label: 'Fb', href: 'https://www.facebook.com/share/1cPXVWjggx/?mibextid=wwXIfr' },
+  { label: 'Ig', href: 'https://www.instagram.com/gh.design5?igsh=MXhhczNxeTh1emg3OA%3D%3D&utm_source=qr' },
+  { label: 'Tk', href: 'https://www.tiktok.com/@gh.design5?_r=1&_t=ZS-96swh3wlqqN' },
+];
+
 export default function Footer() {
   return (
     <footer style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
@@ -32,11 +38,7 @@ export default function Footer() {
             </p>
             {/* Social */}
             <div style={{ display: 'flex', gap: '8px' }}>
-              {[
-                { label: 'Fb', href: 'https://www.facebook.com/share/1cPXVWjggx/?mibextid=wwXIfr' },
-                { label: 'Ig', href: 'https://www.instagram.com/gh.design5?igsh=MXhhczNxeTh1emg3OA%3D%3D&utm_source=qr' },
-                { label: 'Tk', href: 'https://www.tiktok.com/@gh.design5?_r=1&_t=ZS-96swh3wlqqN' },
-              ].map(s => (
+              {SOCIAL_LINKS.map(s => (
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer"
                   className="footer-social"
                   style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--border)', fontFamily: 'var(--font-sans)', fontSize: '12px', color: 'var(--muted)', textDecoration: 'none', cursor: 'pointer', transition: 'all .3s' }}>

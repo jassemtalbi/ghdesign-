@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 
 export type OrderStatus = 'pending' | 'confirmed' | 'no_response' | 'delivered' | 'cancelled' | 'traite' | 'urgent';
 
@@ -117,8 +117,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     if (res.ok) setOrders(prev => prev.map(o => o.id === id ? { ...o, adminNote: note } : o));
   }, []);
 
+  const value = useMemo(
+    () => ({ orders, articles, loading, addOrder, updateOrderStatus, updateOrderNote, deleteOrder, addArticle, updateArticle, deleteArticle, togglePublish, togglePin, refresh: fetchAll }),
+    [orders, articles, loading, addOrder, updateOrderStatus, updateOrderNote, deleteOrder, addArticle, updateArticle, deleteArticle, togglePublish, togglePin, fetchAll]
+  );
+
   return (
-    <Ctx.Provider value={{ orders, articles, loading, addOrder, updateOrderStatus, updateOrderNote, deleteOrder, addArticle, updateArticle, deleteArticle, togglePublish, togglePin, refresh: fetchAll }}>
+    <Ctx.Provider value={value}>
       {children}
     </Ctx.Provider>
   );
