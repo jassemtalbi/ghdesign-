@@ -89,6 +89,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [quickFilter, setQuickFilter] = useState<string>('');
+  const [showNewOrder, setShowNewOrder] = useState(false);
 
   const applyQuick = (key: string) => {
     const today = new Date();
@@ -224,8 +225,28 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         }
       `}</style>
 
+      {showNewOrder && (
+        <NewOrderModal onClose={() => setShowNewOrder(false)} />
+      )}
+
       <div>
         <div style={{ flex: 1, minWidth: 0 }}>
+
+          {/* Header + new order */}
+          {!isViewer && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+              <button onClick={() => setShowNewOrder(true)}
+                style={{
+                  padding: '10px 18px', background: 'var(--accent)', border: '1px solid var(--accent)',
+                  color: 'var(--background)', fontSize: '12px', letterSpacing: '.15em', textTransform: 'uppercase',
+                  cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px',
+                  transition: 'all .2s',
+                }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Nouvelle commande
+              </button>
+            </div>
+          )}
 
           {/* Quick date filters */}
           <div style={{ display: 'flex', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
@@ -600,5 +621,252 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         )}
       </div>
     </>
+  );
+}
+
+const WILAYAS = [
+  'Tunis','Ariana','Ben Arous','Manouba','Nabeul','Zaghouan','Bizerte','Béja',
+  'Jendouba','Kef','Siliana','Sousse','Monastir','Mahdia','Sfax','Kairouan',
+  'Kasserine','Sidi Bouzid','Gabès','Médenine','Tataouine','Gafsa','Tozeur','Kébili',
+];
+
+type NewOrderLine = { articleId: string; name: string; category: string; price: string; priceNum: number; image: string; qty: number; size: string; color: string };
+
+function NewOrderModal({ onClose }: { onClose: () => void }) {
+  const { articles, addOrder } = useAdmin();
+  const [search, setSearch] = useState('');
+  const [lines, setLines] = useState<NewOrderLine[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', address: '', city: '', wilaya: '', notes: '' });
+  const [delivery, setDelivery] = useState(8000);
+
+  const published = useMemo(() => articles.filter(a => a.published), [articles]);
+  const results = useMemo(() => {
+    if (!search.trim()) return [];
+    const q = search.trim().toLowerCase();
+    return published.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
+  }, [published, search]);
+
+  const subtotal = useMemo(() => lines.reduce((s, l) => s + l.priceNum * l.qty, 0), [lines]);
+  const grandTotal = subtotal + delivery;
+
+  const addLine = (a: typeof published[0]) => {
+    setLines(prev => {
+      const existing = prev.find(l => l.articleId === a.id && !l.size && !l.color);
+      if (existing) return prev.map(l => l === existing ? { ...l, qty: l.qty + 1 } : l);
+      return [...prev, { articleId: a.id, name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, image: a.image, qty: 1, size: '', color: '' }];
+    });
+    setSearch('');
+  };
+
+  const updateLine = (idx: number, updates: Partial<NewOrderLine>) =>
+    setLines(prev => prev.map((l, i) => i === idx ? { ...l, ...updates } : l));
+
+  const removeLine = (idx: number) => setLines(prev => prev.filter((_, i) => i !== idx));
+
+  const set = (k: string, v: string) => {
+    setForm(prev => ({ ...prev, [k]: v }));
+    setErrors(prev => ({ ...prev, [k]: '' }));
+  };
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (lines.length === 0) e.lines = 'Ajoutez au moins un article';
+    if (!form.firstName.trim()) e.firstName = 'Requis';
+    if (!form.lastName.trim())  e.lastName  = 'Requis';
+    if (!form.phone.trim())     e.phone     = 'Requis';
+    if (!form.address.trim())   e.address   = 'Requis';
+    if (!form.city.trim())      e.city      = 'Requis';
+    if (!form.wilaya)           e.wilaya    = 'Requis';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validate() || isSubmitting) return;
+    setIsSubmitting(true);
+    await addOrder({
+      customer: { ...form },
+      items: lines.map(l => ({
+        id: l.articleId, name: l.name, category: l.category, price: l.price, priceNum: l.priceNum,
+        qty: l.qty, image: l.image, size: l.size || undefined, color: l.color || undefined,
+      })),
+      subtotal, delivery, total: grandTotal,
+    });
+    setIsSubmitting(false);
+    setDone(true);
+  };
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 90, background: 'rgba(0,0,0,.8)', backdropFilter: 'blur(8px)' }} />
+      <div style={{
+        position: 'fixed', zIndex: 91, top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+        width: 'min(820px, 96vw)', maxHeight: '90vh', overflowY: 'auto',
+        background: 'var(--background)', border: '1px solid var(--border)',
+      }} className="new-order-modal">
+
+        <div style={{ padding: '20px 26px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: 'var(--background)', zIndex: 1 }}>
+          <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: '1.4rem', color: 'var(--foreground)' }}>
+            {done ? 'Commande créée' : 'Nouvelle commande'}
+          </h2>
+          <button onClick={onClose} style={{ background: 'none', border: '1px solid var(--border)', cursor: 'pointer', width: '34px', height: '34px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted)' }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+
+        {done ? (
+          <div style={{ padding: '48px 32px', textAlign: 'center' }}>
+            <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'rgba(74,222,128,.12)', border: '1px solid rgba(74,222,128,.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 18px' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--foreground)', marginBottom: '20px' }}>
+              Commande ajoutée avec succès
+            </p>
+            <button onClick={onClose} className="btn-gold" style={{ padding: '12px 28px', fontSize: '11px', cursor: 'pointer', border: 'none' }}>
+              Fermer
+            </button>
+          </div>
+        ) : (
+          <div style={{ padding: '24px 26px 28px' }}>
+
+            {/* Article search */}
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>Articles</p>
+            <div style={{ position: 'relative', marginBottom: '14px' }}>
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Rechercher un article par nom..."
+                style={{ width: '100%', padding: '11px 13px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.85rem', fontFamily: 'inherit', outline: 'none' }} />
+              {results.length > 0 && (
+                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'var(--surface)', border: '1px solid var(--border)', zIndex: 5, maxHeight: '260px', overflowY: 'auto' }}>
+                  {results.map(a => (
+                    <button key={a.id} onClick={() => addLine(a)}
+                      style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '9px 13px', background: 'none', border: 'none', borderBottom: '1px solid var(--border)', cursor: 'pointer', textAlign: 'left' }}>
+                      <span style={{ fontFamily: 'var(--font-serif)', fontSize: '.85rem', color: 'var(--foreground)', flex: 1 }}>{a.name}</span>
+                      <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.78rem', color: 'var(--accent)' }}>{a.price}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {errors.lines && <p style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: '#e07070', marginBottom: '10px' }}>{errors.lines}</p>}
+
+            {/* Line items */}
+            {lines.length > 0 && (
+              <div style={{ marginBottom: '20px' }}>
+                {lines.map((l, idx) => {
+                  const article = articles.find(a => a.id === l.articleId);
+                  const hasSizes = (article?.sizes?.length ?? 0) > 0;
+                  const hasColors = (article?.colors?.length ?? 0) > 0;
+                  return (
+                    <div key={idx} style={{ padding: '12px 14px', marginBottom: '8px', background: 'var(--surface)', border: '1px solid var(--border)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: hasSizes || hasColors ? '10px' : 0 }}>
+                        <span style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--foreground)', flex: 1 }}>{l.name}</span>
+                        <input type="number" min={1} value={l.qty} onChange={e => updateLine(idx, { qty: Math.max(1, Number(e.target.value) || 1) })}
+                          style={{ width: '52px', padding: '6px 8px', background: 'var(--background)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.8rem', fontFamily: 'inherit', textAlign: 'center' }} />
+                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '.8rem', color: 'var(--accent)', minWidth: '74px', textAlign: 'right' }}>{fmt(l.priceNum * l.qty)}</span>
+                        <button onClick={() => removeLine(idx)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '4px' }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        </button>
+                      </div>
+                      {(hasSizes || hasColors) && (
+                        <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                          {hasSizes && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', alignItems: 'center' }}>
+                              {article!.sizes.map(s => (
+                                <button key={s} onClick={() => updateLine(idx, { size: l.size === s ? '' : s })}
+                                  style={{
+                                    fontFamily: 'var(--font-sans)', fontSize: '9px', padding: '4px 10px', cursor: 'pointer',
+                                    background: l.size === s ? 'var(--accent)' : 'none',
+                                    border: `1px solid ${l.size === s ? 'var(--accent)' : 'var(--border)'}`,
+                                    color: l.size === s ? 'var(--background)' : 'var(--muted)',
+                                  }}>{s}</button>
+                              ))}
+                            </div>
+                          )}
+                          {hasColors && (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', alignItems: 'center' }}>
+                              {article!.colors.map(c => (
+                                <button key={c} onClick={() => updateLine(idx, { color: l.color === c ? '' : c })}
+                                  style={{
+                                    fontFamily: 'var(--font-sans)', fontSize: '9px', padding: '4px 10px', cursor: 'pointer',
+                                    background: l.color === c ? 'rgba(184,146,74,.1)' : 'none',
+                                    border: `1px solid ${l.color === c ? 'var(--accent)' : 'var(--border)'}`,
+                                    color: l.color === c ? 'var(--accent)' : 'var(--muted)',
+                                  }}>{c}</button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Customer info */}
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>Client</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px', marginBottom: '10px' }}>
+              <NOInput label="Prénom *" error={errors.firstName} value={form.firstName} onChange={v => set('firstName', v)} />
+              <NOInput label="Nom *" error={errors.lastName} value={form.lastName} onChange={v => set('lastName', v)} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px', marginBottom: '10px' }}>
+              <NOInput label="Téléphone *" error={errors.phone} value={form.phone} onChange={v => set('phone', v)} />
+              <NOInput label="Email" error="" value={form.email} onChange={v => set('email', v)} />
+            </div>
+            <div style={{ marginBottom: '10px' }}>
+              <NOInput label="Adresse *" error={errors.address} value={form.address} onChange={v => set('address', v)} />
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px', marginBottom: '10px' }}>
+              <NOInput label="Ville *" error={errors.city} value={form.city} onChange={v => set('city', v)} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <label style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.22em', textTransform: 'uppercase', color: errors.wilaya ? '#e07070' : 'var(--muted)' }}>Gouvernorat *</label>
+                <select value={form.wilaya} onChange={e => set('wilaya', e.target.value)}
+                  style={{ width: '100%', padding: '11px 13px', background: 'var(--surface)', border: `1px solid ${errors.wilaya ? '#c05050' : 'var(--border)'}`, color: 'var(--foreground)', fontSize: '.85rem', fontFamily: 'inherit', outline: 'none' }}>
+                  <option value="">Sélectionner...</option>
+                  {WILAYAS.map(w => <option key={w} value={w}>{w}</option>)}
+                </select>
+              </div>
+            </div>
+            <div style={{ marginBottom: '18px' }}>
+              <NOInput label="Note (optionnel)" error="" value={form.notes} onChange={v => set('notes', v)} />
+            </div>
+
+            {/* Totals */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--muted)' }}>Livraison</span>
+                <input type="number" min={0} value={delivery} onChange={e => setDelivery(Math.max(0, Number(e.target.value) || 0))}
+                  style={{ width: '90px', padding: '7px 9px', background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--foreground)', fontSize: '.8rem', fontFamily: 'inherit' }} />
+              </div>
+              <div style={{ flex: 1 }} />
+              <span style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', color: 'var(--muted)' }}>Total</span>
+              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', color: 'var(--accent)' }}>{fmt(grandTotal)}</span>
+            </div>
+
+            <button onClick={handleSubmit} disabled={isSubmitting} className="btn-gold"
+              style={{ width: '100%', padding: '15px', fontSize: '11px', cursor: isSubmitting ? 'default' : 'pointer', border: 'none', opacity: isSubmitting ? 0.6 : 1 }}>
+              {isSubmitting ? 'Création en cours…' : 'Créer la commande'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        @media (max-width: 640px) { .new-order-modal { width: 96vw !important; max-height: 92vh !important; } }
+      `}</style>
+    </>
+  );
+}
+
+function NOInput({ label, error, value, onChange }: { label: string; error: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+      <label style={{ fontFamily: 'var(--font-sans)', fontSize: '8px', letterSpacing: '.22em', textTransform: 'uppercase', color: error ? '#e07070' : 'var(--muted)' }}>{label}</label>
+      <input value={value} onChange={e => onChange(e.target.value)}
+        style={{ width: '100%', padding: '11px 13px', background: 'var(--surface)', border: `1px solid ${error ? '#c05050' : 'var(--border)'}`, color: 'var(--foreground)', fontSize: '.85rem', fontFamily: 'inherit', outline: 'none' }} />
+      {error && <span style={{ fontFamily: 'var(--font-sans)', fontSize: '10px', color: '#e07070' }}>{error}</span>}
+    </div>
   );
 }
