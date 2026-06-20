@@ -28,6 +28,26 @@ export async function POST(req: Request) {
   return NextResponse.json({ ok: true, role: (admin as any).role || 'admin' });
 }
 
+// PATCH /api/auth — change own password (requires current password)
+export async function PATCH(req: Request) {
+  await dbConnect;
+  const { username, currentPassword, newPassword } = await req.json();
+
+  if (!username?.trim() || !currentPassword?.trim() || !newPassword?.trim())
+    return NextResponse.json({ error: 'Champs manquants' }, { status: 400 });
+  if (newPassword.trim().length < 6)
+    return NextResponse.json({ error: 'Le nouveau mot de passe doit contenir au moins 6 caractères' }, { status: 400 });
+
+  const admin = await Admin.findOne({ username: username.trim() });
+  if (!admin || admin.password !== hash(currentPassword))
+    return NextResponse.json({ error: 'Mot de passe actuel incorrect' }, { status: 401 });
+
+  admin.password = hash(newPassword);
+  await admin.save();
+
+  return NextResponse.json({ ok: true });
+}
+
 // DELETE /api/auth — remove an admin account
 export async function DELETE(req: Request) {
   await dbConnect;
