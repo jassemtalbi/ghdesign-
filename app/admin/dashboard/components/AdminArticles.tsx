@@ -19,7 +19,12 @@ const CATEGORIES = ['Traditional', 'Evening', 'Casual Chic', 'Modest'];
 const TAGS = ['Bestseller', 'New', 'Limited', 'Exclusive', 'Just Arrived', 'Sale'];
 
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL'];
-const PRESET_COLORS = ['Noir', 'Blanc', 'Beige', 'Doré', 'Rouge', 'Bleu', 'Vert', 'Rose', 'Bordeaux', 'Gris', 'Marron', 'Jaune'];
+const PRESET_COLORS = [
+  'Noir', 'Blanc', 'Beige', 'Doré', 'Argenté', 'Rouge', 'Bleu', 'Bleu djean', 'Bleu marine', 'Bleu ciel',
+  'Vert', 'Vert olive', 'Vert émeraude', 'Rose', 'Rose fushia', 'Rose poudré', 'Bois de rose',
+  'Bordeaux', 'Gris', 'Gris clair', 'Marron', 'Camel', 'Jaune', 'Moutarde', 'Orange', 'Corail',
+  'Turquoise', 'Violet', 'Mauve', 'Lilas', 'Ivoire', 'Crème', 'Kaki', 'Taupe', 'Nude',
+];
 
 const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', description: '', pinned: false, published: true };
 
