@@ -29,6 +29,7 @@ export default function AdminLogin() {
         localStorage.setItem('gh_admin', '1');
         localStorage.setItem('gh_admin_role', data.role || 'admin');
         localStorage.setItem('gh_admin_user', form.user.trim());
+        localStorage.setItem('gh_admin_session', String(data.sessionVersion || 0));
         router.push('/admin/dashboard');
       } else {
         const data = await res.json();

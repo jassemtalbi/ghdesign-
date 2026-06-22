@@ -12,6 +12,39 @@ export default function AdminSettings() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  const [confirmLogoutAll, setConfirmLogoutAll] = useState(false);
+  const [logoutAllLoading, setLogoutAllLoading] = useState(false);
+  const [logoutAllResult, setLogoutAllResult] = useState<string | null>(null);
+
+  const handleLogoutAll = async () => {
+    const username = localStorage.getItem('gh_admin_user');
+    if (!username) {
+      setLogoutAllResult('Session expirée, veuillez vous reconnecter');
+      setConfirmLogoutAll(false);
+      return;
+    }
+    setLogoutAllLoading(true);
+    setLogoutAllResult(null);
+    try {
+      const res = await fetch('/api/auth/force-logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setLogoutAllResult('Tous les autres comptes ont été déconnectés');
+      } else {
+        setLogoutAllResult(data.error || 'Erreur lors de la déconnexion');
+      }
+    } catch {
+      setLogoutAllResult('Erreur de connexion');
+    } finally {
+      setLogoutAllLoading(false);
+      setConfirmLogoutAll(false);
+    }
+  };
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -91,6 +124,45 @@ export default function AdminSettings() {
           {loading ? 'Mise à jour…' : 'Mettre à jour le mot de passe'}
         </button>
       </form>
+
+      <div style={{ height: '1px', background: 'var(--border)', margin: '36px 0 28px' }} />
+
+      <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '10px' }}>
+        Sécurité
+      </p>
+      <p style={{ fontFamily: 'var(--font-sans)', fontSize: '.82rem', color: 'var(--muted)', lineHeight: 1.7, marginBottom: '16px' }}>
+        Déconnecte instantanément tous les autres comptes administrateurs (sur tous les appareils). Votre session actuelle reste active.
+      </p>
+
+      {!confirmLogoutAll ? (
+        <button type="button" onClick={() => setConfirmLogoutAll(true)}
+          style={{ padding: '12px 24px', background: 'none', border: '1px solid #c05050', color: '#e07070', fontSize: '11px', letterSpacing: '.2em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Déconnecter tous les autres comptes
+        </button>
+      ) : (
+        <div style={{ padding: '14px 16px', background: 'rgba(192,80,80,.08)', border: '1px solid #c05050' }}>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '.85rem', color: 'var(--foreground)', marginBottom: '12px' }}>
+            Confirmer la déconnexion de tous les autres comptes ?
+          </p>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button type="button" onClick={handleLogoutAll} disabled={logoutAllLoading}
+              style={{ padding: '10px 18px', background: '#7f1d1d', border: '1px solid #c05050', color: '#fca5a5', fontSize: '11px', letterSpacing: '.15em', textTransform: 'uppercase', cursor: logoutAllLoading ? 'default' : 'pointer', fontFamily: 'inherit', opacity: logoutAllLoading ? 0.6 : 1 }}>
+              {logoutAllLoading ? 'Déconnexion…' : 'Oui, déconnecter'}
+            </button>
+            <button type="button" onClick={() => setConfirmLogoutAll(false)} disabled={logoutAllLoading}
+              style={{ padding: '10px 18px', background: 'none', border: '1px solid var(--border)', color: 'var(--muted)', fontSize: '11px', letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}>
+              Annuler
+            </button>
+          </div>
+        </div>
+      )}
+
+      {logoutAllResult && (
+        <p style={{ fontFamily: 'var(--font-sans)', fontSize: '12px', color: logoutAllResult.includes('Erreur') || logoutAllResult.includes('expirée') ? '#e07070' : '#4ade80', marginTop: '12px' }}>
+          {logoutAllResult}
+        </p>
+      )}
     </div>
   );
 }

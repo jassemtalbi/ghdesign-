@@ -18,16 +18,41 @@ export default function Dashboard() {
   const [isViewer, setIsViewer] = useState(false);
   const { orders, articles } = useAdmin();
 
+  const logout = () => {
+    localStorage.removeItem('gh_admin');
+    localStorage.removeItem('gh_admin_role');
+    localStorage.removeItem('gh_admin_user');
+    localStorage.removeItem('gh_admin_session');
+    router.replace('/admin/login');
+  };
+
   useEffect(() => {
     if (localStorage.getItem('gh_admin') !== '1') {
       router.replace('/admin/login');
-    } else {
-      setIsViewer(localStorage.getItem('gh_admin_role') === 'viewer');
-      setReady(true);
+      return;
     }
-  }, [router]);
+    setIsViewer(localStorage.getItem('gh_admin_role') === 'viewer');
+    setReady(true);
 
-  const logout = () => { localStorage.removeItem('gh_admin'); router.replace('/admin/login'); };
+    const checkSession = async () => {
+      const username = localStorage.getItem('gh_admin_user');
+      const localVersion = localStorage.getItem('gh_admin_session');
+      if (!username) return;
+      try {
+        const res = await fetch(`/api/auth?username=${encodeURIComponent(username)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (String(data.sessionVersion ?? 0) !== (localVersion ?? '0')) {
+          logout();
+        }
+      } catch { /* network hiccup — ignore, retry next interval */ }
+    };
+
+    checkSession();
+    const interval = setInterval(checkSession, 30000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router]);
 
   if (!ready) return <div style={{ minHeight: '100vh', background: 'var(--background)' }} />;
 

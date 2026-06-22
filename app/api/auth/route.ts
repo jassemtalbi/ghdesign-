@@ -5,9 +5,10 @@ import mongoose, { Schema, model, models } from 'mongoose';
 import crypto from 'crypto';
 
 const AdminSchema = new Schema({
-  username: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role:     { type: String, default: 'admin' },
+  username:       { type: String, required: true, unique: true },
+  password:       { type: String, required: true },
+  role:           { type: String, default: 'admin' },
+  sessionVersion: { type: Number, default: 0 },
 });
 const Admin = models.Admin || model('Admin', AdminSchema);
 
@@ -25,7 +26,21 @@ export async function POST(req: Request) {
   if (!admin || (admin as any).password !== hash(password))
     return NextResponse.json({ error: 'Identifiants incorrects' }, { status: 401 });
 
-  return NextResponse.json({ ok: true, role: (admin as any).role || 'admin' });
+  return NextResponse.json({ ok: true, role: (admin as any).role || 'admin', sessionVersion: (admin as any).sessionVersion || 0 });
+}
+
+// GET /api/auth?username=X — check current sessionVersion (used to detect a forced logout)
+export async function GET(req: Request) {
+  await dbConnect;
+  const { searchParams } = new URL(req.url);
+  const username = searchParams.get('username');
+  if (!username?.trim())
+    return NextResponse.json({ error: 'Champs manquants' }, { status: 400 });
+
+  const admin = await Admin.findOne({ username: username.trim() }).lean();
+  if (!admin) return NextResponse.json({ error: 'Introuvable' }, { status: 404 });
+
+  return NextResponse.json({ sessionVersion: (admin as any).sessionVersion || 0 });
 }
 
 // PATCH /api/auth — change own password (requires current password)
