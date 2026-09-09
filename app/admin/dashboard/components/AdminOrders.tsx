@@ -57,12 +57,12 @@ function Celebration({ onDone }: { onDone: () => void }) {
 const fmt = (n: number) => n.toLocaleString('fr-FR').replace(/\s/g, ',') + ' TND';
 
 const STATUS_COLORS: Record<OrderStatus, string> = {
-  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)', traite: '#a78bfa', urgent: '#ef4444',
+  pending: '#f59e0b', confirmed: '#60a5fa', no_response: '#f87171', delivered: '#4ade80', cancelled: 'var(--muted)', traite: '#a78bfa', urgent: '#ef4444', reporte: '#fb923c', faux_numero: '#94a3b8',
 };
 const STATUS_LABELS: Record<OrderStatus, string> = {
-  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée', traite: 'Traité', urgent: 'Urgent',
+  pending: 'En attente', confirmed: 'Confirmée', no_response: 'Ne répond pas', delivered: 'Livrée', cancelled: 'Annulée', traite: 'Traité', urgent: 'Urgent', reporte: 'Reporté', faux_numero: 'Faux numéro',
 };
-const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'traite', 'urgent', 'delivered', 'cancelled'];
+const ALL_STATUSES: OrderStatus[] = ['pending', 'confirmed', 'no_response', 'traite', 'urgent', 'reporte', 'faux_numero', 'delivered', 'cancelled'];
 
 const QUICK_DATE_FILTERS: [string, string][] = [
   ['', 'Tout'], ['today', "Aujourd'hui"], ['yesterday', 'Hier'],
@@ -120,6 +120,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         'Articles': o.items.map(it => `${it.name}${it.size ? ` (${it.size})` : ''}${it.color ? ` - ${it.color}` : ''} x${it.qty}`).join(', '),
         'Statut': STATUS_LABELS[o.status],
         'Note': o.customer.notes || '',
+        'Note interne': o.adminNote || '',
       };
       if (!isViewer) {
         row['Sous-total (TND)'] = o.subtotal;
@@ -206,6 +207,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
         /* Desktop: show grid columns, hide mobile block */
         .mobile-order-extra { display: none; }
         .order-row-articles { display: block; }
+        .order-row-note-desktop { display: block; }
         .order-row-total-desktop { display: block; }
         .order-row-date { display: block; }
         .order-row-status-desktop { display: block; }
@@ -216,6 +218,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
           /* Show mobile block, hide desktop-only columns */
           .mobile-order-extra { display: block !important; }
           .order-row-articles { display: none !important; }
+          .order-row-note-desktop { display: none !important; }
           .order-row-total-desktop { display: none !important; }
           .order-row-date { display: none !important; }
           .order-row-status-desktop { display: none !important; }
@@ -338,9 +341,10 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
           {/* Table */}
           <div style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
             {/* Header */}
-            <div className="orders-table-header" style={{ display: 'grid', gridTemplateColumns: isViewer ? '1.2fr 1fr 90px 110px' : '1.2fr 1fr 0.8fr 90px 110px', padding: '10px 18px', borderBottom: '1px solid var(--border)', background: 'var(--background)' }}>
+            <div className="orders-table-header" style={{ display: 'grid', gridTemplateColumns: isViewer ? '1.2fr 1fr 1fr 90px 110px' : '1.2fr 1fr 1fr 0.8fr 90px 110px', padding: '10px 18px', borderBottom: '1px solid var(--border)', background: 'var(--background)' }}>
               <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Client</span>
               <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Articles</span>
+              <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: 'var(--muted)' }}>Note interne</span>
               {!isViewer && (
                 <button onClick={() => toggleSort('total')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center' }}>
                   <span style={{ fontSize: '11px', letterSpacing: '.3em', textTransform: 'uppercase', color: sortKey === 'total' ? 'var(--accent)' : 'var(--muted)' }}>Total</span>
@@ -365,7 +369,7 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
               <div key={o.id} onClick={() => { setSelected(o === selected ? null : o); setDeleteConfirm(false); }}
                 className="order-row"
                 style={{
-                  display: 'grid', gridTemplateColumns: isViewer ? '1.2fr 1fr 90px 110px' : '1.2fr 1fr 0.8fr 90px 110px',
+                  display: 'grid', gridTemplateColumns: isViewer ? '1.2fr 1fr 1fr 90px 110px' : '1.2fr 1fr 1fr 0.8fr 90px 110px',
                   padding: '14px 18px', borderBottom: i < paginated.length - 1 ? '1px solid #111' : 'none',
                   cursor: 'pointer', background: selected?.id === o.id ? 'rgba(201,169,110,.05)' : 'none',
                   transition: 'background .2s', alignItems: 'center',
@@ -389,6 +393,9 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
                       </div>
                     ))}
                     {!isViewer && <p style={{ fontSize: '.88rem', color: 'var(--accent)', fontFamily: 'var(--font-serif)', marginTop: '6px' }}>{fmt(o.subtotal)}</p>}
+                    {o.adminNote && (
+                      <p style={{ fontSize: '11px', color: 'var(--muted)', fontStyle: 'italic', marginTop: '6px' }}>{o.adminNote}</p>
+                    )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
                       <p style={{ fontSize: '11px', color: 'var(--muted)' }}>{new Date(o.createdAt).toLocaleDateString('fr-TN')}</p>
                       <p style={{ fontSize: '10px', color: 'var(--muted)', opacity: .7 }}>{new Date(o.createdAt).toLocaleTimeString('fr-TN', { hour: '2-digit', minute: '2-digit' })}</p>
@@ -410,6 +417,15 @@ export default function AdminOrders({ isViewer = false }: { isViewer?: boolean }
                       )}
                     </div>
                   ))}
+                </div>
+                <div className="order-row-note-desktop">
+                  {o.adminNote ? (
+                    <p style={{ fontSize: '11px', color: 'var(--muted)', fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                      {o.adminNote}
+                    </p>
+                  ) : (
+                    <p style={{ fontSize: '11px', color: 'var(--muted)', opacity: .35 }}>—</p>
+                  )}
                 </div>
                 {!isViewer && <p className="order-row-total-desktop" style={{ fontFamily: 'var(--font-serif)', fontSize: '.88rem', color: 'var(--accent)' }}>{fmt(o.subtotal)}</p>}
                 <div className="order-row-date">
