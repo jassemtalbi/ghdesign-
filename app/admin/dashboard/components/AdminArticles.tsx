@@ -60,23 +60,34 @@ export default function AdminArticles() {
 
   const [uploading, setUploading] = useState(false);
 
-  const uploadOne = (file: File): Promise<string | null> => {
-    return new Promise((resolve) => {
-      if (!file.type.startsWith('image/')) { resolve(null); return; }
-      const reader = new FileReader();
-      reader.onload = async e => {
-        try {
-          const res = await fetch('/api/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: e.target?.result }),
-          });
-          const { url } = await res.json();
-          resolve(url);
-        } catch { resolve(null); }
-      };
-      reader.readAsDataURL(file);
-    });
+  // Resize + re-encode in the browser: Vercel rejects request bodies over 4.5 MB
+  const compress = async (file: File, maxSide = 1600, quality = 0.82): Promise<string> => {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    return canvas.toDataURL('image/webp', quality);
+  };
+
+  const uploadOne = async (file: File): Promise<string | null> => {
+    if (!file.type.startsWith('image/')) return null;
+    try {
+      const data = await compress(file);
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data }),
+      });
+      if (!res.ok) { alert(`Échec de l'upload de ${file.name} (${res.status})`); return null; }
+      const { url } = await res.json();
+      return url;
+    } catch {
+      alert(`Échec de l'upload de ${file.name}`);
+      return null;
+    }
   };
 
   const handleFiles = async (files: FileList) => {

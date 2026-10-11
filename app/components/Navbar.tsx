@@ -1,6 +1,7 @@
 ﻿'use client';
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
+import { skipOptimizer } from '../lib/image';
 import { useCart } from '../context/CartContext';
 import CheckoutModal from './CheckoutModal';
 
@@ -176,7 +177,7 @@ export default function Navbar() {
                 <div key={item.cartKey} style={{ padding: '18px 28px', borderBottom: '1px solid var(--border)', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                   {/* Image */}
                   <div style={{ width: '74px', height: '94px', flexShrink: 0, overflow: 'hidden', position: 'relative', background: 'var(--surface)' }}>
-                    <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} sizes="74px" />
+                    <Image src={item.image} alt={item.name} fill unoptimized={skipOptimizer(item.image)} style={{ objectFit: 'cover' }} sizes="74px" />
                   </div>
                   {/* Details */}
                   <div style={{ flex: 1, minWidth: 0 }}>
