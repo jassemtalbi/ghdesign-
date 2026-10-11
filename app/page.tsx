@@ -1,10 +1,8 @@
 import Cursor from "./components/Cursor";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import Marquee from "./components/Marquee";
 import Collections from "./components/Collections";
 import About from "./components/About";
-import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
 export default function Home() {
@@ -14,10 +12,10 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Marquee />
+        <Collections id="femme" eyebrow="Pour Elle" title="Femme" gender="femme" />
+        <Collections id="homme" eyebrow="Pour Lui" title="Homme" gender="homme" />
         <Collections />
         <About />
-        <Contact />
       </main>
       <Footer />
     </>

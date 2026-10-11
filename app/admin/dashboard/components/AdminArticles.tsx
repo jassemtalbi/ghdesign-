@@ -26,7 +26,7 @@ const PRESET_COLORS = [
   'Turquoise', 'Violet', 'Mauve', 'Lilas', 'Ivoire', 'Crème', 'Kaki', 'Taupe', 'Nude',
 ];
 
-const emptyForm = { name: '', category: 'Traditional', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', description: '', pinned: false, published: true };
+const emptyForm = { name: '', category: 'Traditional', gender: '', price: '', priceNum: 0, tag: 'New', image: '', images: [] as string[], sizes: [] as string[], colors: [] as string[], colorInput: '', description: '', pinned: false, published: true };
 
 export default function AdminArticles() {
   const { articles, addArticle, updateArticle, deleteArticle, togglePublish, togglePin } = useAdmin();
@@ -53,7 +53,7 @@ export default function AdminArticles() {
 
   const openEdit = (a: Article) => {
     setEditing(a);
-    setForm({ name: a.name, category: a.category, price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, images: a.images || [], sizes: a.sizes || [], colors: a.colors || [], colorInput: '', description: a.description || '', pinned: a.pinned ?? false, published: a.published });
+    setForm({ name: a.name, category: a.category, gender: a.gender || '', price: a.price, priceNum: a.priceNum, tag: a.tag, image: a.image, images: a.images || [], sizes: a.sizes || [], colors: a.colors || [], colorInput: '', description: a.description || '', pinned: a.pinned ?? false, published: a.published });
     setErrors({});
     setShowForm(true);
   };
@@ -399,6 +399,14 @@ export default function AdminArticles() {
                   <label style={{ display: 'block', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '6px' }}>Catégorie</label>
                   <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} style={{ ...inp(), appearance: 'none' as const }}>
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '11px', letterSpacing: '.25em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: '6px' }}>Section</label>
+                  <select value={form.gender} onChange={e => setForm(p => ({ ...p, gender: e.target.value }))} style={{ ...inp(), appearance: 'none' as const }}>
+                    <option value="">Tous</option>
+                    <option value="femme">Femme</option>
+                    <option value="homme">Homme</option>
                   </select>
                 </div>
                 <div>

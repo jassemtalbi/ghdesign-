@@ -9,7 +9,7 @@ const cols = [
   ]},
   { title: 'Information', links: [
     { label: 'À propos',           href: '#about' },
-    { label: 'Contact',            href: '#contact' },
+    { label: 'Contact',            href: '#footer' },
   ]},
 ];
 
@@ -21,7 +21,7 @@ const SOCIAL_LINKS = [
 
 export default function Footer() {
   return (
-    <footer style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
+    <footer id="footer" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: 'clamp(56px,8vw,96px) clamp(20px,5vw,64px)' }}>
 
         {/* Top grid */}

@@ -19,6 +19,7 @@ export type Article = {
   id: string;
   name: string;
   category: string;
+  gender?: string;
   price: string;
   priceNum: number;
   tag: string;

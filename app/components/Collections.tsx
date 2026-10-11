@@ -6,18 +6,17 @@ import { skipOptimizer } from '../lib/image';
 import { useCart } from '../context/CartContext';
 import { useAdmin, type Article } from '../context/AdminContext';
 
-const tabs = ['All', 'New', 'Traditional', 'Evening', 'Casual Chic', 'Modest'];
-
 const pinFirst = (arr: Article[]) => [...arr].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
-function Collections() {
+type CollectionsProps = { id?: string; eyebrow?: string; title?: string; gender?: 'homme' | 'femme' };
+
+function Collections({ id = 'collections', eyebrow = 'Curated for You', title = 'Tous les articles', gender }: CollectionsProps) {
   const ref = useRef<HTMLElement>(null);
-  const [activeTab, setActiveTab] = useState(0);
   const [added, setAdded] = useState<string | null>(null);
   const { addItem } = useCart();
   const { articles, loading } = useAdmin();
 
-  const published = useMemo(() => articles.filter(a => a.published), [articles]);
+  const published = useMemo(() => articles.filter(a => a.published && (!gender || a.gender === gender)), [articles, gender]);
 
   useEffect(() => {
     const els = ref.current?.querySelectorAll('.reveal') ?? [];
@@ -31,15 +30,9 @@ function Collections() {
     );
     els.forEach(el => obs.observe(el));
     return () => obs.disconnect();
-  }, [articles, activeTab]);
+  }, [articles]);
 
-  const filtered = useMemo(() => (
-    activeTab === 0
-      ? pinFirst(published)
-      : activeTab === 1
-      ? pinFirst([...published].sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 6))
-      : pinFirst(published.filter(p => p.category.toLowerCase().includes(tabs[activeTab].toLowerCase())))
-  ), [published, activeTab]);
+  const filtered = useMemo(() => pinFirst(published), [published]);
 
   const handleAdd = useCallback((p: Article, size: string, color: string) => {
     const cartKey = `${p.id}-${size}-${color}`;
@@ -48,31 +41,17 @@ function Collections() {
     setTimeout(() => setAdded(null), 1600);
   }, [addItem]);
 
+  if (gender && !loading && filtered.length === 0) return null;
+
   return (
-    <section id="collections" ref={ref} style={{ padding: 'clamp(64px,10vw,120px) clamp(16px,5vw,64px)', background: 'var(--background)' }}>
+    <section id={id} ref={ref} style={{ padding: 'clamp(64px,10vw,120px) clamp(16px,5vw,64px)', background: 'var(--background)' }}>
       <div style={{ maxWidth: '1320px', margin: '0 auto' }}>
 
         {/* Header */}
         <div className="reveal" style={{ textAlign: 'center', marginBottom: 'clamp(36px,6vw,64px)' }}>
-          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px', fontWeight: 600 }}>Curated for You</p>
-          <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2rem,6vw,4.2rem)', color: 'var(--foreground)', lineHeight: 1.08, marginBottom: '22px' }}>The Collection</h2>
+          <p style={{ fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.52em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px', fontWeight: 600 }}>{eyebrow}</p>
+          <h2 style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2rem,6vw,4.2rem)', color: 'var(--foreground)', lineHeight: 1.08, marginBottom: '22px' }}>{title}</h2>
           <div className="divider" />
-        </div>
-
-        {/* Filter tabs */}
-        <div className="reveal" style={{ marginBottom: 'clamp(28px,4vw,48px)', overflowX: 'auto', scrollbarWidth: 'none' }}>
-          <div style={{ display: 'flex', gap: 'clamp(18px,3vw,36px)', justifyContent: 'center', minWidth: 'max-content', padding: '0 4px 4px' }}>
-            {tabs.map((t, i) => (
-              <button key={t} onClick={() => setActiveTab(i)}
-                style={{
-                  fontFamily: 'var(--font-sans)', fontSize: '11px', letterSpacing: '.28em', textTransform: 'uppercase', fontWeight: 600,
-                  color: activeTab === i ? 'var(--accent)' : 'var(--muted)',
-                  borderTop: 'none', borderLeft: 'none', borderRight: 'none',
-                  borderBottom: `1px solid ${activeTab === i ? 'var(--accent)' : 'transparent'}`,
-                  paddingBottom: '5px', background: 'none', cursor: 'pointer', transition: 'color .3s',
-                }}>{t}</button>
-            ))}
-          </div>
         </div>
 
         {/* Empty state */}

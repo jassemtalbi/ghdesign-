@@ -6,9 +6,11 @@ import { useCart } from '../context/CartContext';
 import CheckoutModal from './CheckoutModal';
 
 const links = [
+  { label: 'Femme',       href: '#femme' },
+  { label: 'Homme',       href: '#homme' },
   { label: 'Collections', href: '#collections' },
-  { label: 'About',        href: '#about' },
-  { label: 'Contact',      href: '#contact' },
+  { label: 'About',       href: '#about' },
+  { label: 'Contact',     href: '#footer' },
 ];
 
 export default function Navbar() {

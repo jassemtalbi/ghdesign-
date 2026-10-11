@@ -88,7 +88,7 @@ export default function About() {
             </div>
 
             <div className="reveal">
-              <a href="#contact" className="btn-gold">Meet the Designer</a>
+              <a href="#footer" className="btn-gold">Meet the Designer</a>
             </div>
           </div>
         </div>

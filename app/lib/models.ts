@@ -3,6 +3,7 @@ import mongoose, { Schema, model, models } from 'mongoose';
 const ArticleSchema = new Schema({
   name:      { type: String, required: true },
   category:  { type: String, required: true },
+  gender:    { type: String, default: '' },
   price:     { type: String, required: true },
   priceNum:  { type: Number, required: true },
   tag:       { type: String, required: true },
