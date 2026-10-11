@@ -1,7 +1,7 @@
 ﻿'use client';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
-import { skipOptimizer } from '../lib/image';
+import { imageProps } from '../lib/image';
 import { useCart } from '../context/CartContext';
 import { useAdmin, type Article } from '../context/AdminContext';
 
@@ -52,7 +52,7 @@ function NewArrivals() {
             <div key={item.id} className="reveal" style={{ transitionDelay: `${i * 100}ms` }}>
               <div style={{ position: 'relative', overflow: 'hidden', background: '#0f0c07' }}>
                 <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
-                  <Image src={item.image} alt={item.name} fill unoptimized={skipOptimizer(item.image)}
+                  <Image src={item.image} alt={item.name} fill {...imageProps(item.image)}
                     sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 420px"
                     style={{ objectFit: 'cover', transition: 'transform .85s cubic-bezier(.22,1,.36,1)' }}
                     className="nimg"

@@ -1,7 +1,7 @@
 ﻿'use client';
 import { useMemo, useState } from 'react';
 import Image from 'next/image';
-import { skipOptimizer } from '../lib/image';
+import { imageProps } from '../lib/image';
 import { useCart } from '../context/CartContext';
 import { useAdmin } from '../context/AdminContext';
 
@@ -266,7 +266,7 @@ export default function CheckoutModal({ open, onClose }: { open: boolean; onClos
                   return (
                     <div key={item.cartKey} style={{ display: 'flex', gap: '10px', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--border)' }}>
                       <div style={{ width: '50px', height: '64px', flexShrink: 0, position: 'relative', overflow: 'hidden', background: 'var(--surface)' }}>
-                        <Image src={item.image} alt={item.name} fill unoptimized={skipOptimizer(item.image)} style={{ objectFit: 'cover' }} sizes="50px" />
+                        <Image src={item.image} alt={item.name} fill {...imageProps(item.image)} style={{ objectFit: 'cover' }} sizes="50px" />
                         <div style={{ position: 'absolute', top: '-4px', right: '-4px', width: '16px', height: '16px', background: 'var(--accent)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans)', fontSize: '8px', fontWeight: 700, color: 'var(--background)' }}>{item.qty}</div>
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>

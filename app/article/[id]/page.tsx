@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { skipOptimizer } from '../../lib/image';
+import { imageProps } from '../../lib/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useAdmin, type Article } from '../../context/AdminContext';
 import { useCart } from '../../context/CartContext';
@@ -77,7 +77,7 @@ export default function ArticlePage() {
             <div>
               {/* Main image */}
               <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', background: 'var(--surface)', marginBottom: '12px' }}>
-                <Image src={allImages[activeImg]} alt={article.name} fill unoptimized={skipOptimizer(allImages[activeImg])}
+                <Image src={allImages[activeImg]} alt={article.name} fill {...imageProps(allImages[activeImg])}
                   sizes="(max-width: 768px) 100vw, 50vw"
                   style={{ objectFit: 'cover' }}
                   preload loading="eager" />
@@ -108,7 +108,7 @@ export default function ArticlePage() {
                   {allImages.map((img, idx) => (
                     <button key={idx} onClick={() => setActiveImg(idx)}
                       style={{ position: 'relative', width: '72px', height: '90px', padding: 0, border: `2px solid ${activeImg === idx ? 'var(--accent)' : 'var(--border)'}`, cursor: 'pointer', overflow: 'hidden', background: 'var(--surface)', flexShrink: 0, transition: 'border-color .2s' }}>
-                      <Image src={img} alt={`${article.name} ${idx + 1}`} fill unoptimized={skipOptimizer(img)} sizes="72px" style={{ objectFit: 'cover' }} quality={60} />
+                      <Image src={img} alt={`${article.name} ${idx + 1}`} fill {...imageProps(img)} sizes="72px" style={{ objectFit: 'cover' }} quality={60} />
                     </button>
                   ))}
                 </div>
