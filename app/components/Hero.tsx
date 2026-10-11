@@ -24,7 +24,7 @@ export default function Hero() {
   });
 
   return (
-    <section ref={ref} style={{ position: 'relative', width: '100%', height: '100vh', minHeight: '600px', overflow: 'hidden', background: 'var(--background)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <section ref={ref} style={{ position: 'relative', width: '100%', padding: 'clamp(110px,16vw,150px) 0 clamp(40px,6vw,64px)', overflow: 'hidden', background: 'var(--background)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 
       {/* Parallax bg */}
       <div style={{ position: 'absolute', inset: 0, transform: `translateY(${sy * .3}px)` }}>
@@ -42,7 +42,7 @@ export default function Hero() {
           backgroundSize: '72px 72px' }} />
         {/* Big watermark */}
         <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none', userSelect: 'none', opacity: on ? .04 : 0, transition: 'opacity 2s ease' }}>
-          <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(12rem,22vw,20rem)', fontWeight: 700, color: 'var(--accent)', lineHeight: 1, whiteSpace: 'nowrap' }}>GH</span>
+          <span style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(8rem,16vw,14rem)', fontWeight: 700, color: 'var(--accent)', lineHeight: 1, whiteSpace: 'nowrap' }}>GH</span>
         </div>
       </div>
 
@@ -61,44 +61,23 @@ export default function Hero() {
         </div> */}
 
         {/* Heading */}
-        <h1 style={{ ...show(420), fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2.6rem,8.5vw,7.5rem)', lineHeight: 1.06, letterSpacing: '.02em', marginBottom: '22px' }}>
+        <h1 style={{ ...show(420), fontFamily: 'var(--font-serif)', fontWeight: 700, fontSize: 'clamp(2rem,6vw,4.2rem)', lineHeight: 1.06, letterSpacing: '.02em', marginBottom: '22px' }}>
           <span style={{ color: 'var(--foreground)' }}>Where Tradition</span><br />
           <span className="text-gold" style={{ fontStyle: 'italic' }}>Meets Elegance</span>
         </h1>
 
         {/* Sub */}
-        <p style={{ ...show(640), fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 'clamp(.8rem,1.6vw,.95rem)', letterSpacing: '.18em', color: 'var(--muted)', maxWidth: '440px', margin: '0 auto 44px', lineHeight: 2 }}>
+        <p style={{ ...show(640), fontFamily: 'var(--font-sans)', fontWeight: 600, fontSize: 'clamp(.8rem,1.6vw,.95rem)', letterSpacing: '.18em', color: 'var(--muted)', maxWidth: '440px', margin: '0 auto 28px', lineHeight: 1.8 }}>
           Handcrafted fashion for men & women, inspired by the soul of North Africa
         </p>
 
         {/* CTAs */}
-        <div style={{ ...show(860), display: 'flex', marginBottom: '74px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
+        <div style={{ ...show(860), display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
           <a href="#collections" className="btn-gold">Explore Collection</a>
           <a href="#about" className="btn-light">Our Story</a>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div style={{ position: 'absolute', bottom: '80px', left: '50%', transform: 'translateX(-50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', ...show(1100) }}>
-<div style={{ width: '1px', height: '44px', overflow: 'hidden', background: 'rgba(184,146,74,.2)', position: 'relative' }}>
-          <div className="scroll-line" />
-        </div>
-      </div>
-
-      {/* Stats bar */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        display: 'grid', gridTemplateColumns: 'repeat(3,1fr)',
-        borderTop: '1px solid var(--border)',
-        ...show(1200),
-      }} className="hidden md:grid">
-        {[['500+','Unique Pieces'],['10+','Years of Craft'],['100%','Handmade']].map(([n,l]) => (
-          <div key={l} style={{ padding: '14px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', borderRight: '1px solid var(--border)', overflow: 'hidden' }}>
-            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', color: 'var(--accent)', fontWeight: 700 }}>{n}</span>
-            <span style={{ fontFamily: 'var(--font-sans)', fontSize: '9px', letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--muted)', fontWeight: 600, textAlign: 'center', lineHeight: 1.3 }}>{l}</span>
-          </div>
-        ))}
-      </div>
     </section>
   );
 }

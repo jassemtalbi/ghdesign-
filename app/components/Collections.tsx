@@ -8,9 +8,9 @@ import { useAdmin, type Article } from '../context/AdminContext';
 
 const pinFirst = (arr: Article[]) => [...arr].sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
-type CollectionsProps = { id?: string; eyebrow?: string; title?: string; gender?: 'homme' | 'femme' };
+type CollectionsProps = { id?: string; eyebrow?: string; title?: string; gender?: 'homme' | 'femme'; priority?: boolean };
 
-function Collections({ id = 'collections', eyebrow = 'Curated for You', title = 'Tous les articles', gender }: CollectionsProps) {
+function Collections({ id = 'collections', eyebrow = 'Curated for You', title = 'Tous les articles', gender, priority = false }: CollectionsProps) {
   const ref = useRef<HTMLElement>(null);
   const [added, setAdded] = useState<string | null>(null);
   const { addItem } = useCart();
@@ -74,7 +74,7 @@ function Collections({ id = 'collections', eyebrow = 'Curated for You', title = 
         {filtered.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 'clamp(14px,2vw,24px)' }}>
             {filtered.map((p, i) => (
-              <ProductCard key={p.id} p={p} delay={i * 80} added={added} onAdd={handleAdd} aboveFold={i < 4} />
+              <ProductCard key={p.id} p={p} delay={i * 80} added={added} onAdd={handleAdd} aboveFold={priority && i < 4} />
             ))}
           </div>
         )}

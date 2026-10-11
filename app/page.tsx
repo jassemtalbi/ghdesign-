@@ -12,9 +12,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <Collections id="femme" eyebrow="Pour Elle" title="Femme" gender="femme" />
-        <Collections id="homme" eyebrow="Pour Lui" title="Homme" gender="homme" />
-        <Collections />
+        <Collections priority />
         <About />
       </main>
       <Footer />

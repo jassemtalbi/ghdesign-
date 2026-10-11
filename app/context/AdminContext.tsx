@@ -1,4 +1,5 @@
 'use client';
+import { usePathname } from 'next/navigation';
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 
 export type OrderStatus = 'pending' | 'confirmed' | 'no_response' | 'delivered' | 'cancelled' | 'traite' | 'urgent' | 'reporte' | 'faux_numero';
@@ -55,21 +56,22 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
+  const isAdmin = usePathname()?.startsWith('/admin') ?? false;
 
   const fetchAll = useCallback(async () => {
     try {
       const [artRes, ordRes] = await Promise.all([
         fetch('/api/articles'),
-        fetch('/api/orders'),
+        isAdmin ? fetch('/api/orders') : Promise.resolve(null), // orders are admin-only
       ]);
       if (artRes.ok) setArticles(await artRes.json());
-      if (ordRes.ok) setOrders(await ordRes.json());
+      if (ordRes?.ok) setOrders(await ordRes.json());
     } catch (e) {
       console.error('Failed to fetch data', e);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
 

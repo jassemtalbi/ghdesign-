@@ -6,7 +6,9 @@ import { Article } from '../../lib/models';
 export async function GET() {
   await dbConnect;
   const articles = await Article.find().sort({ createdAt: -1 }).lean();
-  return NextResponse.json(articles.map(a => ({ ...a, id: (a as any)._id.toString() })));
+  return NextResponse.json(articles.map(a => ({ ...a, id: (a as any)._id.toString() })), {
+    headers: { 'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=60' },
+  });
 }
 
 export async function POST(req: Request) {
