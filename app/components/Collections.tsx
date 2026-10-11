@@ -2,7 +2,7 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { skipOptimizer } from '../lib/image';
+import { imageProps } from '../lib/image';
 import { useCart } from '../context/CartContext';
 import { useAdmin, type Article } from '../context/AdminContext';
 
@@ -136,7 +136,7 @@ const ProductCard = memo(function ProductCard({ p, delay, added, onAdd, aboveFol
         <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
           {/* Clickable image → detail page (behind arrows) */}
           <Link href={`/article/${p.id}`} style={{ display: 'block', width: '100%', height: '100%', position: 'absolute', inset: 0, zIndex: 1 }} />
-          <Image src={allImages[activeImg] ?? allImages[0]} alt={p.name} fill unoptimized={skipOptimizer(allImages[activeImg] ?? allImages[0])}
+          <Image src={allImages[activeImg] ?? allImages[0]} alt={p.name} fill {...imageProps(allImages[activeImg] ?? allImages[0])}
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 280px"
             style={{ objectFit: 'cover' }}
             className="pimg"

@@ -1,5 +1,6 @@
 export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
+import sharp from 'sharp';
 import dbConnect from '../../../lib/mongodb';
 import mongoose, { Schema, model, models } from 'mongoose';
 
@@ -10,10 +11,20 @@ const ImageSchema = new Schema({
 });
 const GHImage = models.GHImage || model('GHImage', ImageSchema);
 
-// GET — serve image by id
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+// Allowed thumbnail widths (keeps the number of cached variants small)
+const WIDTHS = [128, 256, 384, 640, 828, 1080, 1600];
+
+// Cached by browsers and by the Vercel CDN, so MongoDB + resize run once per variant
+const CACHE = {
+  'Cache-Control': 'public, max-age=31536000, s-maxage=31536000, immutable',
+  'CDN-Cache-Control': 'public, max-age=31536000, immutable',
+};
+
+// GET — serve image by id; ?w=<width> returns a resized WebP
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   await dbConnect;
   const { id } = await params;
+  if (!mongoose.isValidObjectId(id)) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   const img = await GHImage.findById(id).lean() as any;
   if (!img) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
@@ -23,10 +34,16 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
   const buffer = Buffer.from(base64, 'base64');
 
-  return new NextResponse(buffer, {
-    headers: {
-      'Content-Type': mime,
-      'Cache-Control': 'public, max-age=31536000, immutable',
-    },
-  });
+  const w = Number(new URL(req.url).searchParams.get('w'));
+  if (w > 0) {
+    const width = WIDTHS.find(x => x >= w) ?? WIDTHS[WIDTHS.length - 1];
+    try {
+      const out = await sharp(buffer).rotate().resize({ width, withoutEnlargement: true }).webp({ quality: 72 }).toBuffer();
+      return new NextResponse(new Uint8Array(out), { headers: { 'Content-Type': 'image/webp', ...CACHE } });
+    } catch {
+      // fall through to the original
+    }
+  }
+
+  return new NextResponse(buffer, { headers: { 'Content-Type': mime, ...CACHE } });
 }

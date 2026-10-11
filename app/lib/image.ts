@@ -1,6 +1,13 @@
+import type { ImageLoaderProps } from 'next/image';
+
 // Only Unsplash goes through the Next/Vercel image optimizer.
-// Uploaded images (/api/upload/[id], data: URLs, other hosts) are served as-is:
-// the optimizer can't fetch them reliably on Vercel (deployment protection,
-// Hobby transformation quota) and they're already resized at upload time.
-export const skipOptimizer = (src?: string) =>
-  !src || !src.startsWith('https://images.unsplash.com/');
+// Uploaded images (/api/upload/[id]) are resized by our own route (?w=)
+// and cached on the Vercel CDN; anything else (data: URLs, other hosts) is served as-is.
+const isUnsplash = (src?: string) => !!src && src.startsWith('https://images.unsplash.com/');
+const isUpload = (src?: string) => !!src && src.startsWith('/api/upload/');
+
+const uploadLoader = ({ src, width }: ImageLoaderProps) => `${src}?w=${width}`;
+
+// Spread onto <Image>: {...imageProps(src)}
+export const imageProps = (src?: string) =>
+  isUnsplash(src) ? {} : isUpload(src) ? { loader: uploadLoader } : { unoptimized: true };
